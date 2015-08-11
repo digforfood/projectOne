@@ -1,12 +1,12 @@
 'use strict'
 var STATE_INIT = 0,
-	STATE_LOGIN = 1;
+	STATE_LOGIN = 1,
 	STATE_MENU = 2,
 	STATE_RUN = 3,
 	STATE_EXIT = 4;
 
 var socket,
-	gameState = 0,
+	gameState = STATE_INIT,
 	screenPreloader = document.getElementById('screen-preloader'),
 	screenLock = document.getElementById('screen-lock'),
 	screenMainMenu = document.getElementById('screen-main_menu');
@@ -26,7 +26,7 @@ function renderInitFrame(){
 		socket.onmessage = function(ent){handlerEntData(ent.data)};
 		socket.onerror = function(ent){console.log(ent.message);};
 
-		gameState = 1;
+		gameState = STATE_LOGIN;
 	}
 }
 
@@ -35,7 +35,7 @@ function renderLoginFrame(){
 		screenPreloader.classList.add('hidden');
 		screenLock.classList.remove('hidden');
 
-		gameState = 2;
+		//gameState = STATE_MENU;
 	}
 }
 
@@ -44,7 +44,7 @@ function renderMenuFrame(){
 		screenLock.classList.add('hidden');
 		screenMainMenu.classList.remove('hidden');
 
-		gameState = 3;
+		//gameState = STATE_RUN;
 	}
 }
 
@@ -53,10 +53,10 @@ function gameLoop(){
 		renderInitFrame();
 	}
 	else if(gameState === STATE_LOGIN){
-		//
+		renderLoginFrame();
 	}
 	else if(gameState === STATE_MENU){
-		//
+		renderMenuFrame();
 	}
 	else if(gameState === STATE_RUN){
 		//

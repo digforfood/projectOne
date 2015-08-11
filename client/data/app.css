@@ -13,5 +13,16 @@
   left: 0;
   right: 0;
   bottom: 0;
+}
+#screen-preloader {
   background: #f00;
+}
+#screen-lock {
+  background: #0f0;
+}
+#screen-main_menu {
+  background: #00f;
+}
+#screen-game {
+  background: #000;
 }
