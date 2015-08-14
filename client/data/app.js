@@ -11,22 +11,51 @@ var socket,
 	screenLock = document.getElementById('screen-lock'),
 	screenMainMenu = document.getElementById('screen-main_menu');
 
+function loadingData(state){
+	var images = [];
+    var total = imagesToPreload.length;
+
+	for (var i = 0; i < total; i++) {
+        var image = new Image();
+        images.push(image);
+        image.src = imagesToPreload[i];
+    }
+    function preloading(){
+        var counter = 0;
+        var total = magesToPreload.length;
+        for (var i = 0; i < total; i++) {
+            if (images[i].complete) {
+                counter++;
+            }
+        }
+        if (counter == total) {
+            gameState = state;
+        } else {
+            window.setTimeout(preloading, 0);
+        }
+    };
+}
+
+function connectToServer(state, callback){
+	socket = new WebSocket("ws://localhost:443");
+	socket.onopen = function(){
+		callback(state, 'Соединение установлено.');
+	};
+	socket.onclose = function(ent){
+		connectToServer(STATE_LOGIN, loadingData);
+	};
+	socket.onmessage = function(ent){
+		handlerEntData(ent.data);
+	};
+	socket.onerror = function(ent){
+		console.log('ent.message');
+	};
+}
+
 function renderInitFrame(){
 	if (screenPreloader.className.indexOf('hidden') != -1){
 		screenPreloader.classList.remove('hidden');
-		socket = new WebSocket("ws://localhost:443");
-
-		socket.onopen = function(){console.log('Соединение установлено.');};
-		socket.onclose = function(ent){
-			if (ent.wasClean)
-				console.log('Соединение закрыто чисто');
-			else
-				console.log('Обрыв соединения');
-		};
-		socket.onmessage = function(ent){handlerEntData(ent.data)};
-		socket.onerror = function(ent){console.log(ent.message);};
-
-		gameState = STATE_LOGIN;
+		connectToServer(STATE_LOGIN, loadingData);
 	}
 }
 
