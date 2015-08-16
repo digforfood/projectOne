@@ -7,39 +7,36 @@ var STATE_INIT = 0,
 
 var socket,
 	gameState = STATE_INIT,
+	loadingFiles = [],
 	screenPreloader = document.getElementById('screen-preloader'),
 	screenLock = document.getElementById('screen-lock'),
 	screenMainMenu = document.getElementById('screen-main_menu');
 
-function loadingData(state){
-	var images = [];
-    var total = imagesToPreload.length;
+function loadingData(files, state){
+	var images = [],
+		total = files.length,
+		counter = 0;
 
 	for (var i = 0; i < total; i++) {
-        var image = new Image();
-        images.push(image);
-        image.src = imagesToPreload[i];
-    }
-    function preloading(){
-        var counter = 0;
-        var total = magesToPreload.length;
-        for (var i = 0; i < total; i++) {
-            if (images[i].complete) {
-                counter++;
-            }
-        }
-        if (counter == total) {
-            gameState = state;
-        } else {
-            window.setTimeout(preloading, 0);
-        }
-    };
+		var image = new Image();
+		images.push(image);
+		image.src = files[i];
+	}
+	function preloading(){
+		counter = 0;
+		for (var i = 0; i < total; i++) {
+			if (images[i].complete) counter++;
+		}
+		if (counter == total) gameState = state;
+		else window.setTimeout(preloading, 0);
+	};
+	preloading();
 }
 
 function connectToServer(state, callback){
 	socket = new WebSocket("ws://localhost:443");
 	socket.onopen = function(){
-		callback(state, 'Соединение установлено.');
+		callback(loadingFiles, state, 'Соединение установлено.');
 	};
 	socket.onclose = function(ent){
 		connectToServer(STATE_LOGIN, loadingData);
