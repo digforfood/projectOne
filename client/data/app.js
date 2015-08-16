@@ -12,6 +12,12 @@ var socket,
 	screenLock = document.getElementById('screen-lock'),
 	screenMainMenu = document.getElementById('screen-main_menu');
 
+
+/*
+==============
+loadingData
+==============
+*/
 function loadingData(files, state){
 	var images = [],
 		total = files.length,
@@ -33,6 +39,12 @@ function loadingData(files, state){
 	preloading();
 }
 
+
+/*
+==============
+connectToServer
+==============
+*/
 function connectToServer(state, callback){
 	socket = new WebSocket("ws://localhost:443");
 	socket.onopen = function(){
@@ -49,6 +61,12 @@ function connectToServer(state, callback){
 	};
 }
 
+
+/*
+==============
+renderInitFrame
+==============
+*/
 function renderInitFrame(){
 	if (screenPreloader.className.indexOf('hidden') != -1){
 		screenPreloader.classList.remove('hidden');
@@ -56,6 +74,12 @@ function renderInitFrame(){
 	}
 }
 
+
+/*
+==============
+renderLoginFrame
+==============
+*/
 function renderLoginFrame(){
 	if (screenLock.className.indexOf('hidden') != -1){
 		screenPreloader.classList.add('hidden');
@@ -65,6 +89,12 @@ function renderLoginFrame(){
 	}
 }
 
+
+/*
+==============
+renderMenuFrame
+==============
+*/
 function renderMenuFrame(){
 	if (screenMainMenu.className.indexOf('hidden') != -1){
 		screenLock.classList.add('hidden');
@@ -74,6 +104,12 @@ function renderMenuFrame(){
 	}
 }
 
+
+/*
+==============
+gameLoop
+==============
+*/
 function gameLoop(){
 	if(gameState === STATE_INIT){
 		renderInitFrame();
@@ -93,6 +129,12 @@ function gameLoop(){
 	window.setTimeout(gameLoop, 0);
 }
 
+
+/*
+==============
+main
+==============
+*/
 function main(){
 	gameLoop();
 }
