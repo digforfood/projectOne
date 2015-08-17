@@ -19,21 +19,50 @@ loadingData
 ==============
 */
 function loadingData(files, state){
-	var images = [],
-		total = files.length,
+	var lFiles = [],
+		style,
 		counter = 0;
-
-	for (var i = 0; i < total; i++) {
-		var image = new Image();
-		images.push(image);
-		image.src = files[i];
+	for (var i = 0; i < files.length; i++) {
+		if (i > 0) {
+			var image = new Image();
+			lFiles.push(image);
+			image.src = files[i];			
+		} else {
+			if (fileIsCached(files[i])) {
+				injectRawStyle(localStorage.font_css_cache);
+			} else {
+				var xhr = new XMLHttpRequest();
+				lFiles.push(xhr);
+				xhr.open("GET", files[i], true);
+				xhr.send();
+			  }
+		}
 	}
+
+	function fileIsCached(href) {
+		return window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === href);
+	}
+
+	function injectRawStyle(text) {
+		style = document.createElement('style');
+		style.setAttribute("type", "text/css");
+		style.innerHTML = text;
+		document.getElementsByTagName('head')[0].appendChild(style);
+	}
+
 	function preloading(){
 		counter = 0;
-		for (var i = 0; i < total; i++) {
-			if (images[i].complete) counter++;
+		for (var i = 0; i < lFiles.length; i++) {
+			if (lFiles[i].complete) counter++;
+
+			if (lFiles[i].readyState === 4) {
+				injectRawStyle(xhr.responseText);
+				localStorage.font_css_cache = xhr.responseText;
+				localStorage.font_css_cache_file = css_href;
+			}
+			
 		}
-		if (counter == total) gameState = state;
+		if (counter == lFiles.length) gameState = state;
 		else window.setTimeout(preloading, 0);
 	};
 	preloading();
@@ -45,13 +74,13 @@ function loadingData(files, state){
 connectToServer
 ==============
 */
-function connectToServer(state, callback){
+function connectToServer(state){
 	socket = new WebSocket("ws://localhost:443");
 	socket.onopen = function(){
-		callback(loadingFiles, state, 'Соединение установлено.');
+		loadingData(loadingFiles, state, 'Соединение установлено.');
 	};
 	socket.onclose = function(ent){
-		connectToServer(STATE_LOGIN, loadingData);
+		connectToServer(STATE_LOGIN);
 	};
 	socket.onmessage = function(ent){
 		handlerEntData(ent.data);
@@ -70,7 +99,7 @@ renderInitFrame
 function renderInitFrame(){
 	if (screenPreloader.className.indexOf('hidden') != -1){
 		screenPreloader.classList.remove('hidden');
-		connectToServer(STATE_LOGIN, loadingData);
+		connectToServer(STATE_LOGIN);
 	}
 }
 
