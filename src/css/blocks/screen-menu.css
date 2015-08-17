@@ -1,0 +1,9 @@
+.screen--menu {
+	padding: 5%;
+
+	&_title {
+		font-size: 40px;
+		color: #fff;
+	}
+
+}

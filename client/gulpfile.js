@@ -5,9 +5,10 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	cssmin = require('gulp-cssmin'),
 	watch = require('gulp-watch'),
-	nested = require('postcss-nested-props'),
+	nested = require('postcss-nested'),
 	importcss = require('postcss-import'),
-	plumber = require('gulp-plumber');
+	plumber = require('gulp-plumber'),
+	rigger = require('gulp-rigger');
 
 function log(error) {
 
@@ -20,8 +21,8 @@ gulp.task('pcss', function () {
 
 	var proccesors = [
 		autoprefixer({browsers: ['last 2 version']}),
-		nested,
-		importcss
+		importcss,
+		nested
 	];
 
 	return gulp.src('./../src/css/app.css')
@@ -31,16 +32,28 @@ gulp.task('pcss', function () {
 
 });
 
+gulp.task('html-partials', function () {
+
+	return gulp.src('./../src/index.html')
+		.pipe(rigger())
+		.pipe(gulp.dest('./'));
+
+});
+
 gulp.task('watch', function () {
 
 	watch('./../src/css/**/*', function () {
 		gulp.start('pcss');
 	});
 
+	watch('./../src/*.html', function () {
+		gulp.start('rigger');
+	});
+
 });
 
 gulp.task('default', function () {
 
-	gulp.start('pcss', 'watch');
+	gulp.start('pcss', 'html-partials', 'watch');
 
 });

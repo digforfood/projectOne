@@ -24,8 +24,11 @@
     "gulp-cssmin": "^0.1.7",
     "gulp-plumber": "^1.0.1",
     "gulp-postcss": "^5.1.10",
+    "gulp-rigger": "^0.5.8",
     "gulp-watch": "^4.3.4",
     "postcss-import": "^6.2.0",
-    "postcss-nested-props": "0.0.4"
+    "postcss-nested": "^0.3.2",
+    "postcss-nested-props": "0.0.4",
+    "ws": "^0.7.2"
   }
 }

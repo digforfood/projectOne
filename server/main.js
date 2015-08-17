@@ -1,6 +1,6 @@
 'use strict'
 var WebSocketServer = new require('ws'),
-	webSocketServer = new WebSocketServer.Server({port:443});
+	webSocketServer = new WebSocketServer.Server({port:443}),
 	currFrameTick = new Date(),
 	prevFrameTick,
 	deltaFrameTick;
