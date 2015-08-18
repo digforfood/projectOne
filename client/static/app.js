@@ -5,9 +5,10 @@ var STATE_INIT = 0,
 	STATE_RUN = 3,
 	STATE_EXIT = 4;
 
+var resources_fonts = "static/fonts/fonts.css";
+
 var socket,
 	gameState = STATE_INIT,
-	loadingFiles = [],
 	screenPreloader = document.getElementById('screen-preloader'),
 	screenLock = document.getElementById('screen-lock'),
 	screenMainMenu = document.getElementById('screen-main_menu');
@@ -18,54 +19,39 @@ var socket,
 loadingData
 ==============
 */
-function loadingData(files, state){
-	var lFiles = [],
-		style,
-		counter = 0;
-	for (var i = 0; i < files.length; i++) {
-		if (i > 0) {
-			var image = new Image();
-			lFiles.push(image);
-			image.src = files[i];			
-		} else {
-			if (fileIsCached(files[i])) {
-				injectRawStyle(localStorage.font_css_cache);
-			} else {
-				var xhr = new XMLHttpRequest();
-				lFiles.push(xhr);
-				xhr.open("GET", files[i], true);
-				xhr.send();
-			  }
-		}
+function loadingData(state){
+	var fontXhr = false;
+	if (window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === resources_fonts)) {
+		insertRawStyle(localStorage.font_css_cache);
+	} else {
+		fontXhr = new XMLHttpRequest();
+		fontXhr.open("GET", resources_fonts, true);
+		fontXhr.send();
 	}
 
-	function fileIsCached(href) {
-		return window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === href);
-	}
-
-	function injectRawStyle(text) {
-		style = document.createElement('style');
+	function insertRawStyle(text) {
+		var style = document.createElement('style');
 		style.setAttribute("type", "text/css");
 		style.innerHTML = text;
 		document.getElementsByTagName('head')[0].appendChild(style);
 	}
 
-	function preloading(){
-		counter = 0;
-		for (var i = 0; i < lFiles.length; i++) {
-			if (lFiles[i].complete) counter++;
-
-			if (lFiles[i].readyState === 4) {
-				injectRawStyle(xhr.responseText);
+	function check(){
+		if (document.readyState == "complete"){
+			if (fontXhr.readyState === 4){
+				insertRawStyle(xhr.responseText);
 				localStorage.font_css_cache = xhr.responseText;
-				localStorage.font_css_cache_file = css_href;
+				localStorage.font_css_cache_file = resources_fonts;
+				gameState = state;
+				return 0;
+			}else if(!fontXhr){
+				gameState = state;
+				return 0;
 			}
-			
 		}
-		if (counter == lFiles.length) gameState = state;
-		else window.setTimeout(preloading, 0);
+		else window.setTimeout(check, 0);
 	};
-	preloading();
+	check();
 }
 
 
@@ -77,7 +63,7 @@ connectToServer
 function connectToServer(state){
 	socket = new WebSocket("ws://localhost:443");
 	socket.onopen = function(){
-		loadingData(loadingFiles, state, 'Соединение установлено.');
+		loadingData(state, 'Соединение установлено.');
 	};
 	socket.onclose = function(ent){
 		connectToServer(STATE_LOGIN);
