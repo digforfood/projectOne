@@ -21,9 +21,7 @@ loadingData
 */
 function loadingData(state){
 	var fontXhr = false;
-	if (window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === resources_fonts)) {
-		insertRawStyle(localStorage.font_css_cache);
-	} else {
+	if (!(window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === resources_fonts))){
 		fontXhr = new XMLHttpRequest();
 		fontXhr.open("GET", resources_fonts, true);
 		fontXhr.send();
@@ -39,17 +37,18 @@ function loadingData(state){
 	function check(){
 		if (document.readyState == "complete"){
 			if (fontXhr.readyState === 4){
-				insertRawStyle(xhr.responseText);
-				localStorage.font_css_cache = xhr.responseText;
+				insertRawStyle(fontXhr.responseText);
+				localStorage.font_css_cache = fontXhr.responseText;
 				localStorage.font_css_cache_file = resources_fonts;
 				gameState = state;
 				return 0;
 			}else if(!fontXhr){
+				insertRawStyle(localStorage.font_css_cache);
 				gameState = state;
 				return 0;
 			}
 		}
-		else window.setTimeout(check, 0);
+		window.setTimeout(check, 0);
 	};
 	check();
 }

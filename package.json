@@ -29,6 +29,7 @@
     "postcss-import": "^6.2.0",
     "postcss-nested": "^0.3.2",
     "postcss-nested-props": "0.0.4",
-    "ws": "^0.7.2"
+    "ws": "^0.7.2",
+    "express": "^4.13.3"
   }
 }
