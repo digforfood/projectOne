@@ -28,7 +28,7 @@ gulp.task('pcss', function () {
 	return gulp.src('./../src/css/app.css')
 		.pipe(plumber({errorHandler: log}))
 		.pipe(postcss(proccesors))
-		.pipe(gulp.dest('./data/'));
+		.pipe(gulp.dest('./static/'));
 
 });
 
