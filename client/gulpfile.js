@@ -11,14 +11,17 @@ var gulp = require('gulp'),
 	rigger = require('gulp-rigger');
 
 function log(error) {
-
 	console.log(("[" + error.name + " in " + error.plugin + "]").red.bold.inverse,
 	error.message + "]");
-
 };
 
-gulp.task('pcss', function () {
+gulp.task('pjs', function () {
+	return gulp.src('./../src/js/main.js')
+		.pipe(rigger())
+		.pipe(gulp.dest('./static/'));
+});
 
+gulp.task('pcss', function () {
 	var proccesors = [
 		autoprefixer({browsers: ['last 2 version']}),
 		importcss,
@@ -29,31 +32,26 @@ gulp.task('pcss', function () {
 		.pipe(plumber({errorHandler: log}))
 		.pipe(postcss(proccesors))
 		.pipe(gulp.dest('./static/'));
-
 });
 
 gulp.task('html-partials', function () {
-
 	return gulp.src('./../src/index.html')
 		.pipe(rigger())
 		.pipe(gulp.dest('./'));
-
 });
 
 gulp.task('watch', function () {
-
+	watch('./../src/js/**/*', function () {
+		gulp.start('pjs');
+	});
 	watch('./../src/css/**/*', function () {
 		gulp.start('pcss');
 	});
-
 	watch('./../src/*.html', function () {
-		gulp.start('rigger');
+		gulp.start('html-partials');
 	});
-
 });
 
 gulp.task('default', function () {
-
-	gulp.start('pcss', 'html-partials', 'watch');
-
+	gulp.start('pcss', 'pjs', 'html-partials', 'watch');
 });
