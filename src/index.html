@@ -3,14 +3,16 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Title</title>
-		<link rel="stylesheet" href="static/app.css" property="stylesheet">
+		<link rel="stylesheet" href="static/app.css">
+		<script src="static/app.js" async></script>
 	</head>
 	<body>
 
-		<div id="screen-lock" class="screen screen--connected hidden">
+		<div id="screen-lock" class="screen screen--connected">
+			//= partials/screen-lock.html
 		</div>
 
-		<div id="screen-main_menu" class="screen screen--menu">
+		<div id="screen-main_menu" class="screen screen--menu hidden">
 			<h1 class="screen--menu_title">
 				ProjectOne
 			</h1>
@@ -25,5 +27,4 @@
 		</div>
 
 	</body>
-	<script src="static/app.js"></script>
 </html>

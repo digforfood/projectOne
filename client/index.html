@@ -3,14 +3,30 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Title</title>
-		<link rel="stylesheet" href="static/app.css" property="stylesheet">
+		<link rel="stylesheet" href="static/app.css">
+		<script src="static/app.js" async></script>
 	</head>
 	<body>
 
-		<div id="screen-lock" class="screen screen--connected hidden">
+		<div id="screen-lock" class="screen screen--connected">
+			<form action="" class="login">
+				<div class="login_group">
+					<label for="screen-lock--login" class="login_label">Login</label>
+					<input id="screen-lock--login" type="text" class="login_input">
+				</div>
+				<div class="login_group">
+					<label for="screen-lock--pass" class="login_label">Password</label>
+					<input id="screen-lock--pass" type="password" class="login_input">
+				</div>
+				<div class="login_footer">
+					<button type="submit" class="login_button">Login</button>
+					<span class="login_or">Or</span>
+					<a href="javascript: void(0);">Create an account</a>
+				</div>
+			</form>
 		</div>
 
-		<div id="screen-main_menu" class="screen screen--menu">
+		<div id="screen-main_menu" class="screen screen--menu hidden">
 			<h1 class="screen--menu_title">
 				ProjectOne
 			</h1>
@@ -25,5 +41,4 @@
 		</div>
 
 	</body>
-	<script src="static/app.js"></script>
 </html>

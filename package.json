@@ -19,6 +19,7 @@
   "devDependencies": {
     "autoprefixer": "^5.2.0",
     "colors": "^1.1.2",
+    "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-cssmin": "^0.1.7",
@@ -29,7 +30,8 @@
     "postcss-import": "^6.2.0",
     "postcss-nested": "^0.3.2",
     "postcss-nested-props": "0.0.4",
-    "ws": "^0.7.2",
-    "express": "^4.13.3"
+    "postcss-simple-extend": "^0.3.2",
+    "postcss-simple-vars": "^0.3.0",
+    "ws": "^0.7.2"
   }
 }
