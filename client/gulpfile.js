@@ -8,7 +8,9 @@ var gulp = require('gulp'),
 	nested = require('postcss-nested'),
 	importcss = require('postcss-import'),
 	plumber = require('gulp-plumber'),
-	rigger = require('gulp-rigger');
+	rigger = require('gulp-rigger'),
+	vars = require('postcss-simple-vars'),
+	extend = require('postcss-simple-extend');
 
 function log(error) {
 	console.log(("[" + error.name + " in " + error.plugin + "]").red.bold.inverse,
@@ -25,7 +27,9 @@ gulp.task('pcss', function () {
 	var proccesors = [
 		autoprefixer({browsers: ['last 2 version']}),
 		importcss,
-		nested
+		nested,
+		vars,
+		extend
 	];
 
 	return gulp.src('./../src/css/app.css')
