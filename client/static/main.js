@@ -4,7 +4,6 @@ var STATE_INIT = 0,
 	STATE_MENU = 2,
 	STATE_RUN = 3,
 	STATE_EXIT = 4;
-
 var resources_fonts = "static/fonts/fonts.css";
 
 var socket,
