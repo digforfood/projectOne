@@ -1,9 +1,0 @@
-/* Base level css */
-@import 'base/guidlines.css';
-@import 'base/optimize.css';
-@import 'base/class.lib.css';
-
-/* Modules level css */
-@import 'blocks/preloader.css';
-@import 'blocks/screen-menu.css';
-@import 'blocks/screen-lock.css';

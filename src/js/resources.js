@@ -1,1 +1,0 @@
-var resources_fonts = "static/fonts/fonts.css";
