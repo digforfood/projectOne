@@ -1,24 +1,36 @@
 'use strict'
 //= constants.js
 
-var socket,
+var fps_count,
+	lastfps,
+	thisfpstime,
+	lastfpstime,
+
+	socket,
 	canvas,
 	ctx,
 	gameState,
 	correntTime,
 	deltaMilliseconds,
-	lastFrameTime,
+	prevFrameTime,
 	thisFrameTime;
 
 
 /*
 ===========================================
-drawFPS
+scr_drawFPS
 ===========================================
 */
-function drawFPS(){
+function scr_drawFPS(){
+	thisfpstime = new Date();
+	if ((thisfpstime - lastfpstime) >= 1000) {
+		lastfps = fps_count;
+		fps_count = 0;
+		lastfpstime = thisfpstime;
+	}
 	ctx.font = "12px serif";
-	ctx.fillText('FPS: ' + Math.round(1000/deltaMilliseconds), canvas.width - 45, 17);
+	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
+	fps_count++;
 }
 
 
@@ -39,7 +51,7 @@ function scr_updateScreen(){
 	else{
 		//
 	}
-	drawFPS();
+	scr_drawFPS();
 }
 
 
@@ -55,7 +67,7 @@ function frame(){
 	if (deltaMilliseconds < 10)
 		return;			// framerate is too high
 
-	lastFrameTime = thisFrameTime;
+	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
 
 	// To do get new key events
@@ -93,6 +105,11 @@ function main(){
 	canvas.height = 480;
 	ctx = canvas.getContext('2d');
 	gameState = G_STATE_LOGIN;
+
+	fps_count = 0;
+	lastfps = 0;
+	lastfpstime = new Date();
+	
 	thisFrameTime = new Date();
 	
 	gameLoop();
