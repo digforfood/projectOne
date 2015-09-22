@@ -3,11 +3,23 @@
 
 var socket,
 	canvas,
-	context,
+	ctx,
 	gameState,
+	correntTime,
 	deltaMilliseconds,
 	lastFrameTime,
 	thisFrameTime;
+
+
+/*
+===========================================
+drawFPS
+===========================================
+*/
+function drawFPS(){
+	ctx.font = "12px serif";
+	ctx.fillText('FPS: ' + Math.round(1000/deltaMilliseconds), canvas.width - 45, 17);
+}
 
 
 /*
@@ -16,15 +28,18 @@ scr_updateScreen
 ===========================================
 */
 function scr_updateScreen(){
-	if(gameState === STATE_LOADING){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	if(gameState === G_STATE_LOADING){
 		//
 	}
-	else if(gameState === STATE_LOGIN){
+	else if(gameState === G_STATE_LOGIN){
 		//
 	}
 	else{
 		//
 	}
+	drawFPS();
 }
 
 
@@ -34,12 +49,14 @@ frame
 ===========================================
 */
 function frame(){
-	lastFrameTime = thisFrameTime;
-	thisFrameTime = new Date();
-	deltaMilliseconds = thisFrameTime - lastFrameTime;
+	correntTime = new Date();
+	deltaMilliseconds = correntTime - thisFrameTime;
 
-	if (true)
+	if (deltaMilliseconds < 10)
 		return;			// framerate is too high
+
+	lastFrameTime = thisFrameTime;
+	thisFrameTime = correntTime;
 
 	// To do get new key events
 
@@ -72,8 +89,10 @@ main
 */
 function main(){
 	canvas = document.getElementById('canvas');
-	context = canvas. getContext('2d');
-	gameState = G_STATE_INIT;
+	canvas.width = 640;
+	canvas.height = 480;
+	ctx = canvas.getContext('2d');
+	gameState = G_STATE_LOGIN;
 	thisFrameTime = new Date();
 	
 	gameLoop();

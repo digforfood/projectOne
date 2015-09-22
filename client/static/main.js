@@ -1,154 +1,103 @@
 'use strict'
-var STATE_INIT = 0,
-	STATE_LOGIN = 1,
-	STATE_MENU = 2,
-	STATE_RUN = 3,
-	STATE_EXIT = 4;
-var resources_fonts = "static/fonts/fonts.css";
+var	G_STATE_LOADING = 0,
+	G_STATE_LOGIN = 1,
+	G_STATE_RUN = 2,
+	G_STATE_EXIT = 3;
 
 var socket,
-	gameState = STATE_INIT,
-	screenPreloader = document.getElementById('screen-preloader'),
-	screenLock = document.getElementById('screen-lock'),
-	screenMainMenu = document.getElementById('screen-main_menu');
+	canvas,
+	ctx,
+	gameState,
+	correntTime,
+	deltaMilliseconds,
+	lastFrameTime,
+	thisFrameTime;
 
 
 /*
-==============
-loadingData
-==============
+===========================================
+drawFPS
+===========================================
 */
-function loadingData(state){
-	var fontXhr = false;
-	if (!(window.localStorage && localStorage.font_css_cache && (localStorage.font_css_cache_file === resources_fonts))){
-		fontXhr = new XMLHttpRequest();
-		fontXhr.open("GET", resources_fonts, true);
-		fontXhr.send();
-	}
-
-	function insertRawStyle(text) {
-		var style = document.createElement('style');
-		style.setAttribute("type", "text/css");
-		style.innerHTML = text;
-		document.getElementsByTagName('head')[0].appendChild(style);
-	}
-
-	function check(){
-		if (document.readyState == "complete"){
-			if (fontXhr.readyState === 4){
-				insertRawStyle(fontXhr.responseText);
-				localStorage.font_css_cache = fontXhr.responseText;
-				localStorage.font_css_cache_file = resources_fonts;
-				gameState = state;
-				return 0;
-			}else if(!fontXhr){
-				insertRawStyle(localStorage.font_css_cache);
-				gameState = state;
-				return 0;
-			}
-		}
-		window.setTimeout(check, 0);
-	};
-	check();
+function drawFPS(){
+	ctx.font = "12px serif";
+	ctx.fillText('FPS: ' + Math.round(1000/deltaMilliseconds), canvas.width - 45, 17);
 }
 
 
 /*
-==============
-connectToServer
-==============
+===========================================
+scr_updateScreen
+===========================================
 */
-function connectToServer(state){
-	socket = new WebSocket("ws://localhost:443");
-	socket.onopen = function(){
-		loadingData(state, 'Соединение установлено.');
-	};
-	socket.onclose = function(ent){
-		connectToServer(STATE_LOGIN);
-	};
-	socket.onmessage = function(ent){
-		handlerEntData(ent.data);
-	};
-	socket.onerror = function(ent){
-		console.log('ent.message');
-	};
-}
+function scr_updateScreen(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-/*
-==============
-renderInitFrame
-==============
-*/
-function renderInitFrame(){
-	if (screenPreloader.className.indexOf('hidden') != -1){
-		screenPreloader.classList.remove('hidden');
-		connectToServer(STATE_LOGIN);
+	if(gameState === G_STATE_LOADING){
+		//
 	}
-}
-
-
-/*
-==============
-renderLoginFrame
-==============
-*/
-function renderLoginFrame(){
-	if (screenLock.className.indexOf('hidden') != -1){
-		screenPreloader.classList.add('hidden');
-		screenLock.classList.remove('hidden');
-
-		//gameState = STATE_MENU;
+	else if(gameState === G_STATE_LOGIN){
+		//
 	}
-}
-
-
-/*
-==============
-renderMenuFrame
-==============
-*/
-function renderMenuFrame(){
-	if (screenMainMenu.className.indexOf('hidden') != -1){
-		screenLock.classList.add('hidden');
-		screenMainMenu.classList.remove('hidden');
-
-		//gameState = STATE_RUN;
+	else{
+		//
 	}
+	drawFPS();
 }
 
 
 /*
-==============
+===========================================
+frame
+===========================================
+*/
+function frame(){
+	correntTime = new Date();
+	deltaMilliseconds = correntTime - thisFrameTime;
+
+	if (deltaMilliseconds < 10)
+		return;			// framerate is too high
+
+	lastFrameTime = thisFrameTime;
+	thisFrameTime = correntTime;
+
+	// To do get new key events
+
+	// To do fetch results from server
+
+	// To do prediction for other players
+
+	// To do client side motion prediction
+
+	scr_updateScreen();
+}
+
+
+/*
+===========================================
 gameLoop
-==============
+===========================================
 */
 function gameLoop(){
-	if(gameState === STATE_INIT){
-		renderInitFrame();
-	}
-	else if(gameState === STATE_LOGIN){
-		renderLoginFrame();
-	}
-	else if(gameState === STATE_MENU){
-		renderMenuFrame();
-	}
-	else if(gameState === STATE_RUN){
-		//
-	}
-	else if(gameState === STATE_EXIT){
-		//
-	}
+	frame();
+
 	window.setTimeout(gameLoop, 0);
 }
 
 
 /*
-==============
+===========================================
 main
-==============
+===========================================
 */
 function main(){
+	canvas = document.getElementById('canvas');
+	canvas.width = 640;
+	canvas.height = 480;
+	ctx = canvas.getContext('2d');
+	gameState = G_STATE_LOGIN;
+	thisFrameTime = new Date();
+	
 	gameLoop();
 }
 
