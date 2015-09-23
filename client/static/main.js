@@ -9,6 +9,10 @@ var fps_count,
 	thisfpstime,
 	lastfpstime,
 
+	mouse_x,
+	mouse_y,
+	mouse_button,
+
 	socket,
 	canvas,
 	ctx,
@@ -33,6 +37,9 @@ function scr_drawFPS(){
 	}
 	ctx.font = "12px serif";
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
+	ctx.fillText('m_x: ' + mouse_x, canvas.width - 45, 29);
+	ctx.fillText('m_y: ' + mouse_y, canvas.width - 45, 41);
+	ctx.fillText('m_b: ' + mouse_button, canvas.width - 45, 53);
 	fps_count++;
 }
 
@@ -99,6 +106,34 @@ function gameLoop(){
 
 /*
 ===========================================
+controlEventsInit
+===========================================
+*/
+function controlEventsInit(){
+	//mouse events
+	mouse_x = 0;
+	mouse_y = 0;
+	mouse_button = 0;
+	canvas.oncontextmenu = function(){
+		return false;
+	};
+	canvas.onmousedown = function(e){
+		if (!e) e = window.event;
+		mouse_button = e.buttons;
+	};
+	canvas.onmouseup = function(e){
+		mouse_button = 0;
+	};
+	canvas.onmousemove = function(e){
+		if (!e) e = window.event;
+		mouse_x = e.clientX;
+		mouse_y = e.clientY;
+	};
+}
+
+
+/*
+===========================================
 main
 ===========================================
 */
@@ -114,6 +149,8 @@ function main(){
 	lastfpstime = new Date();
 	
 	thisFrameTime = new Date();
+
+	controlEventsInit();
 	
 	gameLoop();
 }
