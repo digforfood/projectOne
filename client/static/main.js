@@ -9,6 +9,7 @@ var fps_count,
 	thisfpstime,
 	lastfpstime,
 
+	keyboard_keys,
 	mouse_x,
 	mouse_y,
 	mouse_button,
@@ -106,6 +107,19 @@ function gameLoop(){
 
 /*
 ===========================================
+drawObjInit
+===========================================
+*/
+function drawObjInit(){
+	canvas = document.getElementById('canvas');
+	canvas.width = 640;
+	canvas.height = 480;
+	ctx = canvas.getContext('2d');
+}
+
+
+/*
+===========================================
 controlEventsInit
 ===========================================
 */
@@ -129,6 +143,17 @@ function controlEventsInit(){
 		mouse_x = e.clientX;
 		mouse_y = e.clientY;
 	};
+
+	//keyboard events
+	keyboard_keys = {};
+	document.onkeydown = function(e){
+		if (!e) e = window.event;
+		keyboard_keys[e.keyCode] = true;
+	};
+	document.onkeyup = function(e){
+		if (!e) e = window.event;
+		keyboard_keys[e.keyCode] = false;
+	};
 }
 
 
@@ -138,10 +163,7 @@ main
 ===========================================
 */
 function main(){
-	canvas = document.getElementById('canvas');
-	canvas.width = 640;
-	canvas.height = 480;
-	ctx = canvas.getContext('2d');
+	drawObjInit();
 	gameState = G_STATE_LOGIN;
 
 	fps_count = 0;
