@@ -14,6 +14,7 @@ var fps_count,
 	mouse_y,
 	mouse_button,
 
+	fps,
 	socket,
 	canvas,
 	ctx,
@@ -75,7 +76,7 @@ function frame(){
 	correntTime = new Date();
 	deltaMilliseconds = correntTime - thisFrameTime;
 
-	if (deltaMilliseconds < 10)
+	if (deltaMilliseconds < 1000/fps)
 		return;			// framerate is too high
 
 	prevFrameTime = thisFrameTime;
@@ -140,8 +141,8 @@ function controlEventsInit(){
 	};
 	canvas.onmousemove = function(e){
 		if (!e) e = window.event;
-		mouse_x = e.clientX;
-		mouse_y = e.clientY;
+		mouse_x = e.movementX;
+		mouse_y = e.movementY;
 	};
 
 	//keyboard events
@@ -154,6 +155,9 @@ function controlEventsInit(){
 		if (!e) e = window.event;
 		keyboard_keys[e.keyCode] = false;
 	};
+
+	//cursor hide
+	canvas.onclick = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
 }
 
 
@@ -163,6 +167,7 @@ main
 ===========================================
 */
 function main(){
+	fps = 100;
 	drawObjInit();
 	gameState = G_STATE_LOGIN;
 
