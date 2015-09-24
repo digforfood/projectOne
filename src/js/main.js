@@ -7,8 +7,8 @@ var fps_count,
 	lastfpstime,
 
 	keyboard_keys,
-	mouse_x,
-	mouse_y,
+	mouse_movement_x,
+	mouse_movement_y,
 	mouse_button,
 
 	fps,
@@ -36,8 +36,8 @@ function scr_drawFPS(){
 	}
 	ctx.font = "12px serif";
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
-	ctx.fillText('m_x: ' + mouse_x, canvas.width - 45, 29);
-	ctx.fillText('m_y: ' + mouse_y, canvas.width - 45, 41);
+	ctx.fillText('m_x: ' + mouse_movement_x, canvas.width - 45, 29);
+	ctx.fillText('m_y: ' + mouse_movement_y, canvas.width - 45, 41);
 	ctx.fillText('m_b: ' + mouse_button, canvas.width - 45, 53);
 	fps_count++;
 }
@@ -123,8 +123,8 @@ controlEventsInit
 */
 function controlEventsInit(){
 	//mouse events
-	mouse_x = 0;
-	mouse_y = 0;
+	mouse_movement_x = 0;
+	mouse_movement_y = 0;
 	mouse_button = 0;
 	canvas.oncontextmenu = function(){
 		return false;
@@ -138,8 +138,8 @@ function controlEventsInit(){
 	};
 	canvas.onmousemove = function(e){
 		if (!e) e = window.event;
-		mouse_x = e.movementX;
-		mouse_y = e.movementY;
+		mouse_movement_x = e.movementX;
+		mouse_movement_y = e.movementY;
 	};
 
 	//keyboard events
