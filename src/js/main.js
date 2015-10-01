@@ -7,6 +7,8 @@ var fps_count,
 	lastfpstime,
 
 	keyboard_keys,
+	mouse_x,
+	mouse_y,
 	mouse_movement_x,
 	mouse_movement_y,
 	mouse_button,
@@ -24,10 +26,20 @@ var fps_count,
 
 /*
 ===========================================
-scr_drawFPS
+CH_mouse
 ===========================================
 */
-function scr_drawFPS(){
+function CH_mouse(){
+	//
+}
+
+
+/*
+===========================================
+SCR_drawFPS
+===========================================
+*/
+function SCR_drawFPS(){
 	thisfpstime = new Date();
 	if ((thisfpstime - lastfpstime) >= 1000) {
 		lastfps = fps_count;
@@ -36,8 +48,8 @@ function scr_drawFPS(){
 	}
 	ctx.font = "12px serif";
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
-	ctx.fillText('m_x: ' + mouse_movement_x, canvas.width - 45, 29);
-	ctx.fillText('m_y: ' + mouse_movement_y, canvas.width - 45, 41);
+	ctx.fillText('m_x: ' + mouse_x, canvas.width - 45, 29);
+	ctx.fillText('m_y: ' + mouse_y, canvas.width - 45, 41);
 	ctx.fillText('m_b: ' + mouse_button, canvas.width - 45, 53);
 	fps_count++;
 }
@@ -45,10 +57,20 @@ function scr_drawFPS(){
 
 /*
 ===========================================
-scr_updateScreen
+SCR_drawСursor
 ===========================================
 */
-function scr_updateScreen(){
+function SCR_drawСursor(){
+	//
+}
+
+
+/*
+===========================================
+SCR_updateScreen
+===========================================
+*/
+function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(gameState === G_STATE_LOADING){
@@ -60,7 +82,8 @@ function scr_updateScreen(){
 	else{
 		//
 	}
-	scr_drawFPS();
+	SCR_drawFPS();
+	SCR_drawСursor();
 }
 
 
@@ -81,13 +104,16 @@ function frame(){
 
 	// To do get new key events
 
+	// command handler mouse
+	CH_mouse();
+
 	// To do fetch results from server
 
 	// To do prediction for other players
 
 	// To do client side motion prediction
 
-	scr_updateScreen();
+	SCR_updateScreen();
 }
 
 
@@ -105,10 +131,10 @@ function gameLoop(){
 
 /*
 ===========================================
-drawObjInit
+canvasInit
 ===========================================
 */
-function drawObjInit(){
+function canvasInit(){
 	canvas = document.getElementById('canvas');
 	canvas.width = 640;
 	canvas.height = 480;
@@ -123,6 +149,8 @@ controlEventsInit
 */
 function controlEventsInit(){
 	//mouse events
+	mouse_x = 0;
+	mouse_y = 0;
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
 	mouse_button = 0;
@@ -165,7 +193,7 @@ main
 */
 function main(){
 	fps = 100;
-	drawObjInit();
+	canvasInit();
 	gameState = G_STATE_LOGIN;
 
 	fps_count = 0;
