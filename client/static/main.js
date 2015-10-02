@@ -2,14 +2,22 @@
 var	G_STATE_LOADING = 0,
 	G_STATE_LOGIN = 1,
 	G_STATE_RUN = 2,
-	G_STATE_EXIT = 3;
+	G_STATE_EXIT = 3,
 
-var fps_count,
+	D_SCREEN_WIDTH = 640,
+	D_SCREEN_HEIGHT = 480;
+
+var scr_width,
+	scr_height,
+
+	fps_count,
 	lastfps,
 	thisfpstime,
 	lastfpstime,
 
 	keyboard_keys,
+	mouse_x,
+	mouse_y,
 	mouse_movement_x,
 	mouse_movement_y,
 	mouse_button,
@@ -27,10 +35,27 @@ var fps_count,
 
 /*
 ===========================================
-scr_drawFPS
+CH_mouse
 ===========================================
 */
-function scr_drawFPS(){
+function CH_mouse(){
+	mouse_x += mouse_movement_x;
+	mouse_y += mouse_movement_y;
+	if (mouse_x < 0) mouse_x = 0;
+	else if (mouse_x >= scr_width) mouse_x = scr_width-1;
+	if (mouse_y < 0) mouse_y = 0;
+	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+	mouse_movement_x = 0;
+	mouse_movement_y = 0;
+}
+
+
+/*
+===========================================
+SCR_drawFPS
+===========================================
+*/
+function SCR_drawFPS(){
 	thisfpstime = new Date();
 	if ((thisfpstime - lastfpstime) >= 1000) {
 		lastfps = fps_count;
@@ -38,20 +63,30 @@ function scr_drawFPS(){
 		lastfpstime = thisfpstime;
 	}
 	ctx.font = "12px serif";
-	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
-	ctx.fillText('m_x: ' + mouse_movement_x, canvas.width - 45, 29);
-	ctx.fillText('m_y: ' + mouse_movement_y, canvas.width - 45, 41);
-	ctx.fillText('m_b: ' + mouse_button, canvas.width - 45, 53);
+	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
+	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
+	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
+	ctx.fillText('m_b: ' + mouse_button, canvas.width - 65, 53);
 	fps_count++;
 }
 
 
 /*
 ===========================================
-scr_updateScreen
+SCR_drawСursor
 ===========================================
 */
-function scr_updateScreen(){
+function SCR_drawСursor(){
+	ctx.fillRect(mouse_x, mouse_y, 10, 10)
+}
+
+
+/*
+===========================================
+SCR_updateScreen
+===========================================
+*/
+function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(gameState === G_STATE_LOADING){
@@ -63,7 +98,8 @@ function scr_updateScreen(){
 	else{
 		//
 	}
-	scr_drawFPS();
+	SCR_drawFPS();
+	SCR_drawСursor();
 }
 
 
@@ -84,13 +120,16 @@ function frame(){
 
 	// To do get new key events
 
+	// command handler mouse
+	CH_mouse();
+
 	// To do fetch results from server
 
 	// To do prediction for other players
 
 	// To do client side motion prediction
 
-	scr_updateScreen();
+	SCR_updateScreen();
 }
 
 
@@ -108,13 +147,15 @@ function gameLoop(){
 
 /*
 ===========================================
-drawObjInit
+canvasInit
 ===========================================
 */
-function drawObjInit(){
+function canvasInit(){
 	canvas = document.getElementById('canvas');
-	canvas.width = 640;
-	canvas.height = 480;
+	scr_width = parseInt(localStorage['scr_width']) || D_SCREEN_WIDTH;
+	scr_height = parseInt(localStorage['scr_height']) || D_SCREEN_HEIGHT;
+	canvas.width = scr_width;
+	canvas.height = scr_height;
 	ctx = canvas.getContext('2d');
 }
 
@@ -126,6 +167,8 @@ controlEventsInit
 */
 function controlEventsInit(){
 	//mouse events
+	mouse_x = 0;
+	mouse_y = 0;
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
 	mouse_button = 0;
@@ -157,7 +200,12 @@ function controlEventsInit(){
 	};
 
 	//cursor hide
-	canvas.onclick = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+	canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+	canvas.requestFullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen;
+	canvas.onclick = function(){
+		canvas.requestPointerLock();
+		canvas.requestFullscreen();
+	};
 }
 
 
@@ -168,7 +216,7 @@ main
 */
 function main(){
 	fps = 100;
-	drawObjInit();
+	canvasInit();
 	gameState = G_STATE_LOGIN;
 
 	fps_count = 0;

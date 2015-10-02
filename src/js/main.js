@@ -1,7 +1,10 @@
 'use strict'
 //= constants.js
 
-var fps_count,
+var scr_width,
+	scr_height,
+
+	fps_count,
 	lastfps,
 	thisfpstime,
 	lastfpstime,
@@ -30,7 +33,14 @@ CH_mouse
 ===========================================
 */
 function CH_mouse(){
-	//
+	mouse_x += mouse_movement_x;
+	mouse_y += mouse_movement_y;
+	if (mouse_x < 0) mouse_x = 0;
+	else if (mouse_x >= scr_width) mouse_x = scr_width-1;
+	if (mouse_y < 0) mouse_y = 0;
+	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+	mouse_movement_x = 0;
+	mouse_movement_y = 0;
 }
 
 
@@ -47,10 +57,10 @@ function SCR_drawFPS(){
 		lastfpstime = thisfpstime;
 	}
 	ctx.font = "12px serif";
-	ctx.fillText('FPS: ' + lastfps, canvas.width - 45, 17);
-	ctx.fillText('m_x: ' + mouse_x, canvas.width - 45, 29);
-	ctx.fillText('m_y: ' + mouse_y, canvas.width - 45, 41);
-	ctx.fillText('m_b: ' + mouse_button, canvas.width - 45, 53);
+	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
+	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
+	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
+	ctx.fillText('m_b: ' + mouse_button, canvas.width - 65, 53);
 	fps_count++;
 }
 
@@ -61,7 +71,7 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
-	//
+	ctx.fillRect(mouse_x, mouse_y, 10, 10)
 }
 
 
@@ -136,8 +146,10 @@ canvasInit
 */
 function canvasInit(){
 	canvas = document.getElementById('canvas');
-	canvas.width = 640;
-	canvas.height = 480;
+	scr_width = parseInt(localStorage['scr_width']) || D_SCREEN_WIDTH;
+	scr_height = parseInt(localStorage['scr_height']) || D_SCREEN_HEIGHT;
+	canvas.width = scr_width;
+	canvas.height = scr_height;
 	ctx = canvas.getContext('2d');
 }
 
@@ -182,7 +194,12 @@ function controlEventsInit(){
 	};
 
 	//cursor hide
-	canvas.onclick = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+	canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+	canvas.requestFullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen;
+	canvas.onclick = function(){
+		canvas.requestPointerLock();
+		canvas.requestFullscreen();
+	};
 }
 
 
