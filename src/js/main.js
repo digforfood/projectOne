@@ -20,7 +20,8 @@ var scr_width,
 	socket,
 	canvas,
 	ctx,
-	gameState,
+	g_state,
+	m_state,
 	correntTime,
 	deltaMilliseconds,
 	prevFrameTime,
@@ -41,6 +42,24 @@ function CH_mouse(){
 	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
+}
+
+
+/*
+===========================================
+SCR_drawMenu
+===========================================
+*/
+function SCR_drawMenu(){
+	if(m_state === M_STATE_NONE){
+		return;
+	}
+	else if(m_state === M_STATE_LOGIN){
+		//
+	}
+	else if(m_state === M_STATE_MAIN){
+		//
+	}
 }
 
 
@@ -71,7 +90,7 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
-	ctx.fillRect(mouse_x, mouse_y, 10, 10)
+	ctx.fillRect(mouse_x, mouse_y, 10, 10);
 }
 
 
@@ -83,14 +102,11 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(gameState === G_STATE_LOADING){
+	if(g_state === G_STATE_LOADING){
 		//
 	}
-	else if(gameState === G_STATE_LOGIN){
-		//
-	}
-	else{
-		//
+	else if(g_state === G_STATE_RUN){
+		SCR_drawMenu();
 	}
 	SCR_drawFPS();
 	SCR_drawСursor();
@@ -118,6 +134,8 @@ function frame(){
 	CH_mouse();
 
 	// To do fetch results from server
+
+	// To do send results to server
 
 	// To do prediction for other players
 
@@ -210,8 +228,9 @@ main
 */
 function main(){
 	fps = 100;
+	g_state = G_STATE_RUN;
+	m_state = M_STATE_LOGIN;
 	canvasInit();
-	gameState = G_STATE_LOGIN;
 
 	fps_count = 0;
 	lastfps = 0;
