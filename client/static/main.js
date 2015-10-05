@@ -1,8 +1,11 @@
 'use strict'
 var	G_STATE_LOADING = 0,
-	G_STATE_LOGIN = 1,
-	G_STATE_RUN = 2,
-	G_STATE_EXIT = 3,
+	G_STATE_RUN = 1,
+	G_STATE_EXIT = 2,
+
+	M_STATE_NONE = 0,
+	M_STATE_LOGIN = 1,
+	M_STATE_MAIN = 2,
 
 	D_SCREEN_WIDTH = 640,
 	D_SCREEN_HEIGHT = 480;
@@ -26,7 +29,8 @@ var scr_width,
 	socket,
 	canvas,
 	ctx,
-	gameState,
+	g_state,
+	m_state,
 	correntTime,
 	deltaMilliseconds,
 	prevFrameTime,
@@ -52,6 +56,45 @@ function CH_mouse(){
 
 /*
 ===========================================
+SCR_drawMenu_login
+===========================================
+*/
+function SCR_drawMenu_login(){
+	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
+	ctx.fillRect (0, 0, scr_width, scr_height); //
+}
+
+
+/*
+===========================================
+SCR_drawMenu_main
+===========================================
+*/
+function SCR_drawMenu_main(){
+	//
+}
+
+
+/*
+===========================================
+SCR_drawMenu
+===========================================
+*/
+function SCR_drawMenu(){
+	if(m_state === M_STATE_NONE){
+		return;
+	}
+	else if(m_state === M_STATE_LOGIN){
+		SCR_drawMenu_login();
+	}
+	else if(m_state === M_STATE_MAIN){
+		SCR_drawMenu_main();
+	}
+}
+
+
+/*
+===========================================
 SCR_drawFPS
 ===========================================
 */
@@ -62,7 +105,8 @@ function SCR_drawFPS(){
 		fps_count = 0;
 		lastfpstime = thisfpstime;
 	}
-	ctx.font = "12px serif";
+	ctx.font = '12px serif';
+	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
 	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
 	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
@@ -77,7 +121,9 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
-	ctx.fillRect(mouse_x, mouse_y, 10, 10)
+	// To do draw cursor
+	ctx.fillStyle = 'rgb(0, 0, 0)';
+	ctx.fillRect(mouse_x, mouse_y, 10, 10);
 }
 
 
@@ -89,14 +135,11 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(gameState === G_STATE_LOADING){
+	if(g_state === G_STATE_LOADING){
 		//
 	}
-	else if(gameState === G_STATE_LOGIN){
-		//
-	}
-	else{
-		//
+	else if(g_state === G_STATE_RUN){
+		SCR_drawMenu();
 	}
 	SCR_drawFPS();
 	SCR_drawСursor();
@@ -124,6 +167,8 @@ function frame(){
 	CH_mouse();
 
 	// To do fetch results from server
+
+	// To do send results to server
 
 	// To do prediction for other players
 
@@ -216,8 +261,9 @@ main
 */
 function main(){
 	fps = 100;
+	g_state = G_STATE_RUN;
+	m_state = M_STATE_LOGIN;
 	canvasInit();
-	gameState = G_STATE_LOGIN;
 
 	fps_count = 0;
 	lastfps = 0;

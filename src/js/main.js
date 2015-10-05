@@ -47,6 +47,27 @@ function CH_mouse(){
 
 /*
 ===========================================
+SCR_drawMenu_login
+===========================================
+*/
+function SCR_drawMenu_login(){
+	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
+	ctx.fillRect (0, 0, scr_width, scr_height); //
+}
+
+
+/*
+===========================================
+SCR_drawMenu_main
+===========================================
+*/
+function SCR_drawMenu_main(){
+	//
+}
+
+
+/*
+===========================================
 SCR_drawMenu
 ===========================================
 */
@@ -55,10 +76,10 @@ function SCR_drawMenu(){
 		return;
 	}
 	else if(m_state === M_STATE_LOGIN){
-		//
+		SCR_drawMenu_login();
 	}
 	else if(m_state === M_STATE_MAIN){
-		//
+		SCR_drawMenu_main();
 	}
 }
 
@@ -75,7 +96,8 @@ function SCR_drawFPS(){
 		fps_count = 0;
 		lastfpstime = thisfpstime;
 	}
-	ctx.font = "12px serif";
+	ctx.font = '12px serif';
+	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
 	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
 	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
@@ -90,6 +112,8 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
+	// To do draw cursor
+	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillRect(mouse_x, mouse_y, 10, 10);
 }
 
