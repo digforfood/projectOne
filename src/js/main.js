@@ -14,7 +14,8 @@ var scr_width,
 	mouse_y,
 	mouse_movement_x,
 	mouse_movement_y,
-	mouse_buttonB, //buffer
+	mouse_prevFrameButton,
+	mouse_thisFrameButton,
 	mouse_button,
 
 	fps,
@@ -68,14 +69,14 @@ function SCR_drawMenu_main(){
 	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
-	for (var i = 0; i < ui_menu.menu[M_STATE_MAIN-1].children.length; i++) {
-		if (ui_menu.menu[M_STATE_MAIN-1].children[i].focus) {
+	for (var i = 0; i < ui_menu.menu[M_STATE_MAIN].children.length; i++) {
+		if (ui_menu.menu[M_STATE_MAIN].children[i].focus) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect (ui_menu.menu[M_STATE_MAIN-1].children[i].x, ui_menu.menu[M_STATE_MAIN-1].children[i].y, 150, 15);
+			ctx.fillRect (ui_menu.menu[M_STATE_MAIN].children[i].x, ui_menu.menu[M_STATE_MAIN].children[i].y, 150, 15);
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(ui_menu.menu[M_STATE_MAIN-1].children[i].string, ui_menu.menu[M_STATE_MAIN-1].children[i].x+5, ui_menu.menu[M_STATE_MAIN-1].children[i].y+12);
+		ctx.fillText(ui_menu.menu[M_STATE_MAIN].children[i].string, ui_menu.menu[M_STATE_MAIN].children[i].x+5, ui_menu.menu[M_STATE_MAIN].children[i].y+12);
 	}
 }
 
@@ -115,7 +116,7 @@ function SCR_drawFPS(){
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
 	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
 	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	ctx.fillText('m_b: ' + mouse_buttonB, canvas.width - 65, 53);
+	ctx.fillText('m_b: ' + mouse_thisFrameButton, canvas.width - 65, 53);
 	fps_count++;
 }
 

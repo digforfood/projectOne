@@ -14,7 +14,7 @@ UI_mouseEvent
 ===========================================
 */
 function UI_mouseEvent(){
-	mouse_buttonB = mouse_button;
+	mouse_thisFrameButton = mouse_button;
 	mouse_x += mouse_movement_x;
 	mouse_y += mouse_movement_y;
 	if (mouse_x < 0) mouse_x = 0;
@@ -23,4 +23,5 @@ function UI_mouseEvent(){
 	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
 
 	UI_handleMouseEvent();
+	mouse_prevFrameButton = mouse_thisFrameButton;
 }
