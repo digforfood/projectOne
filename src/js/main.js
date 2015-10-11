@@ -1,6 +1,5 @@
 'use strict'
 //= constants.js
-//= ui_menu.js
 
 var scr_width,
 	scr_height,
@@ -15,6 +14,7 @@ var scr_width,
 	mouse_y,
 	mouse_movement_x,
 	mouse_movement_y,
+	mouse_buttonB, //buffer
 	mouse_button,
 
 	fps,
@@ -28,22 +28,20 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+//= ui_menu.js
+//= ui_event.js
+
 
 /*
 ===========================================
-CH_mouse
+CL_mouseEvent
 ===========================================
 */
-function CH_mouse(){
+function CL_mouseEvent(){
 	if (m_state == M_STATE_NONE) {
 		//
 	} else {
-		mouse_x += mouse_movement_x;
-		mouse_y += mouse_movement_y;
-		if (mouse_x < 0) mouse_x = 0;
-		else if (mouse_x >= scr_width) mouse_x = scr_width-1;
-		if (mouse_y < 0) mouse_y = 0;
-		else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+		UI_mouseEvent();
 	}
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
@@ -117,7 +115,7 @@ function SCR_drawFPS(){
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
 	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
 	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	ctx.fillText('m_b: ' + mouse_button, canvas.width - 65, 53);
+	ctx.fillText('m_b: ' + mouse_buttonB, canvas.width - 65, 53);
 	fps_count++;
 }
 
@@ -168,10 +166,10 @@ function frame(){
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
 
-	// To do get new key events
+	// client mouse event
+	CL_mouseEvent();
 
-	// command handler mouse
-	CH_mouse();
+	// To do get new key events
 
 	// To do fetch results from server
 

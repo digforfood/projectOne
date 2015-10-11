@@ -9,6 +9,34 @@ var	G_STATE_LOADING = 0,
 
 	D_SCREEN_WIDTH = 640,
 	D_SCREEN_HEIGHT = 480;
+
+var scr_width,
+	scr_height,
+
+	fps_count,
+	lastfps,
+	thisfpstime,
+	lastfpstime,
+
+	keyboard_keys,
+	mouse_x,
+	mouse_y,
+	mouse_movement_x,
+	mouse_movement_y,
+	mouse_buttonB, //buffer
+	mouse_button,
+
+	fps,
+	socket,
+	canvas,
+	ctx,
+	g_state,
+	m_state,
+	correntTime,
+	deltaMilliseconds,
+	prevFrameTime,
+	thisFrameTime;
+
 var	ui_menu = {
 	stack: [],
 	menu: [
@@ -67,49 +95,44 @@ var	ui_menu = {
 		}
 	]
 };
-
-var scr_width,
-	scr_height,
-
-	fps_count,
-	lastfps,
-	thisfpstime,
-	lastfpstime,
-
-	keyboard_keys,
-	mouse_x,
-	mouse_y,
-	mouse_movement_x,
-	mouse_movement_y,
-	mouse_button,
-
-	fps,
-	socket,
-	canvas,
-	ctx,
-	g_state,
-	m_state,
-	correntTime,
-	deltaMilliseconds,
-	prevFrameTime,
-	thisFrameTime;
+/*
+===========================================
+UI_handleMouseEvent
+===========================================
+*/
+function UI_handleMouseEvent(){
+	//
+}
 
 
 /*
 ===========================================
-CH_mouse
+UI_mouseEvent
 ===========================================
 */
-function CH_mouse(){
+function UI_mouseEvent(){
+	mouse_buttonB = mouse_button;
+	mouse_x += mouse_movement_x;
+	mouse_y += mouse_movement_y;
+	if (mouse_x < 0) mouse_x = 0;
+	else if (mouse_x >= scr_width) mouse_x = scr_width-1;
+	if (mouse_y < 0) mouse_y = 0;
+	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+
+	UI_handleMouseEvent();
+}
+
+
+/*
+===========================================
+CL_mouseEvent
+===========================================
+*/
+function CL_mouseEvent(){
 	if (m_state == M_STATE_NONE) {
 		//
 	} else {
-		mouse_x += mouse_movement_x;
-		mouse_y += mouse_movement_y;
-		if (mouse_x < 0) mouse_x = 0;
-		else if (mouse_x >= scr_width) mouse_x = scr_width-1;
-		if (mouse_y < 0) mouse_y = 0;
-		else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+		UI_mouseEvent();
 	}
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
@@ -183,7 +206,7 @@ function SCR_drawFPS(){
 	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
 	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
 	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	ctx.fillText('m_b: ' + mouse_button, canvas.width - 65, 53);
+	ctx.fillText('m_b: ' + mouse_buttonB, canvas.width - 65, 53);
 	fps_count++;
 }
 
@@ -234,10 +257,10 @@ function frame(){
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
 
-	// To do get new key events
+	// client mouse event
+	CL_mouseEvent();
 
-	// command handler mouse
-	CH_mouse();
+	// To do get new key events
 
 	// To do fetch results from server
 
