@@ -235,8 +235,8 @@ function controlEventsInit(){
 	};
 	canvas.onmousemove = function(e){
 		if (!e) e = window.event;
-		mouse_movement_x = e.movementX;
-		mouse_movement_y = e.movementY;
+		mouse_movement_x += e.movementX;
+		mouse_movement_y += e.movementY;
 	};
 
 	//keyboard events
