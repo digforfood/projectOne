@@ -9,6 +9,64 @@ var	G_STATE_LOADING = 0,
 
 	D_SCREEN_WIDTH = 640,
 	D_SCREEN_HEIGHT = 480;
+var	ui_menu = {
+	stack: [],
+	menu: [
+
+///////////////////////////////
+//LOGIN MENU
+///////////////////////////////
+		{
+			string: 'LOGIN',
+			children: [
+				{
+					type: 'input',
+					focus: 0,
+					x: 20,
+					y: 20,
+					string: 'Login'
+				},
+				{
+					type: 'input',
+					focus: 0,
+					x: 20,
+					y: 40,
+					string: 'Password'
+				},
+				{
+					type: 'button',
+					focus: 0,
+					x: 20,
+					y: 60,
+					string: 'Connect'
+				}
+			]
+		},
+
+///////////////////////////////
+//MAIN MENU
+///////////////////////////////
+		{
+			string: 'MAIN',
+			children: [
+				{
+					type: 'text',
+					focus: 1,
+					x: 20,
+					y: 20,
+					string: 'Start'
+				},
+				{
+					type: 'text',
+					focus: 0,
+					x: 20,
+					y: 40,
+					string: 'Settings'
+				}
+			]
+		}
+	]
+};
 
 var scr_width,
 	scr_height,
@@ -43,12 +101,16 @@ CH_mouse
 ===========================================
 */
 function CH_mouse(){
-	mouse_x += mouse_movement_x;
-	mouse_y += mouse_movement_y;
-	if (mouse_x < 0) mouse_x = 0;
-	else if (mouse_x >= scr_width) mouse_x = scr_width-1;
-	if (mouse_y < 0) mouse_y = 0;
-	else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+	if (m_state == M_STATE_NONE) {
+		//
+	} else {
+		mouse_x += mouse_movement_x;
+		mouse_y += mouse_movement_y;
+		if (mouse_x < 0) mouse_x = 0;
+		else if (mouse_x >= scr_width) mouse_x = scr_width-1;
+		if (mouse_y < 0) mouse_y = 0;
+		else if (mouse_y >= scr_height) mouse_y = scr_height-1;
+	}
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
 }
@@ -71,7 +133,18 @@ SCR_drawMenu_main
 ===========================================
 */
 function SCR_drawMenu_main(){
-	//
+	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
+	ctx.fillRect (0, 0, scr_width, scr_height); //
+
+	for (var i = 0; i < ui_menu.menu[M_STATE_MAIN-1].children.length; i++) {
+		if (ui_menu.menu[M_STATE_MAIN-1].children[i].focus) {
+			ctx.fillStyle = 'rgb(252, 122, 19)';
+			ctx.fillRect (ui_menu.menu[M_STATE_MAIN-1].children[i].x, ui_menu.menu[M_STATE_MAIN-1].children[i].y, 150, 15);
+		}
+
+		ctx.fillStyle = 'rgb(0, 0, 0)';
+		ctx.fillText(ui_menu.menu[M_STATE_MAIN-1].children[i].string, ui_menu.menu[M_STATE_MAIN-1].children[i].x+5, ui_menu.menu[M_STATE_MAIN-1].children[i].y+12);
+	}
 }
 
 
@@ -262,7 +335,8 @@ main
 function main(){
 	fps = 100;
 	g_state = G_STATE_RUN;
-	m_state = M_STATE_LOGIN;
+	//m_state = M_STATE_LOGIN;
+	m_state = M_STATE_MAIN;
 	canvasInit();
 
 	fps_count = 0;
