@@ -346,8 +346,10 @@ function controlEventsInit(){
 	canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
 	canvas.requestFullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen;
 	canvas.onclick = function(){
-		canvas.requestPointerLock();
-		canvas.requestFullscreen();
+		if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+			canvas.requestPointerLock();
+			canvas.requestFullscreen();
+		}
 	};
 }
 
