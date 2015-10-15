@@ -1,4 +1,4 @@
-var	ui_menu = {
+ui_menu = {
 	stack: [],
 	menu: {
 
@@ -7,12 +7,14 @@ var	ui_menu = {
 ///////////////////////////////
 		'1':{
 			string: 'LOGIN',
-			children: [
+			items: [
 				{
 					type: 'input',
 					focus: 0,
 					x: 20,
 					y: 20,
+					width: 150,
+					height: 20,
 					string: 'Login'
 				},
 				{
@@ -20,6 +22,8 @@ var	ui_menu = {
 					focus: 0,
 					x: 20,
 					y: 40,
+					width: 150,
+					height: 20,
 					string: 'Password'
 				},
 				{
@@ -27,6 +31,8 @@ var	ui_menu = {
 					focus: 0,
 					x: 20,
 					y: 60,
+					width: 150,
+					height: 20,
 					string: 'Connect'
 				}
 			]
@@ -37,12 +43,14 @@ var	ui_menu = {
 ///////////////////////////////
 		'2':{
 			string: 'MAIN',
-			children: [
+			items: [
 				{
 					type: 'text',
 					focus: 1,
 					x: 20,
 					y: 20,
+					width: 150,
+					height: 20,
 					string: 'Start'
 				},
 				{
@@ -50,6 +58,8 @@ var	ui_menu = {
 					focus: 0,
 					x: 20,
 					y: 40,
+					width: 150,
+					height: 20,
 					string: 'Settings'
 				}
 			]

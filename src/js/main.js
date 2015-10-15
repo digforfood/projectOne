@@ -18,6 +18,9 @@ var scr_width,
 	mouse_thisFrameButton,
 	mouse_button,
 
+	ui_menu,
+	a_menu,
+
 	fps,
 	socket,
 	canvas,
@@ -69,14 +72,14 @@ function SCR_drawMenu_main(){
 	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
-	for (var i = 0; i < ui_menu.menu[M_STATE_MAIN].children.length; i++) {
-		if (ui_menu.menu[M_STATE_MAIN].children[i].focus) {
+	for (var i = 0; i < a_menu.items.length; i++) {
+		if (a_menu.items[i].focus) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect (ui_menu.menu[M_STATE_MAIN].children[i].x, ui_menu.menu[M_STATE_MAIN].children[i].y, 150, 15);
+			ctx.fillRect (a_menu.items[i].x, a_menu.items[i].y, 150, 15);
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(ui_menu.menu[M_STATE_MAIN].children[i].string, ui_menu.menu[M_STATE_MAIN].children[i].x+5, ui_menu.menu[M_STATE_MAIN].children[i].y+12);
+		ctx.fillText(a_menu.items[i].string, a_menu.items[i].x+5, a_menu.items[i].y+12);
 	}
 }
 
@@ -272,6 +275,7 @@ function main(){
 	g_state = G_STATE_RUN;
 	//m_state = M_STATE_LOGIN;
 	m_state = M_STATE_MAIN;
+	a_menu = ui_menu.menu[m_state];
 	canvasInit();
 
 	fps_count = 0;
