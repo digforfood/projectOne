@@ -10,7 +10,7 @@ ui_menu = {
 			items: [
 				{
 					type: 'input',
-					focus: 0,
+					id: 10,
 					x: 20,
 					y: 20,
 					width: 150,
@@ -19,7 +19,7 @@ ui_menu = {
 				},
 				{
 					type: 'input',
-					focus: 0,
+					id: 11,
 					x: 20,
 					y: 40,
 					width: 150,
@@ -28,7 +28,7 @@ ui_menu = {
 				},
 				{
 					type: 'button',
-					focus: 0,
+					id: 12,
 					x: 20,
 					y: 60,
 					width: 150,
@@ -46,7 +46,7 @@ ui_menu = {
 			items: [
 				{
 					type: 'text',
-					focus: 1,
+					id: 20,
 					x: 20,
 					y: 20,
 					width: 150,
@@ -55,7 +55,7 @@ ui_menu = {
 				},
 				{
 					type: 'text',
-					focus: 0,
+					id: 21,
 					x: 20,
 					y: 40,
 					width: 150,

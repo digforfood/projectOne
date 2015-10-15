@@ -20,6 +20,7 @@ var scr_width,
 
 	ui_menu,
 	a_menu,
+	m_focus,
 
 	fps,
 	socket,
@@ -73,7 +74,7 @@ function SCR_drawMenu_main(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < a_menu.items.length; i++) {
-		if (a_menu.items[i].focus) {
+		if (m_focus == a_menu.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
 			ctx.fillRect (a_menu.items[i].x, a_menu.items[i].y, 150, 15);
 		}

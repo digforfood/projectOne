@@ -6,7 +6,7 @@ UI_handleMouseEvent
 function UI_handleMouseEvent(){
 	for(var i =0; i < a_menu.items.length; i++){
 		if(UI_isFocus(mouse_x, mouse_y, a_menu.items[i]))
-			UI_setFocus(a_menu.items[i]);
+			UI_setFocus(a_menu.items[i].id);
 	}
 }
 
@@ -47,6 +47,6 @@ function UI_isFocus(x, y, item){
 UI_setFocus
 ===========================================
 */
-function UI_setFocus(item){
-	//
+function UI_setFocus(id){
+	m_focus = id;
 }

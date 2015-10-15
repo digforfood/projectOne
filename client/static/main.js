@@ -27,6 +27,10 @@ var scr_width,
 	mouse_thisFrameButton,
 	mouse_button,
 
+	ui_menu,
+	a_menu,
+	m_focus,
+
 	fps,
 	socket,
 	canvas,
@@ -38,7 +42,7 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
-var	ui_menu = {
+ui_menu = {
 	stack: [],
 	menu: {
 
@@ -47,26 +51,32 @@ var	ui_menu = {
 ///////////////////////////////
 		'1':{
 			string: 'LOGIN',
-			children: [
+			items: [
 				{
 					type: 'input',
-					focus: 0,
+					id: 10,
 					x: 20,
 					y: 20,
+					width: 150,
+					height: 20,
 					string: 'Login'
 				},
 				{
 					type: 'input',
-					focus: 0,
+					id: 11,
 					x: 20,
 					y: 40,
+					width: 150,
+					height: 20,
 					string: 'Password'
 				},
 				{
 					type: 'button',
-					focus: 0,
+					id: 12,
 					x: 20,
 					y: 60,
+					width: 150,
+					height: 20,
 					string: 'Connect'
 				}
 			]
@@ -77,19 +87,23 @@ var	ui_menu = {
 ///////////////////////////////
 		'2':{
 			string: 'MAIN',
-			children: [
+			items: [
 				{
 					type: 'text',
-					focus: 1,
+					id: 20,
 					x: 20,
 					y: 20,
+					width: 150,
+					height: 20,
 					string: 'Start'
 				},
 				{
 					type: 'text',
-					focus: 0,
+					id: 21,
 					x: 20,
 					y: 40,
+					width: 150,
+					height: 20,
 					string: 'Settings'
 				}
 			]
@@ -102,7 +116,10 @@ UI_handleMouseEvent
 ===========================================
 */
 function UI_handleMouseEvent(){
-	//
+	for(var i =0; i < a_menu.items.length; i++){
+		if(UI_isFocus(mouse_x, mouse_y, a_menu.items[i]))
+			UI_setFocus(a_menu.items[i].id);
+	}
 }
 
 
@@ -122,6 +139,28 @@ function UI_mouseEvent(){
 
 	UI_handleMouseEvent();
 	mouse_prevFrameButton = mouse_thisFrameButton;
+}
+
+
+/*
+===========================================
+UI_isFocus
+===========================================
+*/
+function UI_isFocus(x, y, item){
+	if(x > item.x && x < item.x + item.width && y > item.y && y < item.y + item.height){
+		return true;
+	}
+	return false;
+}
+
+/*
+===========================================
+UI_setFocus
+===========================================
+*/
+function UI_setFocus(id){
+	m_focus = id;
 }
 
 
@@ -161,14 +200,14 @@ function SCR_drawMenu_main(){
 	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
-	for (var i = 0; i < ui_menu.menu[M_STATE_MAIN].children.length; i++) {
-		if (ui_menu.menu[M_STATE_MAIN].children[i].focus) {
+	for (var i = 0; i < a_menu.items.length; i++) {
+		if (m_focus == a_menu.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect (ui_menu.menu[M_STATE_MAIN].children[i].x, ui_menu.menu[M_STATE_MAIN].children[i].y, 150, 15);
+			ctx.fillRect (a_menu.items[i].x, a_menu.items[i].y, 150, 15);
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(ui_menu.menu[M_STATE_MAIN].children[i].string, ui_menu.menu[M_STATE_MAIN].children[i].x+5, ui_menu.menu[M_STATE_MAIN].children[i].y+12);
+		ctx.fillText(a_menu.items[i].string, a_menu.items[i].x+5, a_menu.items[i].y+12);
 	}
 }
 
@@ -364,6 +403,7 @@ function main(){
 	g_state = G_STATE_RUN;
 	//m_state = M_STATE_LOGIN;
 	m_state = M_STATE_MAIN;
+	a_menu = ui_menu.menu[m_state];
 	canvasInit();
 
 	fps_count = 0;
