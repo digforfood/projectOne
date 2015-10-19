@@ -19,6 +19,7 @@ var scr_width,
 	m_active,
 	m_activeItem,
 	m_focusItem,
+	m_buttonDownItem,
 
 	fps,
 	socket,
@@ -235,7 +236,7 @@ controlEventsInit
 */
 function controlEventsInit(){
 	keyEvents = {};
-	
+
 	//mouse events
 	mouse_x = 0;
 	mouse_y = 0;

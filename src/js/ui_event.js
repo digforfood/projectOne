@@ -17,11 +17,13 @@ UI_handleMouseMoveEvent
 ===========================================
 */
 function UI_handleMouseMoveEvent(){
-	m_focusItem = 0;
+	m_focusItem = {};
 
 	for(var i =0; i < m_active.items.length; i++){
-		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i]))
-			m_focusItem = m_activeItem = m_active.items[i].id;
+		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
+			m_focusItem = m_active.items[i];
+			m_activeItem = m_active.items[i].id;
+		}
 	}
 }
 
@@ -48,8 +50,16 @@ function UI_mouseEvent(){
 UI_handleMouseKeyEvent
 ===========================================
 */
-function UI_handleMouseKeyEvent(){
-	//
+function UI_handleMouseKeyEvent(ent){
+	if(ent && !m_buttonDownItem && m_focusItem){
+		m_buttonDownItem = m_focusItem.id;
+	}
+	else if(!ent && m_buttonDownItem){
+		if (m_buttonDownItem == m_focusItem.id)
+			// To do click handler
+
+		m_buttonDownItem = 0;
+	}
 }
 
 
@@ -58,7 +68,7 @@ function UI_handleMouseKeyEvent(){
 UI_handleKeyboardKeyEvent
 ===========================================
 */
-function UI_handleMouseKeyEvent(){
+function UI_handleKeyboardKeyEvent(){
 	//
 }
 
@@ -70,13 +80,11 @@ UI_keyEvent
 */
 function UI_keyEvent(){
 	for(var key in keyEvents){
-		if(key){
-			if(key == 'm_b'){
-				UI_handleMouseKeyEvent();
-			}
-			else{
-				UI_handleKeyboardKeyEvent();
-			}
+		if(key == 'm_b'){
+			UI_handleMouseKeyEvent(keyEvents[key]);
+		}
+		else{
+			UI_handleKeyboardKeyEvent();
 		}
 	}
 }
