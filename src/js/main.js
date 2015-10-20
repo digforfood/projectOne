@@ -32,6 +32,7 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+//= net_main.js
 //= ui_menu.js
 //= ui_event.js
 
@@ -293,6 +294,8 @@ function main(){
 	m_state = M_STATE_MAIN;
 	m_active = ui_menu.menu[m_state];
 	canvasInit();
+
+	NET_init();
 
 	fps_count = 0;
 	lastfps = 0;

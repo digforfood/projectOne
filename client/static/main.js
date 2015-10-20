@@ -10,6 +10,11 @@ var	G_STATE_LOADING = 0,
 	D_SCREEN_WIDTH = 640,
 	D_SCREEN_HEIGHT = 480;
 
+	// G_STATE_DISCONNECTED,
+	// G_STATE_CONNECTING,
+	// G_STATE_CONNECTED,
+	// G_STATE_LOADING,
+
 var scr_width,
 	scr_height,
 
@@ -41,6 +46,26 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+/*
+===========================================
+NET_init
+===========================================
+*/
+function NET_init(){
+	socket = new WebSocket("ws://localhost:443");
+	socket.onopen = function(){
+		//console.log('onopen');
+	};
+	socket.onclose = function(ent){
+		//console.log('onclose');
+	};
+	socket.onmessage = function(ent){
+		//console.log(ent.data);
+	};
+	socket.onerror = function(ent){
+		//console.log('onerror');
+	};
+}
 ui_menu = {
 	stack: [],
 	menu: {
@@ -458,6 +483,8 @@ function main(){
 	m_state = M_STATE_MAIN;
 	m_active = ui_menu.menu[m_state];
 	canvasInit();
+
+	NET_init();
 
 	fps_count = 0;
 	lastfps = 0;
