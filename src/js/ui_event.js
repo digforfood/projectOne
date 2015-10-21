@@ -47,6 +47,16 @@ function UI_mouseEvent(){
 
 /*
 ===========================================
+UI_handleMouseClick
+===========================================
+*/
+function UI_handleMouseClick(){
+	//
+}
+
+
+/*
+===========================================
 UI_handleMouseKeyEvent
 ===========================================
 */
@@ -56,7 +66,7 @@ function UI_handleMouseKeyEvent(ent){
 	}
 	else if(!ent && m_buttonDownItem){
 		if (m_buttonDownItem == m_focusItem.id)
-			// To do click handler
+			UI_handleMouseClick();
 
 		m_buttonDownItem = 0;
 	}
