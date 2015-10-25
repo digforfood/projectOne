@@ -26,7 +26,8 @@ var scr_width,
 	mouse_movement_x,
 	mouse_movement_y,
 
-	ui_menu,
+	ui_s_menu,
+	ui_s_lock,
 	m_active,
 	m_activeItem,
 	m_focusItem,
@@ -43,70 +44,51 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
-/*
-===========================================
-NET_init
-===========================================
-*/
-function NET_init(){
-	socket = new WebSocket("ws://localhost:443");
-	socket.onopen = function(){
-		//console.log('onopen');
-	};
-	socket.onclose = function(ent){
-		//console.log('onclose');
-	};
-	socket.onmessage = function(ent){
-		//console.log(ent.data);
-	};
-	socket.onerror = function(ent){
-		//console.log('onerror');
-	};
-}
-ui_menu = {
+ui_s_lock = {
+
+///////////////////////////////
+//LOGIN SCREEN
+///////////////////////////////
+	string: 'LOGIN',
+	items: [
+		{
+			type: 'input',
+			id: 10,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'Login'
+		},
+		{
+			type: 'input',
+			id: 11,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'Password'
+		},
+		{
+			type: 'button',
+			id: 12,
+			x: 20,
+			y: 60,
+			width: 150,
+			height: 20,
+			string: 'Connect'
+		}
+	]
+
+};
+ui_s_menu = {
 	stack: [],
 	menu: {
 
 ///////////////////////////////
-//LOGIN MENU
-///////////////////////////////
-		'1':{
-			string: 'LOGIN',
-			items: [
-				{
-					type: 'input',
-					id: 10,
-					x: 20,
-					y: 20,
-					width: 150,
-					height: 20,
-					string: 'Login'
-				},
-				{
-					type: 'input',
-					id: 11,
-					x: 20,
-					y: 40,
-					width: 150,
-					height: 20,
-					string: 'Password'
-				},
-				{
-					type: 'button',
-					id: 12,
-					x: 20,
-					y: 60,
-					width: 150,
-					height: 20,
-					string: 'Connect'
-				}
-			]
-		},
-
-///////////////////////////////
 //MAIN MENU
 ///////////////////////////////
-		'2':{
+		'1':{
 			string: 'MAIN',
 			items: [
 				{
@@ -125,12 +107,66 @@ ui_menu = {
 					y: 40,
 					width: 150,
 					height: 20,
-					string: 'Settings'
+					string: 'Options'
+				}
+			]
+		},
+
+///////////////////////////////
+//OPTIONS MENU
+///////////////////////////////
+		'2':{
+			string: 'OPTIONS',
+			items: [
+				{
+					type: 'text',
+					id: 20,
+					x: 20,
+					y: 20,
+					width: 150,
+					height: 20,
+					string: 'sdfdfg'
+				},
+				{
+					type: 'text',
+					id: 21,
+					x: 20,
+					y: 40,
+					width: 150,
+					height: 20,
+					string: 'sdfrasdfg'
 				}
 			]
 		}
 	}
 };
+/*
+===========================================
+NET_init
+===========================================
+*/
+function NET_init(){
+	////////////////////TO DO NET////////////////////
+	// socket = new WebSocket("ws://localhost:443");
+	// socket.onopen = function(){
+	// 	//console.log('onopen');
+	// };
+	// socket.onclose = function(ent){
+	// 	//console.log('onclose');
+	// };
+	// socket.onmessage = function(ent){
+	// 	//console.log(ent.data);
+	// };
+	// socket.onerror = function(ent){
+	// 	//console.log('onerror');
+	// };
+	////////////////////TO DO NET////////////////////
+
+
+	////////////////////TO DO NET////////////////////
+	g_state = G_STATE_CONNECTING;
+	////////////////////TO DO NET////////////////////
+}
 /*
 ===========================================
 UI_rectContainsPoint
@@ -355,10 +391,10 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(g_state === G_STATE_LOADING){
+	if(g_state == G_STATE_DISCONNECTED || g_state == G_STATE_CONNECTING){
 		//
 	}
-	else if(g_state === G_STATE_RUN){
+	else if(g_state == G_STATE_CONNECTED || g_state == G_STATE_RUN){
 		SCR_drawMenu();
 	}
 	SCR_drawFPS();
@@ -485,10 +521,9 @@ main
 */
 function main(){
 	fps = 100;
-	g_state = G_STATE_RUN;
-	//m_state = M_STATE_LOGIN;
-	m_state = M_STATE_MAIN;
-	m_active = ui_menu.menu[m_state];
+	g_state = G_STATE_DISCONNECTED;
+	m_state = M_STATE_NONE;
+	m_active = ui_s_menu.menu[m_state];
 	canvasInit();
 
 	NET_init();

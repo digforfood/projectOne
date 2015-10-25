@@ -15,7 +15,8 @@ var scr_width,
 	mouse_movement_x,
 	mouse_movement_y,
 
-	ui_menu,
+	ui_s_menu,
+	ui_s_lock,
 	m_active,
 	m_activeItem,
 	m_focusItem,
@@ -32,8 +33,9 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+//= ui_screen_lock.js
+//= ui_screen_menu.js
 //= net_main.js
-//= ui_menu.js
 //= ui_event.js
 
 
@@ -159,10 +161,10 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(g_state === G_STATE_LOADING){
+	if(g_state == G_STATE_DISCONNECTED || g_state == G_STATE_CONNECTING){
 		//
 	}
-	else if(g_state === G_STATE_RUN){
+	else if(g_state == G_STATE_CONNECTED || g_state == G_STATE_RUN){
 		SCR_drawMenu();
 	}
 	SCR_drawFPS();
@@ -289,10 +291,9 @@ main
 */
 function main(){
 	fps = 100;
-	g_state = G_STATE_RUN;
-	//m_state = M_STATE_LOGIN;
-	m_state = M_STATE_MAIN;
-	m_active = ui_menu.menu[m_state];
+	g_state = G_STATE_DISCONNECTED;
+	m_state = M_STATE_NONE;
+	m_active = ui_s_menu.menu[m_state];
 	canvasInit();
 
 	NET_init();
