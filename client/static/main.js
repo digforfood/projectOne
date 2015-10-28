@@ -26,8 +26,10 @@ var scr_width,
 	mouse_movement_x,
 	mouse_movement_y,
 
-	ui_s_menu,
+	ui_stack,
 	ui_s_lock,
+	ui_s_m_main,
+	ui_s_m_options,
 	m_active,
 	m_activeItem,
 	m_focusItem,
@@ -81,64 +83,57 @@ ui_s_lock = {
 	]
 
 };
-ui_s_menu = {
-	stack: [],
-	menu: {
-
+ui_s_m_main = {
 ///////////////////////////////
 //MAIN MENU
 ///////////////////////////////
-		'1':{
-			string: 'MAIN',
-			items: [
-				{
-					type: 'text',
-					id: 20,
-					x: 20,
-					y: 20,
-					width: 150,
-					height: 20,
-					string: 'Start'
-				},
-				{
-					type: 'text',
-					id: 21,
-					x: 20,
-					y: 40,
-					width: 150,
-					height: 20,
-					string: 'Options'
-				}
-			]
+string: 'MAIN',
+items: [
+		{
+			type: 'text',
+			id: 20,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'Start'
 		},
-
+		{
+			type: 'text',
+			id: 21,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'Options'
+		}
+	]
+};
+ui_s_m_options = {
 ///////////////////////////////
 //OPTIONS MENU
 ///////////////////////////////
-		'2':{
-			string: 'OPTIONS',
-			items: [
-				{
-					type: 'text',
-					id: 20,
-					x: 20,
-					y: 20,
-					width: 150,
-					height: 20,
-					string: 'sdfdfg'
-				},
-				{
-					type: 'text',
-					id: 21,
-					x: 20,
-					y: 40,
-					width: 150,
-					height: 20,
-					string: 'sdfrasdfg'
-				}
-			]
+string: 'OPTIONS',
+items: [
+		{
+			type: 'text',
+			id: 20,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'sdfdfg'
+		},
+		{
+			type: 'text',
+			id: 21,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'sdfrasdfg'
 		}
-	}
+	]
 };
 /*
 ===========================================
@@ -275,10 +270,10 @@ CL_mouseEvent
 ===========================================
 */
 function CL_mouseEvent(){
-	if (m_state == M_STATE_NONE) {
-		//
-	} else {
+	if (m_state != M_STATE_NONE || g_state <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
+	} else {
+		//
 	}
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
@@ -301,12 +296,22 @@ function CL_keyEvent(){
 
 /*
 ===========================================
-SCR_drawMenu_login
+SCR_drawLockScreen
 ===========================================
 */
-function SCR_drawMenu_login(){
+function SCR_drawLockScreen(){
 	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
 	ctx.fillRect (0, 0, scr_width, scr_height); //
+
+	for (var i = 0; i < m_active.items.length; i++) {
+		if (m_activeItem == m_active.items[i].id) {
+			ctx.fillStyle = 'rgb(252, 122, 19)';
+			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
+		}
+
+		ctx.fillStyle = 'rgb(0, 0, 0)';
+		ctx.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
+	}
 }
 
 
@@ -330,6 +335,16 @@ function SCR_drawMenu_main(){
 	}
 }
 
+/*
+===========================================
+SCR_drawMenu_options
+===========================================
+*/
+function SCR_drawMenu_options(){
+	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
+	ctx.fillRect (0, 0, scr_width, scr_height); //
+}
+
 
 /*
 ===========================================
@@ -340,11 +355,11 @@ function SCR_drawMenu(){
 	if(m_state === M_STATE_NONE){
 		return;
 	}
-	else if(m_state === M_STATE_LOGIN){
-		SCR_drawMenu_login();
-	}
 	else if(m_state === M_STATE_MAIN){
 		SCR_drawMenu_main();
+	}
+	else if(m_state === M_STATE_OPTIONS){
+		SCR_drawMenu_options();
 	}
 }
 
@@ -392,7 +407,7 @@ function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if(g_state == G_STATE_DISCONNECTED || g_state == G_STATE_CONNECTING){
-		//
+		SCR_drawLockScreen();
 	}
 	else if(g_state == G_STATE_CONNECTED || g_state == G_STATE_RUN){
 		SCR_drawMenu();
@@ -521,9 +536,10 @@ main
 */
 function main(){
 	fps = 100;
+	ui_stack = [];
 	g_state = G_STATE_DISCONNECTED;
 	m_state = M_STATE_NONE;
-	m_active = ui_s_menu.menu[m_state];
+	m_active = ui_s_lock;
 	canvasInit();
 
 	NET_init();
