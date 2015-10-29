@@ -191,9 +191,8 @@ function UI_handleMouseMoveEvent(){
 	for(var i =0; i < m_active.items.length; i++){
 		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
 			m_focusItem = m_active.items[i];
-			m_activeItem = m_active.items[i].id;
 			if(m_active.items[i].type == MTYPE_TEXT)
-				m_position = m_active.items[i].id;
+				m_position = m_active.items[i];
 		}
 	}
 }
@@ -311,9 +310,9 @@ function SCR_drawLockScreen(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_position == m_active.items[i].id) {
+		if (m_position && m_position.id == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
+			ctx.fillRect(m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
@@ -332,9 +331,9 @@ function SCR_drawMenu_main(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_position == m_active.items[i].id) {
+		if (m_position && m_position.id == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
+			ctx.fillRect(m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
