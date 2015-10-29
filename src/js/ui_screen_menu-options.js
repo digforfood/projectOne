@@ -5,7 +5,7 @@ ui_s_m_options = {
 string: 'OPTIONS',
 items: [
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 20,
 			x: 20,
 			y: 20,
@@ -14,7 +14,7 @@ items: [
 			string: 'sdfdfg'
 		},
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 21,
 			x: 20,
 			y: 40,

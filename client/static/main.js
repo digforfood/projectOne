@@ -10,7 +10,11 @@ var	G_STATE_DISCONNECTED = 0,
 	M_STATE_OPTIONS = 2,
 
 	D_SCREEN_WIDTH = 640,
-	D_SCREEN_HEIGHT = 480;
+	D_SCREEN_HEIGHT = 480,
+
+	MTYPE_TEXT = 0,
+	MTYPE_INPUT = 1,
+	MTYPE_BUTTON = 2;
 
 var scr_width,
 	scr_height,
@@ -33,6 +37,7 @@ var scr_width,
 	m_active,
 	m_activeItem,
 	m_focusItem,
+	m_position,
 	m_buttonDownItem,
 
 	fps,
@@ -54,7 +59,7 @@ ui_s_lock = {
 	string: 'LOGIN',
 	items: [
 		{
-			type: 'input',
+			type: MTYPE_INPUT,
 			id: 10,
 			x: 20,
 			y: 20,
@@ -63,7 +68,7 @@ ui_s_lock = {
 			string: 'Login'
 		},
 		{
-			type: 'input',
+			type: MTYPE_INPUT,
 			id: 11,
 			x: 20,
 			y: 40,
@@ -72,7 +77,7 @@ ui_s_lock = {
 			string: 'Password'
 		},
 		{
-			type: 'button',
+			type: MTYPE_BUTTON,
 			id: 12,
 			x: 20,
 			y: 60,
@@ -90,7 +95,7 @@ ui_s_m_main = {
 string: 'MAIN',
 items: [
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 20,
 			x: 20,
 			y: 20,
@@ -99,7 +104,7 @@ items: [
 			string: 'Start'
 		},
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 21,
 			x: 20,
 			y: 40,
@@ -116,7 +121,7 @@ ui_s_m_options = {
 string: 'OPTIONS',
 items: [
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 20,
 			x: 20,
 			y: 20,
@@ -125,7 +130,7 @@ items: [
 			string: 'sdfdfg'
 		},
 		{
-			type: 'text',
+			type: MTYPE_TEXT,
 			id: 21,
 			x: 20,
 			y: 40,
@@ -187,6 +192,8 @@ function UI_handleMouseMoveEvent(){
 		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
 			m_focusItem = m_active.items[i];
 			m_activeItem = m_active.items[i].id;
+			if(m_active.items[i].type == MTYPE_TEXT)
+				m_position = m_active.items[i].id;
 		}
 	}
 }
@@ -304,7 +311,7 @@ function SCR_drawLockScreen(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_activeItem == m_active.items[i].id) {
+		if (m_position == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
 			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}
@@ -325,7 +332,7 @@ function SCR_drawMenu_main(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_activeItem == m_active.items[i].id) {
+		if (m_position == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
 			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}

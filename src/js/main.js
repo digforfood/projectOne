@@ -22,6 +22,7 @@ var scr_width,
 	m_active,
 	m_activeItem,
 	m_focusItem,
+	m_position,
 	m_buttonDownItem,
 
 	fps,
@@ -82,7 +83,7 @@ function SCR_drawLockScreen(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_activeItem == m_active.items[i].id) {
+		if (m_position == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
 			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}
@@ -103,7 +104,7 @@ function SCR_drawMenu_main(){
 	ctx.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_activeItem == m_active.items[i].id) {
+		if (m_position == m_active.items[i].id) {
 			ctx.fillStyle = 'rgb(252, 122, 19)';
 			ctx.fillRect (m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}

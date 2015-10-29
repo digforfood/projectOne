@@ -23,6 +23,8 @@ function UI_handleMouseMoveEvent(){
 		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
 			m_focusItem = m_active.items[i];
 			m_activeItem = m_active.items[i].id;
+			if(m_active.items[i].type == MTYPE_TEXT)
+				m_position = m_active.items[i].id;
 		}
 	}
 }

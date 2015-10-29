@@ -6,7 +6,7 @@ ui_s_lock = {
 	string: 'LOGIN',
 	items: [
 		{
-			type: 'input',
+			type: MTYPE_INPUT,
 			id: 10,
 			x: 20,
 			y: 20,
@@ -15,7 +15,7 @@ ui_s_lock = {
 			string: 'Login'
 		},
 		{
-			type: 'input',
+			type: MTYPE_INPUT,
 			id: 11,
 			x: 20,
 			y: 40,
@@ -24,7 +24,7 @@ ui_s_lock = {
 			string: 'Password'
 		},
 		{
-			type: 'button',
+			type: MTYPE_BUTTON,
 			id: 12,
 			x: 20,
 			y: 60,
