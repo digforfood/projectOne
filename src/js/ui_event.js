@@ -79,8 +79,16 @@ function UI_handleMouseKeyEvent(ent){
 UI_handleKeyboardKeyEvent
 ===========================================
 */
-function UI_handleKeyboardKeyEvent(){
-	//
+function UI_handleKeyboardKeyEvent(key, down){
+	if(!down)
+		return;
+
+	if(key == 1){
+		//
+	}
+	else if(key == 2){
+		//
+	}
 }
 
 
@@ -95,7 +103,7 @@ function UI_keyEvent(){
 			UI_handleMouseKeyEvent(keyEvents[key]);
 		}
 		else{
-			UI_handleKeyboardKeyEvent();
+			UI_handleKeyboardKeyEvent(key, keyEvents[key]);
 		}
 	}
 }
