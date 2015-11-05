@@ -109,12 +109,10 @@ function UI_handleKeyEvent(key, down){
 			return;
 
 		keyEvents[key] = false;
-		var keyChar = '';
 		if(keyEvents[K_SHIFT])
-			keyChar = keys_map[key][ui_langSet+1]
+			m_position.buffer += keys_map[key][ui_langSet+1];
 		else
-			keyChar = keys_map[key][ui_langSet]
-		m_position.buffer += keyChar;
+			m_position.buffer += keys_map[key][ui_langSet];
 	}
 }
 
