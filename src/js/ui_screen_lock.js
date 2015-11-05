@@ -12,7 +12,8 @@ ui_s_lock = {
 			y: 20,
 			width: 150,
 			height: 20,
-			string: 'Login'
+			string: 'Login',
+			buffer: ''
 		},
 		{
 			type: MTYPE_INPUT,
@@ -21,7 +22,8 @@ ui_s_lock = {
 			y: 40,
 			width: 150,
 			height: 20,
-			string: 'Password'
+			string: 'Password',
+			buffer: ''
 		},
 		{
 			type: MTYPE_BUTTON,

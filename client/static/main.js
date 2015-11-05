@@ -14,7 +14,77 @@ var	G_STATE_DISCONNECTED = 0,
 
 	MTYPE_TEXT = 0,
 	MTYPE_INPUT = 1,
-	MTYPE_BUTTON = 2;
+	MTYPE_BUTTON = 2,
+
+	LANG_EN = 0,
+	LANG_RU = 2,
+
+	K_MOUSE = 'm_b',
+	K_BACKSPACE = 8,
+	K_TAB = 9,
+	K_ENTER = 13,
+	K_SHIFT = 16,
+	K_CTRL = 17,
+	K_ALT = 18,
+	K_PAUSE = 19,
+	K_CAPS = 20,
+	K_ESC = 27,
+	K_PAGEUP = 33,
+	K_PAGEDOWN = 34,
+	K_END = 35,
+	K_HOME = 36,
+	K_LEFTARROW = 37,
+	K_UPARROW = 38,
+	K_RIGHTARROW = 39,
+	K_DOWNARROW = 40;
+var	keys_map = {
+	"48":  ['0', ')', '0', ')'],
+	"49":  ['1', '!', '1', '!'],
+	"50":  ['2', '@', '2', '"'],
+	"51":  ['3', '#', '3', '№'],
+	"52":  ['4', '$', '4', ';'],
+	"53":  ['5', '%', '5', '%'],
+	"54":  ['6', '^', '6', ':'],
+	"55":  ['7', '&', '7', '?'],
+	"56":  ['8', '*', '8', '*'],
+	"57":  ['9', '(', '9', '('],
+	"65":  ['a', 'A', 'ф', 'Ф'],
+	"66":  ['b', 'B', 'и', 'И'],
+	"67":  ['c', 'C', 'с', 'С'],
+	"68":  ['d', 'D', 'в', 'В'],
+	"69":  ['e', 'E', 'у', 'У'],
+	"70":  ['f', 'F', 'а', 'А'],
+	"71":  ['g', 'G', 'п', 'П'],
+	"72":  ['h', 'H', 'р', 'Р'],
+	"73":  ['i', 'I', 'ш', 'Ш'],
+	"74":  ['j', 'J', 'о', 'О'],
+	"75":  ['k', 'K', 'л', 'Л'],
+	"76":  ['l', 'L', 'д', 'Д'],
+	"77":  ['m', 'M', 'ь', 'Ь'],
+	"78":  ['n', 'N', 'т', 'Т'],
+	"79":  ['o', 'O', 'щ', 'Щ'],
+	"80":  ['p', 'P', 'з', 'З'],
+	"81":  ['q', 'Q', 'й', 'Й'],
+	"82":  ['r', 'R', 'к', 'К'],
+	"83":  ['s', 'S', 'ы', 'Ы'],
+	"84":  ['t', 'T', 'е', 'Е'],
+	"85":  ['u', 'U', 'г', 'Г'],
+	"86":  ['v', 'V', 'м', 'М'],
+	"87":  ['w', 'W', 'ц', 'Ц'],
+	"88":  ['x', 'X', 'ч', 'Ч'],
+	"89":  ['y', 'Y', 'н', 'Н'],
+	"90":  ['z', 'Z', 'я', 'Я'],
+	"187": ['=', '+', '=', '+'],
+	"188": [',', '<', 'б', 'Б'],
+	"189": ['-', '_', '-', '_'],
+	"190": ['.', '>', 'ю', 'Ю'],
+	"191": ['/', '?', '.', ','],
+	"192": ['`', '~', 'ё', 'Ё'],
+	"219": ['[', '{', 'х', 'Х'],
+	"220": ['\\', '|', '\\', '/'],
+	"221": [']', '}', 'ъ', 'Ъ'],
+	"222": ['\'', '"', 'э', 'Э']
+};
 
 var scr_width,
 	scr_height,
@@ -31,6 +101,7 @@ var scr_width,
 	mouse_movement_y,
 
 	ui_stack,
+	ui_langSet,
 	ui_s_lock,
 	ui_s_m_main,
 	ui_s_m_options,
@@ -65,7 +136,8 @@ ui_s_lock = {
 			y: 20,
 			width: 150,
 			height: 20,
-			string: 'Login'
+			string: 'Login',
+			buffer: ''
 		},
 		{
 			type: MTYPE_INPUT,
@@ -74,7 +146,8 @@ ui_s_lock = {
 			y: 40,
 			width: 150,
 			height: 20,
-			string: 'Password'
+			string: 'Password',
+			buffer: ''
 		},
 		{
 			type: MTYPE_BUTTON,
@@ -221,35 +294,70 @@ UI_handleMouseClick
 ===========================================
 */
 function UI_handleMouseClick(){
-	//
-}
-
-
-/*
-===========================================
-UI_handleMouseKeyEvent
-===========================================
-*/
-function UI_handleMouseKeyEvent(ent){
-	if(ent && !m_buttonDownItem && m_focusItem){
-		m_buttonDownItem = m_focusItem.id;
+	if (m_focusItem.type == MTYPE_TEXT) {
+		//
 	}
-	else if(!ent && m_buttonDownItem){
-		if (m_buttonDownItem == m_focusItem.id)
-			UI_handleMouseClick();
-
-		m_buttonDownItem = 0;
+	else if (m_focusItem.type == MTYPE_INPUT) {
+		m_position = m_focusItem;
 	}
 }
 
 
 /*
 ===========================================
-UI_handleKeyboardKeyEvent
+UI_handleKeyEvent
 ===========================================
 */
-function UI_handleKeyboardKeyEvent(){
-	//
+function UI_handleKeyEvent(key, down){
+	if(key == K_MOUSE){
+		if(down && !m_buttonDownItem && m_focusItem){
+			m_buttonDownItem = m_focusItem.id;
+		}
+		else if(!down && m_buttonDownItem){
+			if (m_buttonDownItem == m_focusItem.id)
+				UI_handleMouseClick();
+
+			m_buttonDownItem = 0;
+		}
+	}
+
+	if(!down)
+		return;
+
+	if(key == K_UPARROW){
+		//
+	}	
+	else if(key == K_DOWNARROW){
+		//
+	}
+	else if(key == K_ALT){
+		if(keyEvents[K_SHIFT]){
+			if(ui_langSet == LANG_EN)
+				ui_langSet = LANG_RU;
+			else
+				ui_langSet = LANG_EN;
+			keyEvents[key] = false;
+		}
+	}
+	else if(key == K_BACKSPACE){
+		if(m_position.type!=MTYPE_INPUT)
+			return;
+
+		m_position.buffer = m_position.buffer.slice(0, -1);
+		keyEvents[key] = false;
+	}
+	else if( (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
+		if(m_position.type!=MTYPE_INPUT)
+			return;
+
+		keyEvents[key] = false;
+		var keyChar = '';
+		if(keyEvents[K_SHIFT])
+			keyChar = keys_map[key][ui_langSet+1]
+		else
+			keyChar = keys_map[key][ui_langSet]
+		m_position.buffer += keyChar;
+	}
 }
 
 
@@ -260,12 +368,7 @@ UI_keyEvent
 */
 function UI_keyEvent(){
 	for(var key in keyEvents){
-		if(key == 'm_b'){
-			UI_handleMouseKeyEvent(keyEvents[key]);
-		}
-		else{
-			UI_handleKeyboardKeyEvent();
-		}
+		UI_handleKeyEvent(key, keyEvents[key]);
 	}
 }
 
@@ -292,10 +395,10 @@ CL_keyEvent
 ===========================================
 */
 function CL_keyEvent(){
-	if (m_state == M_STATE_NONE) {
-		//
-	} else {
+	if (m_state != M_STATE_NONE || g_state <= G_STATE_CONNECTING) {
 		UI_keyEvent();
+	} else {
+		//
 	}
 }
 
@@ -316,7 +419,7 @@ function SCR_drawLockScreen(){
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
+		ctx.fillText( ((m_active.items[i].buffer && m_active.items[i].buffer.length)? m_active.items[i].buffer : m_active.items[i].string), m_active.items[i].x+5, m_active.items[i].y+12);
 	}
 }
 
@@ -502,10 +605,10 @@ function controlEventsInit(){
 	};
 	canvas.onmousedown = function(e){
 		if (!e) e = window.event;
-		keyEvents['m_b'] = e.buttons;
+		keyEvents[K_MOUSE] = e.buttons;
 	};
 	canvas.onmouseup = function(e){
-		keyEvents['m_b'] = 0;
+		keyEvents[K_MOUSE] = 0;
 	};
 	canvas.onmousemove = function(e){
 		if (!e) e = window.event;
@@ -543,6 +646,7 @@ main
 function main(){
 	fps = 100;
 	ui_stack = [];
+	ui_langSet = LANG_EN;
 	g_state = G_STATE_DISCONNECTED;
 	m_state = M_STATE_NONE;
 	m_active = ui_s_lock;

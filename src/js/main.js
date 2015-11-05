@@ -1,5 +1,6 @@
 'use strict'
 //= constants.js
+//= keys_map.js
 
 var scr_width,
 	scr_height,
@@ -16,6 +17,7 @@ var scr_width,
 	mouse_movement_y,
 
 	ui_stack,
+	ui_langSet,
 	ui_s_lock,
 	ui_s_m_main,
 	ui_s_m_options,
@@ -65,10 +67,10 @@ CL_keyEvent
 ===========================================
 */
 function CL_keyEvent(){
-	if (m_state == M_STATE_NONE) {
-		//
-	} else {
+	if (m_state != M_STATE_NONE || g_state <= G_STATE_CONNECTING) {
 		UI_keyEvent();
+	} else {
+		//
 	}
 }
 
@@ -89,7 +91,7 @@ function SCR_drawLockScreen(){
 		}
 
 		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
+		ctx.fillText( ((m_active.items[i].buffer && m_active.items[i].buffer.length)? m_active.items[i].buffer : m_active.items[i].string), m_active.items[i].x+5, m_active.items[i].y+12);
 	}
 }
 
@@ -275,10 +277,10 @@ function controlEventsInit(){
 	};
 	canvas.onmousedown = function(e){
 		if (!e) e = window.event;
-		keyEvents['m_b'] = e.buttons;
+		keyEvents[K_MOUSE] = e.buttons;
 	};
 	canvas.onmouseup = function(e){
-		keyEvents['m_b'] = 0;
+		keyEvents[K_MOUSE] = 0;
 	};
 	canvas.onmousemove = function(e){
 		if (!e) e = window.event;
@@ -316,6 +318,7 @@ main
 function main(){
 	fps = 100;
 	ui_stack = [];
+	ui_langSet = LANG_EN;
 	g_state = G_STATE_DISCONNECTED;
 	m_state = M_STATE_NONE;
 	m_active = ui_s_lock;

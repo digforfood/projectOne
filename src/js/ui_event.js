@@ -52,42 +52,69 @@ UI_handleMouseClick
 ===========================================
 */
 function UI_handleMouseClick(){
-	//
-}
-
-
-/*
-===========================================
-UI_handleMouseKeyEvent
-===========================================
-*/
-function UI_handleMouseKeyEvent(ent){
-	if(ent && !m_buttonDownItem && m_focusItem){
-		m_buttonDownItem = m_focusItem.id;
+	if (m_focusItem.type == MTYPE_TEXT) {
+		//
 	}
-	else if(!ent && m_buttonDownItem){
-		if (m_buttonDownItem == m_focusItem.id)
-			UI_handleMouseClick();
-
-		m_buttonDownItem = 0;
+	else if (m_focusItem.type == MTYPE_INPUT) {
+		m_position = m_focusItem;
 	}
 }
 
 
 /*
 ===========================================
-UI_handleKeyboardKeyEvent
+UI_handleKeyEvent
 ===========================================
 */
-function UI_handleKeyboardKeyEvent(key, down){
+function UI_handleKeyEvent(key, down){
+	if(key == K_MOUSE){
+		if(down && !m_buttonDownItem && m_focusItem){
+			m_buttonDownItem = m_focusItem.id;
+		}
+		else if(!down && m_buttonDownItem){
+			if (m_buttonDownItem == m_focusItem.id)
+				UI_handleMouseClick();
+
+			m_buttonDownItem = 0;
+		}
+	}
+
 	if(!down)
 		return;
 
-	if(key == 1){
+	if(key == K_UPARROW){
+		//
+	}	
+	else if(key == K_DOWNARROW){
 		//
 	}
-	else if(key == 2){
-		//
+	else if(key == K_ALT){
+		if(keyEvents[K_SHIFT]){
+			if(ui_langSet == LANG_EN)
+				ui_langSet = LANG_RU;
+			else
+				ui_langSet = LANG_EN;
+			keyEvents[key] = false;
+		}
+	}
+	else if(key == K_BACKSPACE){
+		if(m_position.type!=MTYPE_INPUT)
+			return;
+
+		m_position.buffer = m_position.buffer.slice(0, -1);
+		keyEvents[key] = false;
+	}
+	else if( (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
+		if(m_position.type!=MTYPE_INPUT)
+			return;
+
+		keyEvents[key] = false;
+		var keyChar = '';
+		if(keyEvents[K_SHIFT])
+			keyChar = keys_map[key][ui_langSet+1]
+		else
+			keyChar = keys_map[key][ui_langSet]
+		m_position.buffer += keyChar;
 	}
 }
 
@@ -99,11 +126,6 @@ UI_keyEvent
 */
 function UI_keyEvent(){
 	for(var key in keyEvents){
-		if(key == 'm_b'){
-			UI_handleMouseKeyEvent(keyEvents[key]);
-		}
-		else{
-			UI_handleKeyboardKeyEvent(key, keyEvents[key]);
-		}
+		UI_handleKeyEvent(key, keyEvents[key]);
 	}
 }

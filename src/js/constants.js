@@ -15,30 +15,24 @@ var	G_STATE_DISCONNECTED = 0,
 	MTYPE_INPUT = 1,
 	MTYPE_BUTTON = 2,
 
+	LANG_EN = 0,
+	LANG_RU = 2,
+
+	K_MOUSE = 'm_b',
 	K_BACKSPACE = 8,
 	K_TAB = 9,
 	K_ENTER = 13,
 	K_SHIFT = 16,
 	K_CTRL = 17,
+	K_ALT = 18,
+	K_PAUSE = 19,
+	K_CAPS = 20,
+	K_ESC = 27,
+	K_PAGEUP = 33,
+	K_PAGEDOWN = 34,
+	K_END = 35,
+	K_HOME = 36,
+	K_LEFTARROW = 37,
 	K_UPARROW = 38,
+	K_RIGHTARROW = 39,
 	K_DOWNARROW = 40;
-
-	// backspace	8
-	// tab	9
-	// enter	13
-	// shift	16
-	// ctrl	17
-	// alt	18
-	// pause/break	19
-	// caps lock	20
-	// escape	27
-	// page up	33
-	// page down	34
-	// end	35
-	// home	36
-	// left arrow	37
-	// up arrow	38
-	// right arrow	39
-	// down arrow	40
-	// insert	45
-	// delete	46
