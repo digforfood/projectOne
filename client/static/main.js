@@ -29,6 +29,7 @@ var	G_STATE_DISCONNECTED = 0,
 	K_PAUSE = 19,
 	K_CAPS = 20,
 	K_ESC = 27,
+	K_SPACE = 32,
 	K_PAGEUP = 33,
 	K_PAGEDOWN = 34,
 	K_END = 35,
@@ -38,6 +39,7 @@ var	G_STATE_DISCONNECTED = 0,
 	K_RIGHTARROW = 39,
 	K_DOWNARROW = 40;
 var	keys_map = {
+	"32":  [' ', ' ', ' ', ' '],
 	"48":  ['0', ')', '0', ')'],
 	"49":  ['1', '!', '1', '!'],
 	"50":  ['2', '@', '2', '"'],
@@ -340,14 +342,14 @@ function UI_handleKeyEvent(key, down){
 		}
 	}
 	else if(key == K_BACKSPACE){
-		if(m_position.type!=MTYPE_INPUT)
+		if(m_position && m_position.type!=MTYPE_INPUT)
 			return;
 
 		m_position.buffer = m_position.buffer.slice(0, -1);
 		keyEvents[key] = false;
 	}
-	else if( (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
-		if(m_position.type!=MTYPE_INPUT)
+	else if( key == K_SPACE || (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
+		if(m_position && m_position.type!=MTYPE_INPUT)
 			return;
 
 		keyEvents[key] = false;

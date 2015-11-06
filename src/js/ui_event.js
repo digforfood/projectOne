@@ -98,14 +98,14 @@ function UI_handleKeyEvent(key, down){
 		}
 	}
 	else if(key == K_BACKSPACE){
-		if(m_position.type!=MTYPE_INPUT)
+		if(m_position && m_position.type!=MTYPE_INPUT)
 			return;
 
 		m_position.buffer = m_position.buffer.slice(0, -1);
 		keyEvents[key] = false;
 	}
-	else if( (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
-		if(m_position.type!=MTYPE_INPUT)
+	else if( key == K_SPACE || (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
+		if(m_position && m_position.type!=MTYPE_INPUT)
 			return;
 
 		keyEvents[key] = false;
