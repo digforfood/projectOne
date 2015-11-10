@@ -314,12 +314,14 @@ function UI_handleKeyEvent(key, down){
 	if(key == K_MOUSE){
 		if(down && !m_buttonDownItem && m_focusItem){
 			m_buttonDownItem = m_focusItem.id;
+			return;
 		}
 		else if(!down && m_buttonDownItem){
 			if (m_buttonDownItem == m_focusItem.id)
 				UI_handleMouseClick();
 
 			m_buttonDownItem = 0;
+			return;
 		}
 	}
 
@@ -342,14 +344,14 @@ function UI_handleKeyEvent(key, down){
 		}
 	}
 	else if(key == K_BACKSPACE){
-		if(m_position && m_position.type!=MTYPE_INPUT)
+		if(!m_position || m_position.type!=MTYPE_INPUT)
 			return;
 
 		m_position.buffer = m_position.buffer.slice(0, -1);
 		keyEvents[key] = false;
 	}
-	else if( key == K_SPACE || (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 187 && key <= 192) || (key >= 219 && key <= 222) ){
-		if(m_position && m_position.type!=MTYPE_INPUT)
+	else{
+		if(!m_position || m_position.type!=MTYPE_INPUT || keys_map[key] == undefined)
 			return;
 
 		keyEvents[key] = false;
