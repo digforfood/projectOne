@@ -22,6 +22,6 @@ function NET_init(){
 
 
 	////////////////////TO DO NET////////////////////
-	g_state = G_STATE_CONNECTING;
+	sys_state.pushStateG(G_STATE_CONNECTING);
 	////////////////////TO DO NET////////////////////
 }

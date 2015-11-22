@@ -1,7 +1,18 @@
+/*
+===========================================
+UI_lockScreen_connectAction
+===========================================
+*/
+function UI_lockScreen_connectAction(){
+	sys_state.pushStateG(G_STATE_CONNECTED);
+	sys_state.pushStateM(M_STATE_MAIN);
+}
+
+
 ui_s_lock = {
 
 ///////////////////////////////
-//LOGIN SCREEN
+//LOCK SCREEN
 ///////////////////////////////
 	string: 'LOGIN',
 	items: [
@@ -32,7 +43,8 @@ ui_s_lock = {
 			y: 60,
 			width: 150,
 			height: 20,
-			string: 'Connect'
+			string: 'Connect',
+			onclick: UI_lockScreen_connectAction
 		}
 	]
 

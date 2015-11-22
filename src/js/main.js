@@ -27,12 +27,12 @@ var scr_width,
 	m_position,
 	m_buttonDownItem,
 
+	sys_state,
+
 	fps,
 	socket,
 	canvas,
 	ctx,
-	g_state,
-	m_state,
 	correntTime,
 	deltaMilliseconds,
 	prevFrameTime,
@@ -41,6 +41,8 @@ var scr_width,
 //= ui_screen_lock.js
 //= ui_screen_menu-main.js
 //= ui_screen_menu-options.js
+//= cl_load.js
+//= sys_state.js
 //= net_main.js
 //= ui_event.js
 
@@ -51,10 +53,10 @@ CL_mouseEvent
 ===========================================
 */
 function CL_mouseEvent(){
-	if (m_state != M_STATE_NONE || g_state <= G_STATE_CONNECTING) {
+	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
 	} else {
-		//
+		// To do mouse event in game
 	}
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
@@ -67,10 +69,10 @@ CL_keyEvent
 ===========================================
 */
 function CL_keyEvent(){
-	if (m_state != M_STATE_NONE || g_state <= G_STATE_CONNECTING) {
+	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_keyEvent();
 	} else {
-		//
+		// To do key event in game
 	}
 }
 
@@ -93,6 +95,20 @@ function SCR_drawLockScreen(){
 		ctx.fillStyle = 'rgb(0, 0, 0)';
 		ctx.fillText( ((m_active.items[i].buffer && m_active.items[i].buffer.length)? m_active.items[i].buffer : m_active.items[i].string), m_active.items[i].x+5, m_active.items[i].y+12);
 	}
+}
+
+
+/*
+===========================================
+SCR_drawLoadScreen
+===========================================
+*/
+function SCR_drawLoadScreen(){
+	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
+	ctx.fillRect (0, 0, scr_width, scr_height); //
+
+	ctx.fillStyle = 'rgb(0, 0, 0)';
+	ctx.fillText( 'Loading', 10, 20);
 }
 
 
@@ -133,13 +149,13 @@ SCR_drawMenu
 ===========================================
 */
 function SCR_drawMenu(){
-	if(m_state === M_STATE_NONE){
+	if(sys_state.menu === M_STATE_NONE){
 		return;
 	}
-	else if(m_state === M_STATE_MAIN){
+	else if(sys_state.menu === M_STATE_MAIN){
 		SCR_drawMenu_main();
 	}
-	else if(m_state === M_STATE_OPTIONS){
+	else if(sys_state.menu === M_STATE_OPTIONS){
 		SCR_drawMenu_options();
 	}
 }
@@ -187,12 +203,18 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(g_state == G_STATE_DISCONNECTED || g_state == G_STATE_CONNECTING){
+	if(sys_state.game <= G_STATE_CONNECTING){
 		SCR_drawLockScreen();
 	}
-	else if(g_state == G_STATE_CONNECTED || g_state == G_STATE_RUN){
-		SCR_drawMenu();
+	else if(sys_state.game == G_STATE_LOADING){
+		SCR_drawLoadScreen();
 	}
+	else if(sys_state.game == G_STATE_RUN){
+		//
+	}
+
+	SCR_drawMenu();
+
 	SCR_drawFPS();
 	SCR_drawСursor();
 }
@@ -226,6 +248,9 @@ function frame(){
 	// To do prediction for other players
 
 	// To do client side motion prediction
+
+	// switch game and menu state
+	sys_state.switchState();
 
 	SCR_updateScreen();
 }
@@ -319,8 +344,7 @@ function main(){
 	fps = 100;
 	ui_stack = [];
 	ui_langSet = LANG_EN;
-	g_state = G_STATE_DISCONNECTED;
-	m_state = M_STATE_NONE;
+	sys_state = new SYS_State(G_STATE_DISCONNECTED, M_STATE_NONE);
 	m_active = ui_s_lock;
 	canvasInit();
 

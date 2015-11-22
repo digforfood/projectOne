@@ -58,6 +58,11 @@ function UI_handleMouseClick(){
 	else if (m_focusItem.type == MTYPE_INPUT) {
 		m_position = m_focusItem;
 	}
+
+	if(m_focusItem.onclick == undefined)
+		return;
+
+	m_focusItem.onclick();
 }
 
 
