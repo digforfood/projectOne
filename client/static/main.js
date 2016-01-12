@@ -114,6 +114,7 @@ var scr_width,
 	m_buttonDownItem,
 
 	sys_state,
+	cgs,
 
 	fps,
 	socket,
@@ -126,140 +127,50 @@ var scr_width,
 
 /*
 ===========================================
-UI_lockScreen_connectAction
-===========================================
-*/
-function UI_lockScreen_connectAction(){
-	sys_state.pushStateG(G_STATE_CONNECTED);
-	sys_state.pushStateM(M_STATE_MAIN);
-}
-
-
-ui_s_lock = {
-
-///////////////////////////////
-//LOCK SCREEN
-///////////////////////////////
-	string: 'LOGIN',
-	items: [
-		{
-			type: MTYPE_INPUT,
-			id: 10,
-			x: 20,
-			y: 20,
-			width: 150,
-			height: 20,
-			string: 'Login',
-			buffer: ''
-		},
-		{
-			type: MTYPE_INPUT,
-			id: 11,
-			x: 20,
-			y: 40,
-			width: 150,
-			height: 20,
-			string: 'Password',
-			buffer: ''
-		},
-		{
-			type: MTYPE_BUTTON,
-			id: 12,
-			x: 20,
-			y: 60,
-			width: 150,
-			height: 20,
-			string: 'Connect',
-			onclick: UI_lockScreen_connectAction
-		}
-	]
-
-};
-/*
-===========================================
-UI_mainMenu_startAction
-===========================================
-*/
-function UI_mainMenu_startAction(){
-	CL_loadThreads();
-	sys_state.pushStateG(G_STATE_LOADING);
-	sys_state.pushStateM(M_STATE_NONE);
-}
-
-
-/*
-===========================================
-UI_mainMenu_optionsAction
-===========================================
-*/
-function UI_mainMenu_optionsAction(){
-	sys_state.pushStateM(M_STATE_OPTIONS);
-}
-
-
-ui_s_m_main = {
-///////////////////////////////
-//MAIN MENU
-///////////////////////////////
-string: 'MAIN',
-items: [
-		{
-			type: MTYPE_TEXT,
-			id: 20,
-			x: 20,
-			y: 20,
-			width: 150,
-			height: 20,
-			string: 'Start',
-			onclick: UI_mainMenu_startAction
-		},
-		{
-			type: MTYPE_TEXT,
-			id: 21,
-			x: 20,
-			y: 40,
-			width: 150,
-			height: 20,
-			string: 'Options',
-			onclick: UI_mainMenu_optionsAction
-		}
-	]
-};
-ui_s_m_options = {
-///////////////////////////////
-//OPTIONS MENU
-///////////////////////////////
-string: 'OPTIONS',
-items: [
-		{
-			type: MTYPE_TEXT,
-			id: 20,
-			x: 20,
-			y: 20,
-			width: 150,
-			height: 20,
-			string: 'sdfdfg'
-		},
-		{
-			type: MTYPE_TEXT,
-			id: 21,
-			x: 20,
-			y: 40,
-			width: 150,
-			height: 20,
-			string: 'sdfrasdfg'
-		}
-	]
-};
-/*
-===========================================
 CL_loadThreads
 ===========================================
 */
 function CL_loadThreads(){
+	cgs = {};
+
 	// To do start load thread audio
+	cgs.audio = {};
+	cgs.audio.test = new Audio('https://s21f.storage.yandex.net/get-mp3/3ab75658db4feb0f48fe9b143e6d02a9/00052914c11ad807/music/13/4/data-0.3:52466573623:7835062?track-id=168524&play=true&');
 
 	// To do start load thread sprites
+	cgs.sprites = {};
+	cgs.sprites.test = new Image();
+	cgs.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
+}
+/*
+===========================================
+NET_init
+===========================================
+*/
+function NET_init(){
+	////////////////////TO DO NET////////////////////
+	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+	socket.onopen = function(){
+		sys_state.pushStateG(G_STATE_CONNECTING);
+		console.log('onopen');
+	};
+	socket.onclose = function(ent){
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		console.log('onclose');
+	};
+	socket.onmessage = function(ent){
+		console.log(ent.data);
+	};
+	socket.onerror = function(ent){
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		console.log('onerror');
+	};
+	////////////////////TO DO NET////////////////////
+
+
+	////////////////////TO DO NET////////////////////
+	//sys_state.pushStateG(G_STATE_CONNECTING);
+	////////////////////TO DO NET////////////////////
 }
 /*
 ===========================================
@@ -324,6 +235,13 @@ function SCR_drawLoadScreen(){
 
 	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText( 'Loading', 10, 20);
+
+	////////////////////TO DO////////////////////
+	if(SYS_checkResources() != 100)
+		return;
+
+	sys_state.pushStateG(G_STATE_RUN);
+	////////////////////TO DO////////////////////
 }
 
 
@@ -410,6 +328,26 @@ function SCR_drawСursor(){
 }
 /*
 ===========================================
+SYS_checkResources
+===========================================
+*/
+function SYS_checkResources(){
+	var obj = 0,
+		objComplete = 0;
+
+	for (var i in cgs){
+		for (var o in cgs[i]){
+			obj++;
+
+			if(cgs[i][o].complete || cgs[i][o].readyState == "complete" || cgs[i][o].readyState == 4)
+				objComplete++;
+		}
+	}
+
+	return Math.floor(objComplete/obj*100);
+}
+/*
+===========================================
 CLASS SYS_State
 ===========================================
 */
@@ -446,33 +384,6 @@ function SYS_State(ent_g, ent_m){
 	this.pushStateM = function(state){
 		this.m_stateStack = [state];
 	};
-}
-/*
-===========================================
-NET_init
-===========================================
-*/
-function NET_init(){
-	////////////////////TO DO NET////////////////////
-	// socket = new WebSocket("ws://localhost:443");
-	// socket.onopen = function(){
-	// 	//console.log('onopen');
-	// };
-	// socket.onclose = function(ent){
-	// 	//console.log('onclose');
-	// };
-	// socket.onmessage = function(ent){
-	// 	//console.log(ent.data);
-	// };
-	// socket.onerror = function(ent){
-	// 	//console.log('onerror');
-	// };
-	////////////////////TO DO NET////////////////////
-
-
-	////////////////////TO DO NET////////////////////
-	sys_state.pushStateG(G_STATE_CONNECTING);
-	////////////////////TO DO NET////////////////////
 }
 /*
 ===========================================
@@ -610,6 +521,135 @@ function UI_keyEvent(){
 		UI_handleKeyEvent(key, keyEvents[key]);
 	}
 }
+/*
+===========================================
+UI_lockScreen_connectAction
+===========================================
+*/
+function UI_lockScreen_connectAction(){
+	if(sys_state.game != G_STATE_DISCONNECTED){
+		sys_state.pushStateG(G_STATE_CONNECTED);
+		sys_state.pushStateM(M_STATE_MAIN);
+	}
+}
+
+
+ui_s_lock = {
+
+///////////////////////////////
+//LOCK SCREEN
+///////////////////////////////
+	string: 'LOGIN',
+	items: [
+		{
+			type: MTYPE_INPUT,
+			id: 10,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'Login',
+			buffer: ''
+		},
+		{
+			type: MTYPE_INPUT,
+			id: 11,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'Password',
+			buffer: ''
+		},
+		{
+			type: MTYPE_BUTTON,
+			id: 12,
+			x: 20,
+			y: 60,
+			width: 150,
+			height: 20,
+			string: 'Connect',
+			onclick: UI_lockScreen_connectAction
+		}
+	]
+
+};
+/*
+===========================================
+UI_mainMenu_startAction
+===========================================
+*/
+function UI_mainMenu_startAction(){
+	CL_loadThreads();
+	sys_state.pushStateG(G_STATE_LOADING);
+	sys_state.pushStateM(M_STATE_NONE);
+}
+
+
+/*
+===========================================
+UI_mainMenu_optionsAction
+===========================================
+*/
+function UI_mainMenu_optionsAction(){
+	sys_state.pushStateM(M_STATE_OPTIONS);
+}
+
+
+ui_s_m_main = {
+///////////////////////////////
+//MAIN MENU
+///////////////////////////////
+string: 'MAIN',
+items: [
+		{
+			type: MTYPE_TEXT,
+			id: 20,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'Start',
+			onclick: UI_mainMenu_startAction
+		},
+		{
+			type: MTYPE_TEXT,
+			id: 21,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'Options',
+			onclick: UI_mainMenu_optionsAction
+		}
+	]
+};
+ui_s_m_options = {
+///////////////////////////////
+//OPTIONS MENU
+///////////////////////////////
+string: 'OPTIONS',
+items: [
+		{
+			type: MTYPE_TEXT,
+			id: 20,
+			x: 20,
+			y: 20,
+			width: 150,
+			height: 20,
+			string: 'sdfdfg'
+		},
+		{
+			type: MTYPE_TEXT,
+			id: 21,
+			x: 20,
+			y: 40,
+			width: 150,
+			height: 20,
+			string: 'sdfrasdfg'
+		}
+	]
+};
 
 
 /*

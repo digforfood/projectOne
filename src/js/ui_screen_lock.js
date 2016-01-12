@@ -4,8 +4,10 @@ UI_lockScreen_connectAction
 ===========================================
 */
 function UI_lockScreen_connectAction(){
-	sys_state.pushStateG(G_STATE_CONNECTED);
-	sys_state.pushStateM(M_STATE_MAIN);
+	if(sys_state.game != G_STATE_DISCONNECTED){
+		sys_state.pushStateG(G_STATE_CONNECTED);
+		sys_state.pushStateM(M_STATE_MAIN);
+	}
 }
 
 

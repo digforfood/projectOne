@@ -61,6 +61,13 @@ function SCR_drawLoadScreen(){
 
 	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText( 'Loading', 10, 20);
+
+	////////////////////TO DO////////////////////
+	if(SYS_checkResources() != 100)
+		return;
+
+	sys_state.pushStateG(G_STATE_RUN);
+	////////////////////TO DO////////////////////
 }
 
 

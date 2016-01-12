@@ -28,6 +28,7 @@ var scr_width,
 	m_buttonDownItem,
 
 	sys_state,
+	cgs,
 
 	fps,
 	socket,
@@ -38,14 +39,15 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+//= cl_load.js
+//= net_main.js
+//= scr_main.js
+//= sys_main.js
+//= sys_state.js
+//= ui_event.js
 //= ui_screen_lock.js
 //= ui_screen_menu-main.js
 //= ui_screen_menu-options.js
-//= cl_load.js
-//= scr_main.js
-//= sys_state.js
-//= net_main.js
-//= ui_event.js
 
 
 /*
