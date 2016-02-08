@@ -4,24 +4,40 @@ NET_init
 ===========================================
 */
 function NET_init(){
-	////////////////////TO DO NET////////////////////
+	net_clKey = parseInt(localStorage['net_clKey']) || null;
+	net_logInMsg = {};
+	net_inPackets = [];
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+
 	socket.onopen = function(){
-		sys_state.pushStateG(G_STATE_CONNECTING);
 		console.log('onopen');
+
+		if(net_clKey != null){
+			net_logInMsg['k'] = net_clKey;
+
+			CL_createPacket();
+		} else {
+			sys_state.pushStateG(G_STATE_CONNECTING);
+		}
 	};
+
 	socket.onclose = function(ent){
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		console.log('onclose');
+
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
+
 	socket.onmessage = function(ent){
 		console.log(ent.data);
+
+		net_inPackets.push(ent.data);
 	};
+
 	socket.onerror = function(ent){
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		console.log('onerror');
+
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
-	////////////////////TO DO NET////////////////////
 
 
 	////////////////////TO DO NET////////////////////

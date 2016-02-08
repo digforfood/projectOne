@@ -5,6 +5,10 @@ var	G_STATE_DISCONNECTED = 0,
 	G_STATE_RUN = 3,
 	G_STATE_LOADING = 4,
 
+	MSG_SERVERCOMMAND = 1,
+	MSG_GAMESTATE = 2,
+	MSG_SNAPSHOT = 3,
+
 	M_STATE_NONE = 0,
 	M_STATE_MAIN = 1,
 	M_STATE_OPTIONS = 2,
@@ -116,8 +120,13 @@ var scr_width,
 	sys_state,
 	cgs,
 
-	fps,
 	socket,
+	net_clKey,
+	net_logInMsg,
+	net_inPackets,
+	net_outPacket,
+
+	fps,
 	canvas,
 	ctx,
 	correntTime,
@@ -144,28 +153,154 @@ function CL_loadThreads(){
 }
 /*
 ===========================================
+CL_parseCommandString
+===========================================
+*/
+function CL_parseCommandString(data){
+	// To do
+}
+
+
+/*
+===========================================
+CL_parseGamestate
+===========================================
+*/
+function CL_parseGamestate(data){
+	if(typeof data.k != "undefined")
+		net_clKey = data.k;
+
+	sys_state.pushStateG(data.s);
+}
+
+
+/*
+===========================================
+CL_parseSnapshot
+===========================================
+*/
+function CL_parseSnapshot(data){
+	// To do
+}
+
+
+/*
+===========================================
+CL_parseServerMessage
+===========================================
+*/
+function CL_parseServerMessage(){
+	if (net_inPackets.length == 0)
+		return;
+
+	var l_msg = [],
+		type = 0,
+		data = {};
+
+	for(var i = 0; i < net_inPackets.length; i++){
+
+		l_msg = net_inPackets[i].m;
+
+		for (var j = 0; j < l_msg.length; j++) {
+
+			type = l_msg[j].t;
+			data = l_msg[j].d;
+
+			if(type == MSG_SERVERCOMMAND){
+				CL_parseCommandString(data);
+			}
+			else if(type == MSG_GAMESTATE){
+				CL_parseGamestate(data);
+			}
+			else if(type == MSG_SNAPSHOT){
+				CL_parseSnapshot(data);
+			}
+		};
+	}
+
+	net_inPackets = [];
+}
+/*
+===========================================
+CL_createPacket
+===========================================
+*/
+function CL_createPacket(){
+	var msg = {};
+
+	if(Object.keys(net_logInMsg).length > 0){
+		msg['li'] = net_logInMsg;
+
+		net_logInMsg = {};
+
+		////////////////////TEST////////////////////
+		net_inPackets.push({'m': [{'t': MSG_GAMESTATE, 'd': {'k': 112233, 's': G_STATE_CONNECTED}}]});
+		////////////////////TEST////////////////////
+	}
+	else if(net_clKey != null){
+		msg['k'] = net_clKey;
+
+		// To do create packet
+	}
+	else
+		return;
+
+	// To do NET send msg
+	console.log('NET send msg: ', msg);
+}
+
+
+/*
+===========================================
+CL_sendCmd
+===========================================
+*/
+function CL_sendCmd(){
+	if (sys_state.game == G_STATE_DISCONNECTED)
+		return;
+
+	CL_createPacket();
+}
+/*
+===========================================
 NET_init
 ===========================================
 */
 function NET_init(){
-	////////////////////TO DO NET////////////////////
+	net_clKey = parseInt(localStorage['net_clKey']) || null;
+	net_logInMsg = {};
+	net_inPackets = [];
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+
 	socket.onopen = function(){
-		sys_state.pushStateG(G_STATE_CONNECTING);
 		console.log('onopen');
+
+		if(net_clKey != null){
+			net_logInMsg['k'] = net_clKey;
+
+			CL_createPacket();
+		} else {
+			sys_state.pushStateG(G_STATE_CONNECTING);
+		}
 	};
+
 	socket.onclose = function(ent){
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		console.log('onclose');
+
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
+
 	socket.onmessage = function(ent){
 		console.log(ent.data);
+
+		net_inPackets.push(ent.data);
 	};
+
 	socket.onerror = function(ent){
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		console.log('onerror');
+
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
-	////////////////////TO DO NET////////////////////
 
 
 	////////////////////TO DO NET////////////////////
@@ -194,10 +329,13 @@ SCR_drawField_button
 ===========================================
 */
 function SCR_drawField_button(elem){
-	if (m_position && m_position.id == elem.id) {
-		ctx.fillStyle = 'rgb(252, 122, 19)';
-		ctx.fillRect(elem.x, elem.y, 150, 15);
+	if(sys_state.game == G_STATE_DISCONNECTED){
+		ctx.fillStyle = 'rgb(106, 121, 137)';
 	}
+	else{
+		ctx.fillStyle = 'rgb(252, 2, 2)';
+	}
+	ctx.fillRect(elem.x, elem.y, 150, 15);
 
 	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText(elem.string, elem.x+5, elem.y+12);
@@ -363,6 +501,8 @@ function SYS_State(ent_g, ent_m){
 			this.game = this.g_stateStack[0];
 			if(this.game == G_STATE_DISCONNECTED || this.game == G_STATE_CONNECTING)
 				m_active = ui_s_lock;
+			else if(this.game == G_STATE_CONNECTED)
+				this.pushStateM(M_STATE_MAIN);
 			this.g_stateStack = [];
 		}
 		if(this.m_stateStack.length > 0){
@@ -477,10 +617,10 @@ function UI_handleKeyEvent(key, down){
 		return;
 
 	if(key == K_UPARROW){
-		//
+		// To do
 	}	
 	else if(key == K_DOWNARROW){
-		//
+		// To do
 	}
 	else if(key == K_ALT){
 		if(keyEvents[K_SHIFT]){
@@ -528,8 +668,14 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
-		sys_state.pushStateG(G_STATE_CONNECTED);
-		sys_state.pushStateM(M_STATE_MAIN);
+		if(net_clKey != null){
+			net_logInMsg['k'] = net_clKey;
+		} else {
+			net_logInMsg['n'] = ui_s_lock.items[0].buffer;
+			net_logInMsg['p'] = ui_s_lock.items[1].buffer;
+		}
+
+		CL_createPacket();
 	}
 }
 
@@ -660,7 +806,8 @@ CL_mouseEvent
 function CL_mouseEvent(){
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
-	} else {
+	}
+	else {
 		// To do mouse event in game
 	}
 	mouse_movement_x = 0;
@@ -676,9 +823,27 @@ CL_keyEvent
 function CL_keyEvent(){
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_keyEvent();
-	} else {
+	}
+	else {
 		// To do key event in game
 	}
+}
+
+
+/*
+===========================================
+CL_incomingEvents
+===========================================
+*/
+function CL_incomingEvents(){
+	// fetch results from server
+	CL_parseServerMessage();
+
+	// client mouse event
+	CL_mouseEvent();
+
+	// get new key events
+	CL_keyEvent();
 }
 
 
@@ -697,7 +862,7 @@ function SCR_updateScreen(){
 		SCR_drawLoadScreen();
 	}
 	else if(sys_state.game == G_STATE_RUN){
-		//
+		// To do
 	}
 
 	SCR_drawMenu();
@@ -722,15 +887,11 @@ function frame(){
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
 
-	// client mouse event
-	CL_mouseEvent();
+	// client incoming events
+	CL_incomingEvents();
 
-	// get new key events
-	CL_keyEvent();
-
-	// To do fetch results from server
-
-	// To do send results to server
+	// send results to server
+	CL_sendCmd();
 
 	// To do prediction for other players
 

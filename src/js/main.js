@@ -30,8 +30,13 @@ var scr_width,
 	sys_state,
 	cgs,
 
-	fps,
 	socket,
+	net_clKey,
+	net_logInMsg,
+	net_inPackets,
+	net_outPacket,
+
+	fps,
 	canvas,
 	ctx,
 	correntTime,
@@ -40,6 +45,8 @@ var scr_width,
 	thisFrameTime;
 
 //= cl_load.js
+//= cl_parse.js
+//= cl_send.js
 //= net_main.js
 //= scr_main.js
 //= sys_main.js
@@ -58,7 +65,8 @@ CL_mouseEvent
 function CL_mouseEvent(){
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
-	} else {
+	}
+	else {
 		// To do mouse event in game
 	}
 	mouse_movement_x = 0;
@@ -74,9 +82,27 @@ CL_keyEvent
 function CL_keyEvent(){
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_keyEvent();
-	} else {
+	}
+	else {
 		// To do key event in game
 	}
+}
+
+
+/*
+===========================================
+CL_incomingEvents
+===========================================
+*/
+function CL_incomingEvents(){
+	// fetch results from server
+	CL_parseServerMessage();
+
+	// client mouse event
+	CL_mouseEvent();
+
+	// get new key events
+	CL_keyEvent();
 }
 
 
@@ -95,7 +121,7 @@ function SCR_updateScreen(){
 		SCR_drawLoadScreen();
 	}
 	else if(sys_state.game == G_STATE_RUN){
-		//
+		// To do
 	}
 
 	SCR_drawMenu();
@@ -120,15 +146,11 @@ function frame(){
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
 
-	// client mouse event
-	CL_mouseEvent();
+	// client incoming events
+	CL_incomingEvents();
 
-	// get new key events
-	CL_keyEvent();
-
-	// To do fetch results from server
-
-	// To do send results to server
+	// send results to server
+	CL_sendCmd();
 
 	// To do prediction for other players
 

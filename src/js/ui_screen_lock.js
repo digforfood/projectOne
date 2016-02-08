@@ -5,8 +5,14 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
-		sys_state.pushStateG(G_STATE_CONNECTED);
-		sys_state.pushStateM(M_STATE_MAIN);
+		if(net_clKey != null){
+			net_logInMsg['k'] = net_clKey;
+		} else {
+			net_logInMsg['n'] = ui_s_lock.items[0].buffer;
+			net_logInMsg['p'] = ui_s_lock.items[1].buffer;
+		}
+
+		CL_createPacket();
 	}
 }
 

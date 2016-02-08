@@ -20,10 +20,13 @@ SCR_drawField_button
 ===========================================
 */
 function SCR_drawField_button(elem){
-	if (m_position && m_position.id == elem.id) {
-		ctx.fillStyle = 'rgb(252, 122, 19)';
-		ctx.fillRect(elem.x, elem.y, 150, 15);
+	if(sys_state.game == G_STATE_DISCONNECTED){
+		ctx.fillStyle = 'rgb(106, 121, 137)';
 	}
+	else{
+		ctx.fillStyle = 'rgb(252, 2, 2)';
+	}
+	ctx.fillRect(elem.x, elem.y, 150, 15);
 
 	ctx.fillStyle = 'rgb(0, 0, 0)';
 	ctx.fillText(elem.string, elem.x+5, elem.y+12);

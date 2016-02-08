@@ -90,10 +90,10 @@ function UI_handleKeyEvent(key, down){
 		return;
 
 	if(key == K_UPARROW){
-		//
+		// To do
 	}	
 	else if(key == K_DOWNARROW){
-		//
+		// To do
 	}
 	else if(key == K_ALT){
 		if(keyEvents[K_SHIFT]){

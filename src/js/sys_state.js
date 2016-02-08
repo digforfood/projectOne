@@ -15,6 +15,8 @@ function SYS_State(ent_g, ent_m){
 			this.game = this.g_stateStack[0];
 			if(this.game == G_STATE_DISCONNECTED || this.game == G_STATE_CONNECTING)
 				m_active = ui_s_lock;
+			else if(this.game == G_STATE_CONNECTED)
+				this.pushStateM(M_STATE_MAIN);
 			this.g_stateStack = [];
 		}
 		if(this.m_stateStack.length > 0){
