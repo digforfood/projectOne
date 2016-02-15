@@ -1,5 +1,15 @@
 /*
 ===========================================
+NET_sendPacket
+===========================================
+*/
+function NET_sendPacket(data){
+	socket.send(JSON.stringify(data));
+}
+
+
+/*
+===========================================
 NET_init
 ===========================================
 */
@@ -30,7 +40,7 @@ function NET_init(){
 	socket.onmessage = function(ent){
 		console.log(ent.data);
 
-		net_inPackets.push(ent.data);
+		net_inPackets.push(JSON.parse(ent.data));
 	};
 
 	socket.onerror = function(ent){

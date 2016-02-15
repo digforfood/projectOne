@@ -125,6 +125,7 @@ var scr_width,
 	net_logInMsg,
 	net_inPackets,
 	net_outPacket,
+	net_lastPacketSentTime,
 
 	fps,
 	canvas,
@@ -234,12 +235,19 @@ function CL_createPacket(){
 		net_logInMsg = {};
 
 		////////////////////TEST////////////////////
-		net_inPackets.push({'m': [{'t': MSG_GAMESTATE, 'd': {'k': 112233, 's': G_STATE_CONNECTED}}]});
+		// net_inPackets.push({'m': [{'t': MSG_GAMESTATE, 'd': {'k': 112233, 's': G_STATE_CONNECTED}}]});
 		////////////////////TEST////////////////////
 	}
 	else if(net_clKey != null){
 		msg['k'] = net_clKey;
 
+		// To do create packet
+		// To do create packet
+		// To do create packet
+		// To do create packet
+		// To do create packet
+		// To do create packet
+		// To do create packet
 		// To do create packet
 	}
 	else
@@ -247,6 +255,8 @@ function CL_createPacket(){
 
 	// To do NET send msg
 	console.log('NET send msg: ', msg);
+	NET_sendPacket(msg);
+	net_lastPacketSentTime = correntTime;
 }
 
 
@@ -256,11 +266,24 @@ CL_sendCmd
 ===========================================
 */
 function CL_sendCmd(){
-	if (sys_state.game == G_STATE_DISCONNECTED)
+	if (sys_state.game == G_STATE_DISCONNECTED && sys_state.game == G_STATE_CONNECTING)
+		return;
+
+	if (sys_state.menu != M_STATE_NONE && correntTime - net_lastPacketSentTime < 1000)
 		return;
 
 	CL_createPacket();
 }
+/*
+===========================================
+NET_sendPacket
+===========================================
+*/
+function NET_sendPacket(data){
+	socket.send(JSON.stringify(data));
+}
+
+
 /*
 ===========================================
 NET_init
@@ -293,7 +316,7 @@ function NET_init(){
 	socket.onmessage = function(ent){
 		console.log(ent.data);
 
-		net_inPackets.push(ent.data);
+		net_inPackets.push(JSON.parse(ent.data));
 	};
 
 	socket.onerror = function(ent){

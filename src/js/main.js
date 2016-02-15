@@ -35,6 +35,7 @@ var scr_width,
 	net_logInMsg,
 	net_inPackets,
 	net_outPacket,
+	net_lastPacketSentTime,
 
 	fps,
 	canvas,
