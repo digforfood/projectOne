@@ -3,17 +3,11 @@
 CL_createPacket
 ===========================================
 */
-function CL_createPacket(){
+function CL_createPacket(obj){
 	var msg = {};
 
-	if(Object.keys(net_logInMsg).length > 0){
-		msg['li'] = net_logInMsg;
-
-		net_logInMsg = {};
-
-		////////////////////TEST////////////////////
-		// net_inPackets.push({'m': [{'t': MSG_GAMESTATE, 'd': {'k': 112233, 's': G_STATE_CONNECTED}}]});
-		////////////////////TEST////////////////////
+	if(obj != undefined){
+		msg['li'] = obj;
 	}
 	else if(net_clKey != null){
 		msg['k'] = net_clKey;
@@ -30,9 +24,10 @@ function CL_createPacket(){
 	else
 		return;
 
-	// To do NET send msg
-	console.log('NET send msg: ', msg);
+
+	console.log('NET send msg: ', msg); // To do NET send msg
 	NET_sendPacket(msg);
+
 	net_lastPacketSentTime = correntTime;
 }
 

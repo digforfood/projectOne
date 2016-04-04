@@ -32,7 +32,6 @@ var scr_width,
 
 	socket,
 	net_clKey,
-	net_logInMsg,
 	net_inPackets,
 	net_outPacket,
 	net_lastPacketSentTime,
