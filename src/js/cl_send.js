@@ -4,13 +4,15 @@ CL_createPacket
 ===========================================
 */
 function CL_createPacket(obj){
-	var msg = {};
+	var msg = {t: 0, b: {}};
 
 	if(obj != undefined){
-		msg['li'] = obj;
+		msg.t = 0;
+		msg.b = obj;
 	}
 	else if(net_clKey != null){
-		msg['k'] = net_clKey;
+		msg.t = 1;
+		msg.b['k'] = net_clKey;
 
 		// To do create packet
 		// To do create packet
