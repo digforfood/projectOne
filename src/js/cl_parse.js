@@ -3,7 +3,7 @@
 CL_parseCommandString
 ===========================================
 */
-function CL_parseCommandString(data){
+function CL_parseCommandString(ent){
 	// To do
 }
 
@@ -13,11 +13,11 @@ function CL_parseCommandString(data){
 CL_parseGamestate
 ===========================================
 */
-function CL_parseGamestate(data){
-	if(typeof data.k != "undefined")
-		net_clKey = data.k;
+function CL_parseGamestate(ent){
+	if(typeof ent.k != "undefined")
+		net_clKey = ent.k;
 
-	sys_state.pushStateG(data.s);
+	sys_state.pushStateG(ent.s);
 }
 
 
@@ -26,7 +26,7 @@ function CL_parseGamestate(data){
 CL_parseSnapshot
 ===========================================
 */
-function CL_parseSnapshot(data){
+function CL_parseSnapshot(ent){
 	// To do
 }
 
@@ -42,7 +42,7 @@ function CL_parseServerMessage(){
 
 	var l_msg = [],
 		type = 0,
-		data = {};
+		body = {};
 
 	for(var i = 0; i < net_inPackets.length; i++){
 
@@ -51,16 +51,16 @@ function CL_parseServerMessage(){
 		for (var j = 0; j < l_msg.length; j++) {
 
 			type = l_msg[j].t;
-			data = l_msg[j].d;
+			body = l_msg[j].b;
 
 			if(type == MSG_SERVERCOMMAND){
-				CL_parseCommandString(data);
+				CL_parseCommandString(body);
 			}
 			else if(type == MSG_GAMESTATE){
-				CL_parseGamestate(data);
+				CL_parseGamestate(body);
 			}
 			else if(type == MSG_SNAPSHOT){
-				CL_parseSnapshot(data);
+				CL_parseSnapshot(body);
 			}
 		};
 	}

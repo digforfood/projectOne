@@ -3,25 +3,26 @@
 CL_createPacket
 ===========================================
 */
-function CL_createPacket(obj){
-	var msg = {t: 0, b: {}};
+function CL_createPacket(ent){
+	var msg = {t: 0, b: {}},
+		bufLen = net_evBuf.length;
 
-	if(obj != undefined){
+	if(ent != undefined){
 		msg.t = 0;
-		msg.b = obj;
+		msg.b = ent;
 	}
 	else if(net_clKey != null){
 		msg.t = 1;
 		msg.b['k'] = net_clKey;
 
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
+		if(bufLen > 0){
+			msg.b['e'] = [];
+
+			for(var i=0; i<bufLen; i++){
+				msg.b['e'].push(net_evBuf[i]);
+			}
+			// To do create packet
+		}		
 	}
 	else
 		return;

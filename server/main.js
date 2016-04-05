@@ -54,7 +54,7 @@ function main(){
 
 		player.socket.on('message', function(message){
 			console.log(message);
-			var msg = {'m': [{'t': 2, 'd': {'k': 112233, 's': 2}}]};
+			var msg = {'m': [{'t': 2, 'b': {'k': 112233, 's': 2}}]};
 			this.send(JSON.stringify(msg), function(){ /* ignore errors */ });
 		});
 
