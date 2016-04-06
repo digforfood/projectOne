@@ -17,6 +17,7 @@ function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_logInMsg = {};
 	net_inPackets = [];
+	net_buf = {ev: [], mouse: ''};
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
 
 	socket.onopen = function(){

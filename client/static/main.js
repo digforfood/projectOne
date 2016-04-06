@@ -9,6 +9,9 @@ var	G_STATE_DISCONNECTED = 0,
 	MSG_GAMESTATE = 2,
 	MSG_SNAPSHOT = 3,
 
+	MSG_CL_LOGIN = 0,
+	MSG_CL_DATA = 1,
+
 	M_STATE_NONE = 0,
 	M_STATE_MAIN = 1,
 	M_STATE_OPTIONS = 2,
@@ -122,7 +125,7 @@ var scr_width,
 
 	socket,
 	net_clKey,
-	net_logInMsg,
+	net_evBuf, //To do
 	net_inPackets,
 	net_outPacket,
 	net_lastPacketSentTime,
@@ -157,7 +160,7 @@ function CL_loadThreads(){
 CL_parseCommandString
 ===========================================
 */
-function CL_parseCommandString(data){
+function CL_parseCommandString(ent){
 	// To do
 }
 
@@ -167,11 +170,11 @@ function CL_parseCommandString(data){
 CL_parseGamestate
 ===========================================
 */
-function CL_parseGamestate(data){
-	if(typeof data.k != "undefined")
-		net_clKey = data.k;
+function CL_parseGamestate(ent){
+	if(typeof ent.k != "undefined")
+		net_clKey = ent.k;
 
-	sys_state.pushStateG(data.s);
+	sys_state.pushStateG(ent.s);
 }
 
 
@@ -180,7 +183,7 @@ function CL_parseGamestate(data){
 CL_parseSnapshot
 ===========================================
 */
-function CL_parseSnapshot(data){
+function CL_parseSnapshot(ent){
 	// To do
 }
 
@@ -196,7 +199,7 @@ function CL_parseServerMessage(){
 
 	var l_msg = [],
 		type = 0,
-		data = {};
+		body = {};
 
 	for(var i = 0; i < net_inPackets.length; i++){
 
@@ -205,16 +208,16 @@ function CL_parseServerMessage(){
 		for (var j = 0; j < l_msg.length; j++) {
 
 			type = l_msg[j].t;
-			data = l_msg[j].d;
+			body = l_msg[j].b;
 
 			if(type == MSG_SERVERCOMMAND){
-				CL_parseCommandString(data);
+				CL_parseCommandString(body);
 			}
 			else if(type == MSG_GAMESTATE){
-				CL_parseGamestate(data);
+				CL_parseGamestate(body);
 			}
 			else if(type == MSG_SNAPSHOT){
-				CL_parseSnapshot(data);
+				CL_parseSnapshot(body);
 			}
 		};
 	}
@@ -226,36 +229,34 @@ function CL_parseServerMessage(){
 CL_createPacket
 ===========================================
 */
-function CL_createPacket(){
-	var msg = {};
+function CL_createPacket(ent){
+	var msg = {t: 0, b: {}},
+		bufLen = net_evBuf.length;
 
-	if(Object.keys(net_logInMsg).length > 0){
-		msg['li'] = net_logInMsg;
-
-		net_logInMsg = {};
-
-		////////////////////TEST////////////////////
-		// net_inPackets.push({'m': [{'t': MSG_GAMESTATE, 'd': {'k': 112233, 's': G_STATE_CONNECTED}}]});
-		////////////////////TEST////////////////////
+	if(ent != undefined){
+		msg.t = MSG_CL_LOGIN;
+		msg.b = ent;
 	}
 	else if(net_clKey != null){
-		msg['k'] = net_clKey;
+		msg.t = MSG_CL_DATA;
+		msg.b['k'] = net_clKey;
 
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
-		// To do create packet
+		if(bufLen > 0){
+			msg.b['e'] = [];
+
+			for(var i=0; i<bufLen; i++){
+				msg.b['e'].push(net_evBuf[i]);
+			}
+			// To do create packet
+		}		
 	}
 	else
 		return;
 
-	// To do NET send msg
-	console.log('NET send msg: ', msg);
+
+	console.log('NET send msg: ', msg); // To do NET send msg
 	NET_sendPacket(msg);
+
 	net_lastPacketSentTime = correntTime;
 }
 
@@ -293,6 +294,7 @@ function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_logInMsg = {};
 	net_inPackets = [];
+	net_evBuf = [];
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
 
 	socket.onopen = function(){
@@ -691,14 +693,16 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
+		var data = {};
+
 		if(net_clKey != null){
-			net_logInMsg['k'] = net_clKey;
+			data['k'] = net_clKey;
 		} else {
-			net_logInMsg['n'] = ui_s_lock.items[0].buffer;
-			net_logInMsg['p'] = ui_s_lock.items[1].buffer;
+			data['n'] = ui_s_lock.items[0].buffer;
+			data['p'] = ui_s_lock.items[1].buffer;
 		}
 
-		CL_createPacket();
+		CL_createPacket(data);
 	}
 }
 
@@ -967,7 +971,7 @@ function controlEventsInit(){
 	mouse_y = 0;
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
-	keyEvents['m_b'] = 0;
+	keyEvents[K_MOUSE] = 0;
 	canvas.oncontextmenu = function(){
 		return false;
 	};

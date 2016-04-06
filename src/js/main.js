@@ -32,7 +32,7 @@ var scr_width,
 
 	socket,
 	net_clKey,
-	net_evBuf, //To do
+	net_buf, //To do
 	net_inPackets,
 	net_outPacket,
 	net_lastPacketSentTime,
@@ -204,7 +204,7 @@ function controlEventsInit(){
 	mouse_y = 0;
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
-	keyEvents['m_b'] = 0;
+	keyEvents[K_MOUSE] = 0;
 	canvas.oncontextmenu = function(){
 		return false;
 	};

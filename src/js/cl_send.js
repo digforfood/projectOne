@@ -5,24 +5,30 @@ CL_createPacket
 */
 function CL_createPacket(ent){
 	var msg = {t: 0, b: {}},
-		bufLen = net_evBuf.length;
+		evBufLen = net_buf.ev.length;
 
 	if(ent != undefined){
-		msg.t = 0;
+		msg.t = MSG_CL_LOGIN;
 		msg.b = ent;
 	}
 	else if(net_clKey != null){
-		msg.t = 1;
+		msg.t = MSG_CL_DATA;
 		msg.b['k'] = net_clKey;
 
-		if(bufLen > 0){
+		if(evBufLen > 0){
 			msg.b['e'] = [];
 
-			for(var i=0; i<bufLen; i++){
-				msg.b['e'].push(net_evBuf[i]);
+			for(var i=0; i<evBufLen; i++){
+				msg.b['e'].push(net_buf.ev[i]);
 			}
-			// To do create packet
-		}		
+
+			net_buf.ev = [];
+		}
+
+		if(net_buf.mouse.length>0){
+			msg.b['m'] = net_buf.mouse;
+			net_buf.mouse = '';
+		}
 	}
 	else
 		return;
