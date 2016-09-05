@@ -69,7 +69,13 @@ function SCR_drawLoadScreen(){
 	if(SYS_checkResources() != 100)
 		return;
 
-	sys_state.pushStateG(G_STATE_RUN);
+	if (sys_state.game == G_STATE_INTRO_LOADING) {
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		// NET_connect();
+	}
+	else {
+		sys_state.pushStateG(G_STATE_RUN);
+	}
 	////////////////////TO DO////////////////////
 }
 
@@ -153,5 +159,6 @@ SCR_drawСursor
 function SCR_drawСursor(){
 	// To do draw cursor
 	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillRect(mouse_x, mouse_y, 10, 10);
+	// ctx.fillRect(mouse_x, mouse_y, 10, 10);
+	void ctx.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }

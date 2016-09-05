@@ -17,6 +17,14 @@ function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_inPackets = [];
 	net_buf = {ev: [], mouse: ''};
+}
+
+/*
+===========================================
+NET_connect
+===========================================
+*/
+function NET_connect(){
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
 
 	socket.onopen = function(){
@@ -42,9 +50,4 @@ function NET_init(){
 
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
-
-
-	////////////////////TO DO NET////////////////////
-	//sys_state.pushStateG(G_STATE_CONNECTING);
-	////////////////////TO DO NET////////////////////
 }

@@ -115,11 +115,11 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(sys_state.game <= G_STATE_CONNECTING){
-		SCR_drawLockScreen();
-	}
-	else if(sys_state.game == G_STATE_LOADING){
+	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
 		SCR_drawLoadScreen();
+	}
+	else if(sys_state.game <= G_STATE_CONNECTING){
+		SCR_drawLockScreen();
 	}
 	else if(sys_state.game == G_STATE_RUN){
 		// To do
@@ -252,11 +252,13 @@ function main(){
 	fps = 100;
 	ui_stack = [];
 	ui_langSet = LANG_EN;
-	sys_state = new SYS_State(G_STATE_DISCONNECTED, M_STATE_NONE);
+	sys_state = new SYS_State(G_STATE_INTRO_LOADING, M_STATE_NONE);
 	m_active = ui_s_lock;
 	canvasInit();
 
 	NET_init();
+
+	CL_loadThreads();
 
 	fps_count = 0;
 	lastfps = 0;

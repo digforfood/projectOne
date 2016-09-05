@@ -1,9 +1,10 @@
 'use strict'
-var	G_STATE_DISCONNECTED = 0,
-	G_STATE_CONNECTING = 1,
-	G_STATE_CONNECTED = 2,
-	G_STATE_RUN = 3,
-	G_STATE_LOADING = 4,
+var	G_STATE_INTRO_LOADING = 0,
+	G_STATE_DISCONNECTED = 1,
+	G_STATE_CONNECTING = 2,
+	G_STATE_CONNECTED = 3,
+	G_STATE_RUN = 4,
+	G_STATE_LOADING = 5,
 
 	MSG_SERVERCOMMAND = 1,
 	MSG_GAMESTATE = 2,
@@ -125,7 +126,7 @@ var scr_width,
 
 	socket,
 	net_clKey,
-	net_evBuf, //To do
+	net_buf, //To do
 	net_inPackets,
 	net_outPacket,
 	net_lastPacketSentTime,
@@ -144,16 +145,24 @@ CL_loadThreads
 ===========================================
 */
 function CL_loadThreads(){
-	cgs = {};
+	if (sys_state.game == G_STATE_INTRO_LOADING) {
+		cgs = {};
 
-	// To do start load thread audio
-	cgs.audio = {};
-	cgs.audio.test = new Audio('https://s21f.storage.yandex.net/get-mp3/3ab75658db4feb0f48fe9b143e6d02a9/00052914c11ad807/music/13/4/data-0.3:52466573623:7835062?track-id=168524&play=true&');
+		// To do start load thread audio
+		cgs.audio = {};
+		cgs.audio.menu = new Audio('https://cs1-50v4.vk-cdn.net/p18/85e3f0113e9ac8.mp3');
 
-	// To do start load thread sprites
-	cgs.sprites = {};
-	cgs.sprites.test = new Image();
-	cgs.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
+		// To do start load thread sprites
+		cgs.sprites = {};
+		cgs.sprites.cursor = new Image();
+		cgs.sprites.cursor.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
+	}
+	else {
+		cgs.audio.test = new Audio('https://psv4.vk.me/c4423/u14378279/audios/36982d737b30.mp3');
+
+		cgs.sprites.test = new Image();
+		cgs.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
+	}
 }
 /*
 ===========================================
@@ -231,7 +240,7 @@ CL_createPacket
 */
 function CL_createPacket(ent){
 	var msg = {t: 0, b: {}},
-		bufLen = net_evBuf.length;
+		evBufLen = net_buf.ev.length;
 
 	if(ent != undefined){
 		msg.t = MSG_CL_LOGIN;
@@ -241,14 +250,20 @@ function CL_createPacket(ent){
 		msg.t = MSG_CL_DATA;
 		msg.b['k'] = net_clKey;
 
-		if(bufLen > 0){
+		if(evBufLen > 0){
 			msg.b['e'] = [];
 
-			for(var i=0; i<bufLen; i++){
-				msg.b['e'].push(net_evBuf[i]);
+			for(var i=0; i<evBufLen; i++){
+				msg.b['e'].push(net_buf.ev[i]);
 			}
-			// To do create packet
-		}		
+
+			net_buf.ev = [];
+		}
+
+		if(net_buf.mouse.length>0){
+			msg.b['m'] = net_buf.mouse;
+			net_buf.mouse = '';
+		}
 	}
 	else
 		return;
@@ -292,21 +307,22 @@ NET_init
 */
 function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
-	net_logInMsg = {};
 	net_inPackets = [];
-	net_evBuf = [];
+	net_buf = {ev: [], mouse: ''};
+}
+
+/*
+===========================================
+NET_connect
+===========================================
+*/
+function NET_connect(){
 	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
 
 	socket.onopen = function(){
 		console.log('onopen');
 
-		if(net_clKey != null){
-			net_logInMsg['k'] = net_clKey;
-
-			CL_createPacket();
-		} else {
-			sys_state.pushStateG(G_STATE_CONNECTING);
-		}
+		sys_state.pushStateG(G_STATE_CONNECTING);
 	};
 
 	socket.onclose = function(ent){
@@ -326,11 +342,6 @@ function NET_init(){
 
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
-
-
-	////////////////////TO DO NET////////////////////
-	//sys_state.pushStateG(G_STATE_CONNECTING);
-	////////////////////TO DO NET////////////////////
 }
 /*
 ===========================================
@@ -403,7 +414,13 @@ function SCR_drawLoadScreen(){
 	if(SYS_checkResources() != 100)
 		return;
 
-	sys_state.pushStateG(G_STATE_RUN);
+	if (sys_state.game == G_STATE_INTRO_LOADING) {
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		// NET_connect();
+	}
+	else {
+		sys_state.pushStateG(G_STATE_RUN);
+	}
 	////////////////////TO DO////////////////////
 }
 
@@ -487,7 +504,8 @@ SCR_drawСursor
 function SCR_drawСursor(){
 	// To do draw cursor
 	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillRect(mouse_x, mouse_y, 10, 10);
+	// ctx.fillRect(mouse_x, mouse_y, 10, 10);
+	void ctx.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }
 /*
 ===========================================
@@ -882,11 +900,11 @@ SCR_updateScreen
 function SCR_updateScreen(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	if(sys_state.game <= G_STATE_CONNECTING){
-		SCR_drawLockScreen();
-	}
-	else if(sys_state.game == G_STATE_LOADING){
+	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
 		SCR_drawLoadScreen();
+	}
+	else if(sys_state.game <= G_STATE_CONNECTING){
+		SCR_drawLockScreen();
 	}
 	else if(sys_state.game == G_STATE_RUN){
 		// To do
@@ -1019,11 +1037,13 @@ function main(){
 	fps = 100;
 	ui_stack = [];
 	ui_langSet = LANG_EN;
-	sys_state = new SYS_State(G_STATE_DISCONNECTED, M_STATE_NONE);
+	sys_state = new SYS_State(G_STATE_INTRO_LOADING, M_STATE_NONE);
 	m_active = ui_s_lock;
 	canvasInit();
 
 	NET_init();
+
+	CL_loadThreads();
 
 	fps_count = 0;
 	lastfps = 0;
