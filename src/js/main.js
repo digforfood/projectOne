@@ -39,7 +39,7 @@ var scr_width,
 
 	fps,
 	canvas,
-	ctx,
+	gl,
 	correntTime,
 	deltaMilliseconds,
 	prevFrameTime,
@@ -113,7 +113,6 @@ SCR_updateScreen
 ===========================================
 */
 function SCR_updateScreen(){
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
 		SCR_drawLoadScreen();

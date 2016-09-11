@@ -5,12 +5,12 @@ SCR_drawField_input
 */
 function SCR_drawField_input(elem){
 	if (m_position && m_position.id == elem.id) {
-		ctx.fillStyle = 'rgb(252, 122, 19)';
-		ctx.fillRect(elem.x, elem.y, 150, 15);
+		gl.fillStyle = 'rgb(252, 122, 19)';
+		gl.fillRect(elem.x, elem.y, 150, 15);
 	}
 
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillText( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+12);
+	gl.fillStyle = 'rgb(0, 0, 0)';
+	gl.fillText( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+12);
 }
 
 
@@ -21,15 +21,15 @@ SCR_drawField_button
 */
 function SCR_drawField_button(elem){
 	if(sys_state.game == G_STATE_DISCONNECTED){
-		ctx.fillStyle = 'rgb(106, 121, 137)';
+		gl.fillStyle = 'rgb(106, 121, 137)';
 	}
 	else{
-		ctx.fillStyle = 'rgb(252, 2, 2)';
+		gl.fillStyle = 'rgb(252, 2, 2)';
 	}
-	ctx.fillRect(elem.x, elem.y, 150, 15);
+	gl.fillRect(elem.x, elem.y, 150, 15);
 
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillText(elem.string, elem.x+5, elem.y+12);
+	gl.fillStyle = 'rgb(0, 0, 0)';
+	gl.fillText(elem.string, elem.x+5, elem.y+12);
 }
 
 
@@ -39,8 +39,8 @@ SCR_drawLockScreen
 ===========================================
 */
 function SCR_drawLockScreen(){
-	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
-	ctx.fillRect (0, 0, scr_width, scr_height); //
+	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
+	// gl.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
@@ -59,11 +59,11 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
-	ctx.fillRect (0, 0, scr_width, scr_height); //
+	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
+	// gl.fillRect (0, 0, scr_width, scr_height); //
 
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillText( 'Loading', 10, 20);
+	gl.fillStyle = 'rgb(0, 0, 0)';
+	gl.fillText( 'Loading', 10, 20);
 
 	////////////////////TO DO////////////////////
 	if(SYS_checkResources() != 100)
@@ -86,17 +86,17 @@ SCR_drawMenu_main
 ===========================================
 */
 function SCR_drawMenu_main(){
-	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
-	ctx.fillRect (0, 0, scr_width, scr_height); //
+	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
+	// gl.fillRect (0, 0, scr_width, scr_height); //
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if (m_position && m_position.id == m_active.items[i].id) {
-			ctx.fillStyle = 'rgb(252, 122, 19)';
-			ctx.fillRect(m_active.items[i].x, m_active.items[i].y, 150, 15);
+			gl.fillStyle = 'rgb(252, 122, 19)';
+			gl.fillRect(m_active.items[i].x, m_active.items[i].y, 150, 15);
 		}
 
-		ctx.fillStyle = 'rgb(0, 0, 0)';
-		ctx.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
+		gl.fillStyle = 'rgb(0, 0, 0)';
+		gl.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
 	}
 }
 
@@ -106,8 +106,8 @@ SCR_drawMenu_options
 ===========================================
 */
 function SCR_drawMenu_options(){
-	ctx.fillStyle = 'rgb(136, 197, 198)';		// background
-	ctx.fillRect (0, 0, scr_width, scr_height); //
+	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
+	// gl.fillRect (0, 0, scr_width, scr_height); //
 }
 
 
@@ -141,12 +141,12 @@ function SCR_drawFPS(){
 		fps_count = 0;
 		lastfpstime = thisfpstime;
 	}
-	ctx.font = '12px serif';
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	ctx.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
-	ctx.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
-	ctx.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	ctx.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	gl.font = '12px serif';
+	gl.fillStyle = 'rgb(0, 0, 0)';
+	gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
+	gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
+	gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
+	gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
 	fps_count++;
 }
 
@@ -158,7 +158,7 @@ SCR_drawСursor
 */
 function SCR_drawСursor(){
 	// To do draw cursor
-	ctx.fillStyle = 'rgb(0, 0, 0)';
-	// ctx.fillRect(mouse_x, mouse_y, 10, 10);
-	void ctx.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
+	gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillRect(mouse_x, mouse_y, 10, 10);
+	gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }
