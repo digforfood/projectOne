@@ -113,6 +113,7 @@ SCR_updateScreen
 ===========================================
 */
 function SCR_updateScreen(){
+	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
 		SCR_drawLoadScreen();
@@ -186,7 +187,8 @@ function canvasInit(){
 	scr_height = parseInt(localStorage['scr_height']) || D_SCREEN_HEIGHT;
 	canvas.width = scr_width;
 	canvas.height = scr_height;
-	ctx = canvas.getContext('2d');
+	gl = canvas.getContext('webgl');
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 }
 
 
