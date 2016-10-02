@@ -42,6 +42,8 @@ function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 
+	//draw string bind cgs.shaders.chars & cgs.textures.chars
+
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
 			SCR_drawField_input(m_active.items[i]);

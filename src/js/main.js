@@ -48,6 +48,7 @@ var scr_width,
 //= cl_load.js
 //= cl_parse.js
 //= cl_send.js
+//= cl_shaders.js
 //= net_main.js
 //= scr_main.js
 //= sys_main.js
