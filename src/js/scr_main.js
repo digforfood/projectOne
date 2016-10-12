@@ -61,11 +61,33 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
+	// INIT shaders
+	var vertexShader = SYS_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
+		fragmentShader = SYS_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText( 'Loading', 10, 20);
+	var shaderProgram = gl.createProgram();
+	gl.attachShader(shaderProgram, vertexShader);
+	gl.attachShader(shaderProgram, fragmentShader);
+	gl.linkProgram(shaderProgram);
+
+	gl.useProgram(shaderProgram);
+
+
+	// INIT Buffers
+	var vertices = new Float32Array([1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0]),
+		vertexBuffer = gl.createBuffer();
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+	var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(a_Position);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillText( 'Loading', 10, 20);
 
 	////////////////////TO DO////////////////////
 	if(SYS_checkResources() != 100)
@@ -137,19 +159,19 @@ SCR_drawFPS
 ===========================================
 */
 function SCR_drawFPS(){
-	thisfpstime = new Date();
-	if ((thisfpstime - lastfpstime) >= 1000) {
-		lastfps = fps_count;
-		fps_count = 0;
-		lastfpstime = thisfpstime;
-	}
-	gl.font = '12px serif';
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
-	gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
-	gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
-	fps_count++;
+	// thisfpstime = new Date();
+	// if ((thisfpstime - lastfpstime) >= 1000) {
+	// 	lastfps = fps_count;
+	// 	fps_count = 0;
+	// 	lastfpstime = thisfpstime;
+	// }
+	// gl.font = '12px serif';
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
+	// gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
+	// gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
+	// gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	// fps_count++;
 }
 
 
@@ -160,7 +182,7 @@ SCR_drawСursor
 */
 function SCR_drawСursor(){
 	// To do draw cursor
-	gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillRect(mouse_x, mouse_y, 10, 10);
-	gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
+	// gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }

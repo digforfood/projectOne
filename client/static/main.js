@@ -146,8 +146,6 @@ CL_loadThreads
 */
 function CL_loadThreads(){
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
-		cgs = {};
-
 		// To do start load thread audio
 		cgs.audio = {};
 		cgs.audio.menu = new Audio('https://cs1-50v4.vk-cdn.net/p18/85e3f0113e9ac8.mp3');
@@ -156,6 +154,11 @@ function CL_loadThreads(){
 		cgs.sprites = {};
 		cgs.sprites.cursor = new Image();
 		cgs.sprites.cursor.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
+
+		// To do start load thread textures
+		cgs.textures = {};
+		cgs.textures.chars = new Image();
+		cgs.textures.chars.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
 	}
 	else {
 		cgs.audio.test = new Audio('https://psv4.vk.me/c4423/u14378279/audios/36982d737b30.mp3');
@@ -290,6 +293,19 @@ function CL_sendCmd(){
 
 	CL_createPacket();
 }
+cgs = {};
+cgs.shaders = {};
+
+cgs.shaders.v_chars =
+	'attribute vec4 a_Position;\n' +
+	'void main() {\n' +
+	'	gl_Position = a_Position;\n' +
+	'}\n';
+
+cgs.shaders.f_chars = 
+	'void main() {\n' +
+	'	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+	'}\n';
 /*
 ===========================================
 NET_sendPacket
@@ -387,6 +403,8 @@ function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 
+	//draw string bind cgs.shaders.chars & cgs.textures.chars
+
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
 			SCR_drawField_input(m_active.items[i]);
@@ -404,11 +422,33 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
+	// INIT shaders
+	var vertexShader = SYS_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
+		fragmentShader = SYS_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText( 'Loading', 10, 20);
+	var shaderProgram = gl.createProgram();
+	gl.attachShader(shaderProgram, vertexShader);
+	gl.attachShader(shaderProgram, fragmentShader);
+	gl.linkProgram(shaderProgram);
+
+	gl.useProgram(shaderProgram);
+
+
+	// INIT Buffers
+	var vertices = new Float32Array([1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0]),
+		vertexBuffer = gl.createBuffer();
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+	var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(a_Position);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillText( 'Loading', 10, 20);
 
 	////////////////////TO DO////////////////////
 	if(SYS_checkResources() != 100)
@@ -480,19 +520,19 @@ SCR_drawFPS
 ===========================================
 */
 function SCR_drawFPS(){
-	thisfpstime = new Date();
-	if ((thisfpstime - lastfpstime) >= 1000) {
-		lastfps = fps_count;
-		fps_count = 0;
-		lastfpstime = thisfpstime;
-	}
-	gl.font = '12px serif';
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
-	gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
-	gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
-	fps_count++;
+	// thisfpstime = new Date();
+	// if ((thisfpstime - lastfpstime) >= 1000) {
+	// 	lastfps = fps_count;
+	// 	fps_count = 0;
+	// 	lastfpstime = thisfpstime;
+	// }
+	// gl.font = '12px serif';
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
+	// gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
+	// gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
+	// gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	// fps_count++;
 }
 
 
@@ -503,9 +543,9 @@ SCR_drawСursor
 */
 function SCR_drawСursor(){
 	// To do draw cursor
-	gl.fillStyle = 'rgb(0, 0, 0)';
+	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillRect(mouse_x, mouse_y, 10, 10);
-	gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
+	// gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }
 /*
 ===========================================
@@ -526,6 +566,26 @@ function SYS_checkResources(){
 	}
 
 	return Math.floor(objComplete/obj*100);
+}
+
+
+/*
+===========================================
+SYS_getShader
+===========================================
+*/
+function SYS_getShader(type, source){
+	var shader = gl.createShader(type);
+	
+	gl.shaderSource(shader, source);
+	gl.compileShader(shader);
+
+	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {  
+		alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));  
+		return null;
+	}
+
+	return shader;
 }
 /*
 ===========================================

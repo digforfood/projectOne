@@ -18,3 +18,23 @@ function SYS_checkResources(){
 
 	return Math.floor(objComplete/obj*100);
 }
+
+
+/*
+===========================================
+SYS_getShader
+===========================================
+*/
+function SYS_getShader(type, source){
+	var shader = gl.createShader(type);
+	
+	gl.shaderSource(shader, source);
+	gl.compileShader(shader);
+
+	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {  
+		alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));  
+		return null;
+	}
+
+	return shader;
+}

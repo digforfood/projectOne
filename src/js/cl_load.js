@@ -15,6 +15,7 @@ function CL_loadThreads(){
 		cgs.sprites.cursor.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
 
 		// To do start load thread textures
+		cgs.textures = {};
 		cgs.textures.chars = new Image();
 		cgs.textures.chars.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
 	}
