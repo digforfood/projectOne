@@ -62,8 +62,8 @@ SCR_drawLoadScreen
 */
 function SCR_drawLoadScreen(){
 	// INIT shaders
-	var vertexShader = SYS_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
-		fragmentShader = SYS_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
+	var vertexShader = CG_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
+		fragmentShader = CG_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
 
 	var shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
@@ -80,7 +80,7 @@ function SCR_drawLoadScreen(){
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-	var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+	var a_Position = gl.getAttribLocation(shaderProgram, 'a_Position');
 	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 	gl.enableVertexAttribArray(a_Position);
 

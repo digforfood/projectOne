@@ -141,6 +141,54 @@ var scr_width,
 
 /*
 ===========================================
+CG_getShader
+===========================================
+*/
+function CG_getShader(type, source){
+	var shader = gl.createShader(type);
+	
+	gl.shaderSource(shader, source);
+	gl.compileShader(shader);
+
+	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {  
+		alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));  
+		return null;
+	}
+
+	return shader;
+}
+
+
+/*
+===========================================
+CG_setProgram
+===========================================
+*/
+function CG_setProgram(id){
+	//
+}
+
+
+/*
+===========================================
+CG_createProgram
+===========================================
+*/
+function CG_createProgram(){
+	//
+}
+
+
+/*
+===========================================
+CG_init
+===========================================
+*/
+function CG_init(){
+	//
+}
+/*
+===========================================
 CL_loadThreads
 ===========================================
 */
@@ -423,8 +471,8 @@ SCR_drawLoadScreen
 */
 function SCR_drawLoadScreen(){
 	// INIT shaders
-	var vertexShader = SYS_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
-		fragmentShader = SYS_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
+	var vertexShader = CG_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
+		fragmentShader = CG_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
 
 	var shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
@@ -441,7 +489,7 @@ function SCR_drawLoadScreen(){
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-	var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+	var a_Position = gl.getAttribLocation(shaderProgram, 'a_Position');
 	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
 	gl.enableVertexAttribArray(a_Position);
 
@@ -566,26 +614,6 @@ function SYS_checkResources(){
 	}
 
 	return Math.floor(objComplete/obj*100);
-}
-
-
-/*
-===========================================
-SYS_getShader
-===========================================
-*/
-function SYS_getShader(type, source){
-	var shader = gl.createShader(type);
-	
-	gl.shaderSource(shader, source);
-	gl.compileShader(shader);
-
-	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {  
-		alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));  
-		return null;
-	}
-
-	return shader;
 }
 /*
 ===========================================
