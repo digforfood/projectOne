@@ -61,28 +61,10 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	// INIT shaders
-	var vertexShader = CG_getShader(gl.VERTEX_SHADER, cgs.shaders.v_chars),
-		fragmentShader = CG_getShader(gl.FRAGMENT_SHADER, cgs.shaders.f_chars);
+	var program = CG_setProgram(0);
 
-	var shaderProgram = gl.createProgram();
-	gl.attachShader(shaderProgram, vertexShader);
-	gl.attachShader(shaderProgram, fragmentShader);
-	gl.linkProgram(shaderProgram);
-
-	gl.useProgram(shaderProgram);
-
-
-	// INIT Buffers
-	var vertices = new Float32Array([1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0]),
-		vertexBuffer = gl.createBuffer();
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-	var a_Position = gl.getAttribLocation(shaderProgram, 'a_Position');
-	gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
-	gl.enableVertexAttribArray(a_Position);
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

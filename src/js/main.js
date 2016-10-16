@@ -27,6 +27,9 @@ var scr_width,
 	m_position,
 	m_buttonDownItem,
 
+	cg_glPrograms,
+	cg_glCurrentProgram,
+
 	sys_state,
 	cgs,
 
@@ -258,6 +261,8 @@ function main(){
 	sys_state = new SYS_State(G_STATE_INTRO_LOADING, M_STATE_NONE);
 	m_active = ui_s_lock;
 	canvasInit();
+
+	CG_init();
 
 	NET_init();
 

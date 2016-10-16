@@ -2,9 +2,9 @@ cgs = {};
 cgs.shaders = {};
 
 cgs.shaders.v_chars =
-	'attribute vec4 a_Position;\n' +
+	'attribute vec4 aPosition;\n' +
 	'void main() {\n' +
-	'	gl_Position = a_Position;\n' +
+	'	gl_Position = aPosition;\n' +
 	'}\n';
 
 cgs.shaders.f_chars = 
