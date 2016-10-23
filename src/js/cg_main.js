@@ -59,7 +59,7 @@ function CG_setProgram(id){
 CG_createProgram
 ===========================================
 */
-function CG_createProgram(id, v_shader, f_shader, attr){
+function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 	var i = 0,
 		obj_program = {},
 		vertexShader = {},
@@ -83,6 +83,10 @@ function CG_createProgram(id, v_shader, f_shader, attr){
 	gl.linkProgram(obj_program.gl_p);
 	gl.useProgram(obj_program.gl_p);
 
+	for (i = 0; i < uniforms.length; i++){
+		obj_program[uniforms[i]] = gl.getUniformLocation(obj_program.gl_p, uniforms[i]);
+	}
+
 	for (i = 0; i < attr.length; i++) {
 		obj_program.attr[obj_program.attr.length] = attr[i];
 		obj_program[attr[i]] = gl.getAttribLocation(obj_program.gl_p, attr[i]);
@@ -101,5 +105,5 @@ function CG_init(){
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
 
-	CG_createProgram(0, cgs.shaders.v_chars, cgs.shaders.f_chars, ['aPosition']);
+	CG_createProgram(0, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
 }
