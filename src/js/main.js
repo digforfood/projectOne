@@ -29,6 +29,7 @@ var scr_width,
 
 	cg_glPrograms,
 	cg_glCurrentProgram,
+	cg_glOrtho,
 
 	sys_state,
 	cgs,

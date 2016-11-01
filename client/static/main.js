@@ -123,6 +123,7 @@ var scr_width,
 
 	cg_glPrograms,
 	cg_glCurrentProgram,
+	cg_glOrtho,
 
 	sys_state,
 	cgs,
@@ -141,6 +142,44 @@ var scr_width,
 	deltaMilliseconds,
 	prevFrameTime,
 	thisFrameTime;
+
+/*
+===========================================
+CG_getOrtho2D
+===========================================
+*/
+function CG_getOrtho2D(left,right,bottom,top){
+	var near = -1,
+		far = 1,
+		rl = right-left,
+		tb = top-bottom,
+		fn = far-near;
+
+	return [2/rl,				0,					0,				0,
+			0,					2/tb,				0,				0,
+			0,					0,					-2/fn,			0,
+			-(right+left)/rl,	-(top+bottom)/tb,	-(far+near)/fn,	1];
+}
+
+
+/*
+===========================================
+CG_setOrtho2D
+===========================================
+*/
+function CG_setOrtho2D(){
+	for (var i = 0; i < cg_glPrograms.length; i++) {
+		var program = cg_glPrograms[i];
+
+		if (program.uOrtho == null){
+			continue;
+		}
+
+		gl.useProgram(program.gl_p);
+		gl.uniformMatrix4fv(program.uOrtho, false, cg_glOrtho);
+	}
+}
+
 
 /*
 ===========================================
@@ -227,7 +266,7 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 	gl.linkProgram(obj_program.gl_p);
 	gl.useProgram(obj_program.gl_p);
 
-	for (i = 0; i < uniforms.length; i++){
+	for (i = 0; i < uniforms.length; i++) {
 		obj_program[uniforms[i]] = gl.getUniformLocation(obj_program.gl_p, uniforms[i]);
 	}
 
@@ -248,8 +287,11 @@ CG_init
 function CG_init(){
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
+	cg_glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0);
 
 	CG_createProgram(0, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
+
+	CG_setOrtho2D();
 }
 /*
 ===========================================
@@ -411,11 +453,9 @@ cgs.shaders = {};
 cgs.shaders.v_chars =
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
-	// 'attribute vec2 aPosition;\n' +
-	'attribute vec4 aPosition;\n' +
+	'attribute vec2 aPosition;\n' +
 	'void main(){\n' +
-	// '	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
-	'	gl_Position = aPosition;\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
 	'}\n';
 
 cgs.shaders.f_chars = 
@@ -538,21 +578,12 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	var program = CG_setProgram(0),
-		ortho = [
-			0.0, 0.0, 0.0, 0.0,
-			0.0, 0.0, 0.0, 0.0,
-			0.0, 0.0, 0.00001, 0.0,
-			-1.0, 1.0, 0.0, 1.0
-		];
-
-	gl.uniformMatrix4fv(program.uOrtho, false, ortho);
-
+	var program = CG_setProgram(0);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-	gl.uniform2f(program.uDest, 10, 10);
+	gl.uniform2f(program.uDest, 630, 470);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';

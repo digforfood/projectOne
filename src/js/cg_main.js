@@ -1,5 +1,43 @@
 /*
 ===========================================
+CG_getOrtho2D
+===========================================
+*/
+function CG_getOrtho2D(left,right,bottom,top){
+	var near = -1,
+		far = 1,
+		rl = right-left,
+		tb = top-bottom,
+		fn = far-near;
+
+	return [2/rl,				0,					0,				0,
+			0,					2/tb,				0,				0,
+			0,					0,					-2/fn,			0,
+			-(right+left)/rl,	-(top+bottom)/tb,	-(far+near)/fn,	1];
+}
+
+
+/*
+===========================================
+CG_setOrtho2D
+===========================================
+*/
+function CG_setOrtho2D(){
+	for (var i = 0; i < cg_glPrograms.length; i++) {
+		var program = cg_glPrograms[i];
+
+		if (program.uOrtho == null){
+			continue;
+		}
+
+		gl.useProgram(program.gl_p);
+		gl.uniformMatrix4fv(program.uOrtho, false, cg_glOrtho);
+	}
+}
+
+
+/*
+===========================================
 CG_getShader
 ===========================================
 */
@@ -83,7 +121,7 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 	gl.linkProgram(obj_program.gl_p);
 	gl.useProgram(obj_program.gl_p);
 
-	for (i = 0; i < uniforms.length; i++){
+	for (i = 0; i < uniforms.length; i++) {
 		obj_program[uniforms[i]] = gl.getUniformLocation(obj_program.gl_p, uniforms[i]);
 	}
 
@@ -104,6 +142,9 @@ CG_init
 function CG_init(){
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
+	cg_glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0);
 
 	CG_createProgram(0, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
+
+	CG_setOrtho2D();
 }

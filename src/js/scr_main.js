@@ -61,21 +61,12 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	var program = CG_setProgram(0),
-		ortho = [
-			0.0, 0.0, 0.0, 0.0,
-			0.0, 0.0, 0.0, 0.0,
-			0.0, 0.0, 0.00001, 0.0,
-			-1.0, 1.0, 0.0, 1.0
-		];
-
-	gl.uniformMatrix4fv(program.uOrtho, false, ortho);
-
+	var program = CG_setProgram(0);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-	gl.uniform2f(program.uDest, 10, 10);
+	gl.uniform2f(program.uDest, 630, 470);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';
