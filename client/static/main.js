@@ -123,7 +123,6 @@ var scr_width,
 
 	cg_glPrograms,
 	cg_glCurrentProgram,
-	cg_glOrtho,
 
 	sys_state,
 	cgs,
@@ -168,15 +167,18 @@ CG_setOrtho2D
 ===========================================
 */
 function CG_setOrtho2D(){
+	var glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0),
+		program = [];
+
 	for (var i = 0; i < cg_glPrograms.length; i++) {
-		var program = cg_glPrograms[i];
+		program = cg_glPrograms[i];
 
 		if (program.uOrtho == null){
 			continue;
 		}
 
 		gl.useProgram(program.gl_p);
-		gl.uniformMatrix4fv(program.uOrtho, false, cg_glOrtho);
+		gl.uniformMatrix4fv(program.uOrtho, false, glOrtho);
 	}
 }
 
@@ -287,7 +289,6 @@ CG_init
 function CG_init(){
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
-	cg_glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0);
 
 	CG_createProgram(0, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
 
