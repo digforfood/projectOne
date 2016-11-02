@@ -61,7 +61,7 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	var program = CG_setProgram(0);
+	var program = CG_setProgram(CG_GL_P_CHAR);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
