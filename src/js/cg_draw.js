@@ -1,0 +1,49 @@
+/*
+===========================================
+CG_drawRect
+===========================================
+*/
+function CG_drawRect(x, y, width, height) {
+	var program = CG_setProgram(CG_GL_P_RECT);
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+	gl.uniform4f(program.uDest, x, y, width, height);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+/*
+===========================================
+CG_drawChar
+===========================================
+*/
+function CG_drawChar(char, x, y) {
+	var program = CG_setProgram(CG_GL_P_CHAR);
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+	// gl.uniform2f(program.uCharacter, char, char);
+	gl.uniform2f(program.uDest, x, y);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+/*
+===========================================
+CG_drawString
+===========================================
+*/
+function CG_drawString(str, x, y) {
+	var i = 0,
+		char = 0;
+
+	for (i = 0; i < str.length; i++) {
+		char = str.charCodeAt(i);
+		CG_drawChar(char, x, y);
+
+		x += 8;
+	}
+}

@@ -48,6 +48,7 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+//= cg_draw.js
 //= cg_main.js
 //= cl_load.js
 //= cl_parse.js

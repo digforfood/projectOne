@@ -18,7 +18,8 @@ var	G_STATE_INTRO_LOADING = 0,
 	M_STATE_OPTIONS = 2,
 
 	CG_GL_P_CHAR = 0,
-	CG_GL_P_PIC = 1,
+	CG_GL_P_RECT = 1,
+	CG_GL_P_PIC = 2,
 
 	D_SCREEN_WIDTH = 640,
 	D_SCREEN_HEIGHT = 480,
@@ -145,6 +146,55 @@ var scr_width,
 	prevFrameTime,
 	thisFrameTime;
 
+/*
+===========================================
+CG_drawRect
+===========================================
+*/
+function CG_drawRect(x, y, width, height) {
+	var program = CG_setProgram(CG_GL_P_RECT);
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+	gl.uniform4f(program.uDest, x, y, width, height);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+/*
+===========================================
+CG_drawChar
+===========================================
+*/
+function CG_drawChar(char, x, y) {
+	var program = CG_setProgram(CG_GL_P_CHAR);
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+	// gl.uniform2f(program.uCharacter, char, char);
+	gl.uniform2f(program.uDest, x, y);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+/*
+===========================================
+CG_drawString
+===========================================
+*/
+function CG_drawString(str, x, y) {
+	var i = 0,
+		char = 0;
+
+	for (i = 0; i < str.length; i++) {
+		char = str.charCodeAt(i);
+		CG_drawChar(char, x, y);
+
+		x += 8;
+	}
+}
 /*
 ===========================================
 CG_getOrtho2D
@@ -294,6 +344,7 @@ function CG_init(){
 	cg_glCurrentProgram = null;
 
 	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
+	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition']);
 	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition']);
 
 	CG_setOrtho2D();
@@ -455,6 +506,19 @@ function CL_sendCmd(){
 cgs = {};
 cgs.shaders = {};
 
+cgs.shaders.v_rect =
+	'uniform vec4 uDest;\n' +
+	'uniform mat4 uOrtho;\n' +
+	'attribute vec2 aPosition;\n' +
+	'void main(){\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
+	'}\n';
+
+cgs.shaders.f_rect = 
+	'void main() {\n' +
+	'	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+	'}\n';
+
 cgs.shaders.v_chars =
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
@@ -596,13 +660,8 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	var program = CG_setProgram(CG_GL_P_CHAR);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
-	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
-
-	gl.uniform2f(program.uDest, 630, 470);
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	CG_drawString('kjaskjdhgfkasld asjhk', 25, 100);
+	CG_drawRect(25, 110, 500, 100);
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillText( 'Loading', 10, 20);

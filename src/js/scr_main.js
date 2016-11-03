@@ -61,13 +61,8 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	var program = CG_setProgram(CG_GL_P_CHAR);
-
-	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
-	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
-
-	gl.uniform2f(program.uDest, 630, 470);
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	CG_drawString('kjaskjdhgfkasld asjhk', 25, 100);
+	CG_drawRect(25, 110, 500, 100);
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillText( 'Loading', 10, 20);

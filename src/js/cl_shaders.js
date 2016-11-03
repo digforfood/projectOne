@@ -1,6 +1,19 @@
 cgs = {};
 cgs.shaders = {};
 
+cgs.shaders.v_rect =
+	'uniform vec4 uDest;\n' +
+	'uniform mat4 uOrtho;\n' +
+	'attribute vec2 aPosition;\n' +
+	'void main(){\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
+	'}\n';
+
+cgs.shaders.f_rect = 
+	'void main() {\n' +
+	'	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+	'}\n';
+
 cgs.shaders.v_chars =
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
