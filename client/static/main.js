@@ -127,6 +127,9 @@ var scr_width,
 
 	cg_glPrograms,
 	cg_glCurrentProgram,
+	cg_glTextures,
+	cg_glCurrentTextures,
+	cg_glActiveTexture,
 
 	sys_state,
 	cgs,
@@ -164,15 +167,37 @@ function CG_drawRect(x, y, width, height) {
 
 /*
 ===========================================
+CG_drawPic
+===========================================
+*/
+function CG_drawPic(img, x, y, width, height) {
+	var program = CG_setProgram(CG_GL_P_PIC);
+
+	CG_bindTextures(program, img);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
+	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
+
+	gl.uniform4f(program.uDest, x, y, width, height);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+
+/*
+===========================================
 CG_drawChar
 ===========================================
 */
 function CG_drawChar(char, x, y) {
 	var program = CG_setProgram(CG_GL_P_CHAR);
+
+	CG_bindTextures(program, cg_glTextures['char']);
+
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-	// gl.uniform2f(program.uCharacter, char, char);
+	gl.uniform2f(program.uCharacter, char & 15, (char >> 4)-2); ////////////// TO DO
 	gl.uniform2f(program.uDest, x, y);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -200,7 +225,7 @@ function CG_drawString(str, x, y) {
 CG_getOrtho2D
 ===========================================
 */
-function CG_getOrtho2D(left,right,bottom,top){
+function CG_getOrtho2D(left,right,bottom,top) {
 	var near = -1,
 		far = 1,
 		rl = right-left,
@@ -219,7 +244,7 @@ function CG_getOrtho2D(left,right,bottom,top){
 CG_setOrtho2D
 ===========================================
 */
-function CG_setOrtho2D(){
+function CG_setOrtho2D() {
 	var glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0),
 		program = [];
 
@@ -238,10 +263,23 @@ function CG_setOrtho2D(){
 
 /*
 ===========================================
+CG_setTextures
+===========================================
+*/
+function CG_setTextures() {
+	CG_createTexture('char', cgs.media.textures.chars);
+	CG_createTexture('cursor', cgs.media.sprites.cursor);
+
+	////////////////////TO DO////////////////////
+}
+
+
+/*
+===========================================
 CG_getShader
 ===========================================
 */
-function CG_getShader(type, source){
+function CG_getShader(type, source) {
 	var shader = gl.createShader(type);
 	
 	gl.shaderSource(shader, source);
@@ -261,7 +299,7 @@ function CG_getShader(type, source){
 CG_setProgram
 ===========================================
 */
-function CG_setProgram(id){
+function CG_setProgram(id) {
 	var i = 0,
 		j = 0,
 		obj_program = cg_glCurrentProgram;
@@ -294,10 +332,46 @@ function CG_setProgram(id){
 
 /*
 ===========================================
+CG_bindTextures
+===========================================
+*/
+function CG_bindTextures(program, texture) {
+	if (cg_glCurrentTextures[program] !== texture) {
+		if (cg_glActiveTexture !== program) {
+			cg_glActiveTexture = program;
+			gl.activeTexture(gl.TEXTURE0);
+		}
+
+		cg_glCurrentTextures[program] = texture;
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+	}
+}
+
+
+/*
+===========================================
+CG_createTexture
+===========================================
+*/
+function CG_createTexture(id, img) {
+	var texture = gl.createTexture();
+
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+	cg_glTextures[id] = texture;
+}
+
+
+/*
+===========================================
 CG_createProgram
 ===========================================
 */
-function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
+function CG_createProgram(id, v_shader, f_shader, uniforms, attr, textures) {
 	var i = 0,
 		obj_program = {},
 		vertexShader = {},
@@ -330,6 +404,11 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 		obj_program[attr[i]] = gl.getAttribLocation(obj_program.gl_p, attr[i]);
 	}
 
+	for (i = 0; i < textures.length; i++) {
+		obj_program[textures[i]] = i;
+		gl.uniform1i(gl.getUniformLocation(obj_program.gl_p, textures[i]), i);
+	}
+
 	cg_glPrograms[cg_glPrograms.length] = obj_program;
 }
 
@@ -339,13 +418,16 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 CG_init
 ===========================================
 */
-function CG_init(){
+function CG_init() {
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
+	cg_glTextures = {};
+	cg_glCurrentTextures = [];
+	cg_glActiveTexture = null;
 
-	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
-	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition']);
-	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition']);
+	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho'], ['aPosition'], ['tTexture']);
+	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition'], []);
+	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition'], []);
 
 	CG_setOrtho2D();
 }
@@ -356,25 +438,29 @@ CL_loadThreads
 */
 function CL_loadThreads(){
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
+		cgs.media = {};
 		// To do start load thread audio
-		cgs.audio = {};
-		// cgs.audio.menu = new Audio('https://cs1-50v4.vk-cdn.net/p18/85e3f0113e9ac8.mp3');
+		// cgs.media.audio = {};
+		// cgs.media.audio.menu = new Audio('https://cs1-50v4.vk-cdn.net/p18/85e3f0113e9ac8.mp3');
 
 		// To do start load thread sprites
-		cgs.sprites = {};
-		cgs.sprites.cursor = new Image();
-		cgs.sprites.cursor.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
+		cgs.media.sprites = {};
+		cgs.media.sprites.cursor = new Image();
+		cgs.media.sprites.cursor.src = 'static/media/sprites/cursor.png';
+
+		cgs.media.sprites.test = new Image();
+		cgs.media.sprites.test.src = 'http://rutravel.net/uploads/posts/2015-03/1426435026_moscow_map-20.jpg';
 
 		// To do start load thread textures
-		cgs.textures = {};
-		cgs.textures.chars = new Image();
-		cgs.textures.chars.src = 'http://findicons.com/files/icons/1156/fugue/16/cursor.png';
+		cgs.media.textures = {};
+		cgs.media.textures.chars = new Image();
+		cgs.media.textures.chars.src = 'static/media/sprites/font.bmp';
 	}
 	else {
-		// cgs.audio.test = new Audio('https://psv4.vk.me/c4423/u14378279/audios/36982d737b30.mp3');
+		// cgs.media.audio.test = new Audio('https://psv4.vk.me/c4423/u14378279/audios/36982d737b30.mp3');
 
-		cgs.sprites.test = new Image();
-		cgs.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
+		cgs.media.sprites.test = new Image();
+		cgs.media.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
 	}
 }
 /*
@@ -506,6 +592,12 @@ function CL_sendCmd(){
 cgs = {};
 cgs.shaders = {};
 
+
+/*
+===========================================
+Shader CG_GL_P_RECT
+===========================================
+*/
 cgs.shaders.v_rect =
 	'uniform vec4 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
@@ -519,30 +611,53 @@ cgs.shaders.f_rect =
 	'	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
 	'}\n';
 
+
+/*
+===========================================
+Shader CG_GL_P_CHAR
+===========================================
+*/
 cgs.shaders.v_chars =
+	'uniform vec2 uCharacter;\n' +
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
+	'varying vec2 vTexCoord;\n' +
 	'void main(){\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
+	'	vTexCoord = (aPosition + uCharacter) * 0.0625;\n' +
 	'}\n';
 
-cgs.shaders.f_chars = 
+cgs.shaders.f_chars =
+	'precision mediump float;\n' +
+	'uniform sampler2D tTexture;\n' +
+	'varying vec2 vTexCoord;\n' +
 	'void main() {\n' +
-	'	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+	'	gl_FragColor = texture2D(tTexture, vTexCoord);\n' +
 	'}\n';
 
+
+/*
+===========================================
+Shader CG_GL_P_PIC
+===========================================
+*/
 cgs.shaders.v_pic =
-	'uniform vec2 uDest;\n' +
+	'uniform vec4 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
+	'varying vec2 vTexCoord;\n' +
 	'void main(){\n' +
-	'	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
+	'	vTexCoord = aPosition;\n' +
 	'}\n';
 
 cgs.shaders.f_pic = 
+	'precision mediump float;\n' +
+	'uniform sampler2D tTexture;\n' +
+	'varying vec2 vTexCoord;\n' +
 	'void main() {\n' +
-	'	gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n' +
+	'	gl_FragColor = texture2D(tTexture, vTexCoord);\n' +
 	'}\n';
 /*
 ===========================================
@@ -604,12 +719,12 @@ SCR_drawField_input
 */
 function SCR_drawField_input(elem){
 	if (m_position && m_position.id == elem.id) {
-		gl.fillStyle = 'rgb(252, 122, 19)';
-		gl.fillRect(elem.x, elem.y, 150, 15);
+		// gl.fillStyle = 'rgb(252, 122, 19)';
+		CG_drawRect(elem.x, elem.y, 150, 15);
 	}
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+12);
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	CG_drawString( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+8 );
 }
 
 
@@ -620,15 +735,15 @@ SCR_drawField_button
 */
 function SCR_drawField_button(elem){
 	if(sys_state.game == G_STATE_DISCONNECTED){
-		gl.fillStyle = 'rgb(106, 121, 137)';
+		// gl.fillStyle = 'rgb(106, 121, 137)';
 	}
 	else{
-		gl.fillStyle = 'rgb(252, 2, 2)';
+		// gl.fillStyle = 'rgb(252, 2, 2)';
 	}
-	gl.fillRect(elem.x, elem.y, 150, 15);
+	CG_drawRect(elem.x, elem.y, 150, 15);
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText(elem.string, elem.x+5, elem.y+12);
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	CG_drawString(elem.string, elem.x+5, elem.y+8);
 }
 
 
@@ -640,8 +755,6 @@ SCR_drawLockScreen
 function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
-
-	//draw string bind cgs.shaders.chars & cgs.textures.chars
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
@@ -660,16 +773,17 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	CG_drawString('kjaskjdhgfkasld asjhk', 25, 100);
-	CG_drawRect(25, 110, 500, 100);
+	var loadStatus = SYS_checkResources();
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillText( 'Loading', 10, 20);
+	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20);
 
-	////////////////////TO DO////////////////////
-	if(SYS_checkResources() != 100)
+
+	if(loadStatus != 100)
 		return;
 
+	CG_setTextures();
+
+	////////////////////TO DO////////////////////	
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		// NET_connect();
@@ -718,13 +832,13 @@ SCR_drawMenu
 ===========================================
 */
 function SCR_drawMenu(){
-	if(sys_state.menu === M_STATE_NONE){
+	if(sys_state.menu === M_STATE_NONE) {
 		return;
 	}
-	else if(sys_state.menu === M_STATE_MAIN){
+	else if(sys_state.menu === M_STATE_MAIN) {
 		SCR_drawMenu_main();
 	}
-	else if(sys_state.menu === M_STATE_OPTIONS){
+	else if(sys_state.menu === M_STATE_OPTIONS) {
 		SCR_drawMenu_options();
 	}
 }
@@ -736,19 +850,23 @@ SCR_drawFPS
 ===========================================
 */
 function SCR_drawFPS(){
-	// thisfpstime = new Date();
-	// if ((thisfpstime - lastfpstime) >= 1000) {
-	// 	lastfps = fps_count;
-	// 	fps_count = 0;
-	// 	lastfpstime = thisfpstime;
-	// }
+	if(sys_state.game == G_STATE_INTRO_LOADING) {
+		return;
+	}
+
+	thisfpstime = new Date();
+	if ((thisfpstime - lastfpstime) >= 1000) {
+		lastfps = fps_count;
+		fps_count = 0;
+		lastfpstime = thisfpstime;
+	}
 	// gl.font = '12px serif';
 	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
-	// gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
-	// gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	// gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
-	// fps_count++;
+	CG_drawString('FPS: ' + lastfps, canvas.width - 65, 17);
+	CG_drawString('m_x: ' + mouse_x, canvas.width - 65, 29);
+	CG_drawString('m_y: ' + mouse_y, canvas.width - 65, 41);
+	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	fps_count++;
 }
 
 
@@ -758,6 +876,12 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
+	if(sys_state.game == G_STATE_INTRO_LOADING) {
+		return;
+	}
+
+	// CG_drawRect(mouse_x, mouse_y, 10, 10);
+	CG_drawPic(cg_glTextures['cursor'], mouse_x, mouse_y, 16, 16);
 	// To do draw cursor
 	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillRect(mouse_x, mouse_y, 10, 10);
@@ -772,11 +896,11 @@ function SYS_checkResources(){
 	var obj = 0,
 		objComplete = 0;
 
-	for (var i in cgs){
-		for (var o in cgs[i]){
+	for (var i in cgs.media){
+		for (var o in cgs.media[i]){
 			obj++;
 
-			if(cgs[i][o].complete || cgs[i][o].readyState == "complete" || cgs[i][o].readyState == 4)
+			if(cgs.media[i][o].complete || cgs.media[i][o].readyState == "complete" || cgs.media[i][o].readyState == 4)
 				objComplete++;
 		}
 	}

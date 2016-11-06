@@ -3,7 +3,7 @@
 CG_getOrtho2D
 ===========================================
 */
-function CG_getOrtho2D(left,right,bottom,top){
+function CG_getOrtho2D(left,right,bottom,top) {
 	var near = -1,
 		far = 1,
 		rl = right-left,
@@ -22,7 +22,7 @@ function CG_getOrtho2D(left,right,bottom,top){
 CG_setOrtho2D
 ===========================================
 */
-function CG_setOrtho2D(){
+function CG_setOrtho2D() {
 	var glOrtho = CG_getOrtho2D(0, scr_width, scr_height, 0),
 		program = [];
 
@@ -41,10 +41,23 @@ function CG_setOrtho2D(){
 
 /*
 ===========================================
+CG_setTextures
+===========================================
+*/
+function CG_setTextures() {
+	CG_createTexture('char', cgs.media.textures.chars);
+	CG_createTexture('cursor', cgs.media.sprites.cursor);
+
+	////////////////////TO DO////////////////////
+}
+
+
+/*
+===========================================
 CG_getShader
 ===========================================
 */
-function CG_getShader(type, source){
+function CG_getShader(type, source) {
 	var shader = gl.createShader(type);
 	
 	gl.shaderSource(shader, source);
@@ -64,7 +77,7 @@ function CG_getShader(type, source){
 CG_setProgram
 ===========================================
 */
-function CG_setProgram(id){
+function CG_setProgram(id) {
 	var i = 0,
 		j = 0,
 		obj_program = cg_glCurrentProgram;
@@ -97,10 +110,46 @@ function CG_setProgram(id){
 
 /*
 ===========================================
+CG_bindTextures
+===========================================
+*/
+function CG_bindTextures(program, texture) {
+	if (cg_glCurrentTextures[program] !== texture) {
+		if (cg_glActiveTexture !== program) {
+			cg_glActiveTexture = program;
+			gl.activeTexture(gl.TEXTURE0);
+		}
+
+		cg_glCurrentTextures[program] = texture;
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+	}
+}
+
+
+/*
+===========================================
+CG_createTexture
+===========================================
+*/
+function CG_createTexture(id, img) {
+	var texture = gl.createTexture();
+
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+	cg_glTextures[id] = texture;
+}
+
+
+/*
+===========================================
 CG_createProgram
 ===========================================
 */
-function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
+function CG_createProgram(id, v_shader, f_shader, uniforms, attr, textures) {
 	var i = 0,
 		obj_program = {},
 		vertexShader = {},
@@ -133,6 +182,11 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 		obj_program[attr[i]] = gl.getAttribLocation(obj_program.gl_p, attr[i]);
 	}
 
+	for (i = 0; i < textures.length; i++) {
+		obj_program[textures[i]] = i;
+		gl.uniform1i(gl.getUniformLocation(obj_program.gl_p, textures[i]), i);
+	}
+
 	cg_glPrograms[cg_glPrograms.length] = obj_program;
 }
 
@@ -142,13 +196,16 @@ function CG_createProgram(id, v_shader, f_shader, uniforms, attr){
 CG_init
 ===========================================
 */
-function CG_init(){
+function CG_init() {
 	cg_glPrograms = [];
 	cg_glCurrentProgram = null;
+	cg_glTextures = {};
+	cg_glCurrentTextures = [];
+	cg_glActiveTexture = null;
 
-	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uDest', 'uOrtho'], ['aPosition']);
-	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition']);
-	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition']);
+	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho'], ['aPosition'], ['tTexture']);
+	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition'], []);
+	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition'], []);
 
 	CG_setOrtho2D();
 }

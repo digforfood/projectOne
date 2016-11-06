@@ -5,12 +5,12 @@ SCR_drawField_input
 */
 function SCR_drawField_input(elem){
 	if (m_position && m_position.id == elem.id) {
-		gl.fillStyle = 'rgb(252, 122, 19)';
-		gl.fillRect(elem.x, elem.y, 150, 15);
+		// gl.fillStyle = 'rgb(252, 122, 19)';
+		CG_drawRect(elem.x, elem.y, 150, 15);
 	}
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+12);
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	CG_drawString( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+8 );
 }
 
 
@@ -21,15 +21,15 @@ SCR_drawField_button
 */
 function SCR_drawField_button(elem){
 	if(sys_state.game == G_STATE_DISCONNECTED){
-		gl.fillStyle = 'rgb(106, 121, 137)';
+		// gl.fillStyle = 'rgb(106, 121, 137)';
 	}
 	else{
-		gl.fillStyle = 'rgb(252, 2, 2)';
+		// gl.fillStyle = 'rgb(252, 2, 2)';
 	}
-	gl.fillRect(elem.x, elem.y, 150, 15);
+	CG_drawRect(elem.x, elem.y, 150, 15);
 
-	gl.fillStyle = 'rgb(0, 0, 0)';
-	gl.fillText(elem.string, elem.x+5, elem.y+12);
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	CG_drawString(elem.string, elem.x+5, elem.y+8);
 }
 
 
@@ -41,8 +41,6 @@ SCR_drawLockScreen
 function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
-
-	//draw string bind cgs.shaders.chars & cgs.textures.chars
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
@@ -61,16 +59,17 @@ SCR_drawLoadScreen
 ===========================================
 */
 function SCR_drawLoadScreen(){
-	CG_drawString('kjaskjdhgfkasld asjhk', 25, 100);
-	CG_drawRect(25, 110, 500, 100);
+	var loadStatus = SYS_checkResources();
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillText( 'Loading', 10, 20);
+	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20);
 
-	////////////////////TO DO////////////////////
-	if(SYS_checkResources() != 100)
+
+	if(loadStatus != 100)
 		return;
 
+	CG_setTextures();
+
+	////////////////////TO DO////////////////////	
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
 		// NET_connect();
@@ -119,13 +118,13 @@ SCR_drawMenu
 ===========================================
 */
 function SCR_drawMenu(){
-	if(sys_state.menu === M_STATE_NONE){
+	if(sys_state.menu === M_STATE_NONE) {
 		return;
 	}
-	else if(sys_state.menu === M_STATE_MAIN){
+	else if(sys_state.menu === M_STATE_MAIN) {
 		SCR_drawMenu_main();
 	}
-	else if(sys_state.menu === M_STATE_OPTIONS){
+	else if(sys_state.menu === M_STATE_OPTIONS) {
 		SCR_drawMenu_options();
 	}
 }
@@ -137,19 +136,23 @@ SCR_drawFPS
 ===========================================
 */
 function SCR_drawFPS(){
-	// thisfpstime = new Date();
-	// if ((thisfpstime - lastfpstime) >= 1000) {
-	// 	lastfps = fps_count;
-	// 	fps_count = 0;
-	// 	lastfpstime = thisfpstime;
-	// }
+	if(sys_state.game == G_STATE_INTRO_LOADING) {
+		return;
+	}
+
+	thisfpstime = new Date();
+	if ((thisfpstime - lastfpstime) >= 1000) {
+		lastfps = fps_count;
+		fps_count = 0;
+		lastfpstime = thisfpstime;
+	}
 	// gl.font = '12px serif';
 	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillText('FPS: ' + lastfps, canvas.width - 65, 17);
-	// gl.fillText('m_x: ' + mouse_x, canvas.width - 65, 29);
-	// gl.fillText('m_y: ' + mouse_y, canvas.width - 65, 41);
-	// gl.fillText('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
-	// fps_count++;
+	CG_drawString('FPS: ' + lastfps, canvas.width - 65, 17);
+	CG_drawString('m_x: ' + mouse_x, canvas.width - 65, 29);
+	CG_drawString('m_y: ' + mouse_y, canvas.width - 65, 41);
+	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	fps_count++;
 }
 
 
@@ -159,6 +162,12 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor(){
+	if(sys_state.game == G_STATE_INTRO_LOADING) {
+		return;
+	}
+
+	// CG_drawRect(mouse_x, mouse_y, 10, 10);
+	CG_drawPic(cg_glTextures['cursor'], mouse_x, mouse_y, 16, 16);
 	// To do draw cursor
 	// gl.fillStyle = 'rgb(0, 0, 0)';
 	// gl.fillRect(mouse_x, mouse_y, 10, 10);

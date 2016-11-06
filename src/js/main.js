@@ -29,6 +29,9 @@ var scr_width,
 
 	cg_glPrograms,
 	cg_glCurrentProgram,
+	cg_glTextures,
+	cg_glCurrentTextures,
+	cg_glActiveTexture,
 
 	sys_state,
 	cgs,
