@@ -5,8 +5,7 @@ SCR_drawField_input
 */
 function SCR_drawField_input(elem){
 	if (m_position && m_position.id == elem.id) {
-		// gl.fillStyle = 'rgb(252, 122, 19)';
-		CG_drawRect(elem.x, elem.y, 150, 15);
+		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';
@@ -21,14 +20,12 @@ SCR_drawField_button
 */
 function SCR_drawField_button(elem){
 	if(sys_state.game == G_STATE_DISCONNECTED){
-		// gl.fillStyle = 'rgb(106, 121, 137)';
+		CG_drawRect(elem.x, elem.y, 150, 15, [106, 121, 137]);
 	}
 	else{
-		// gl.fillStyle = 'rgb(252, 2, 2)';
+		CG_drawRect(elem.x, elem.y, 150, 15, [252, 2, 2]);
 	}
-	CG_drawRect(elem.x, elem.y, 150, 15);
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString(elem.string, elem.x+5, elem.y+8);
 }
 
@@ -41,6 +38,7 @@ SCR_drawLockScreen
 function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
@@ -61,7 +59,7 @@ SCR_drawLoadScreen
 function SCR_drawLoadScreen(){
 	var loadStatus = SYS_checkResources();
 
-	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20);
+	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20, [255, 255, 255]);
 
 
 	if(loadStatus != 100)
@@ -166,10 +164,7 @@ function SCR_drawСursor(){
 		return;
 	}
 
-	// CG_drawRect(mouse_x, mouse_y, 10, 10);
 	CG_drawPic(cg_glTextures['cursor'], mouse_x, mouse_y, 16, 16);
 	// To do draw cursor
-	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillRect(mouse_x, mouse_y, 10, 10);
 	// gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }

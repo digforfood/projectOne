@@ -136,7 +136,7 @@ function CG_createTexture(id, img) {
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
@@ -204,7 +204,7 @@ function CG_init() {
 	cg_glActiveTexture = null;
 
 	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho'], ['aPosition'], ['tTexture']);
-	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition'], []);
+	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho', 'uColor'], ['aPosition'], []);
 	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition'], []);
 
 	CG_setOrtho2D();

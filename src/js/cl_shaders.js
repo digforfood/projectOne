@@ -15,9 +15,11 @@ cgs.shaders.v_rect =
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'}\n';
 
-cgs.shaders.f_rect = 
+cgs.shaders.f_rect =
+	'precision mediump float;\n' +
+	'uniform vec4 uColor;\n' +
 	'void main() {\n' +
-	'	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+	'	gl_FragColor = vec4(uColor.rgb * (1.0 / 255.0), uColor.a);\n' +
 	'}\n';
 
 

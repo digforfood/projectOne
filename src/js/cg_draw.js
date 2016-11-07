@@ -3,11 +3,12 @@
 CG_drawRect
 ===========================================
 */
-function CG_drawRect(x, y, width, height) {
+function CG_drawRect(x, y, width, height, color) {
 	var program = CG_setProgram(CG_GL_P_RECT);
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
+	gl.uniform4f(program.uColor, color[0], color[1], color[2], 1);
 	gl.uniform4f(program.uDest, x, y, width, height);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

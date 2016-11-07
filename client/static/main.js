@@ -154,11 +154,12 @@ var scr_width,
 CG_drawRect
 ===========================================
 */
-function CG_drawRect(x, y, width, height) {
+function CG_drawRect(x, y, width, height, color) {
 	var program = CG_setProgram(CG_GL_P_RECT);
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
+	gl.uniform4f(program.uColor, color[0], color[1], color[2], 1);
 	gl.uniform4f(program.uDest, x, y, width, height);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -358,7 +359,7 @@ function CG_createTexture(id, img) {
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
@@ -426,7 +427,7 @@ function CG_init() {
 	cg_glActiveTexture = null;
 
 	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho'], ['aPosition'], ['tTexture']);
-	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho'], ['aPosition'], []);
+	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho', 'uColor'], ['aPosition'], []);
 	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition'], []);
 
 	CG_setOrtho2D();
@@ -606,9 +607,11 @@ cgs.shaders.v_rect =
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'}\n';
 
-cgs.shaders.f_rect = 
+cgs.shaders.f_rect =
+	'precision mediump float;\n' +
+	'uniform vec4 uColor;\n' +
 	'void main() {\n' +
-	'	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n' +
+	'	gl_FragColor = vec4(uColor.rgb * (1.0 / 255.0), uColor.a);\n' +
 	'}\n';
 
 
@@ -719,8 +722,7 @@ SCR_drawField_input
 */
 function SCR_drawField_input(elem){
 	if (m_position && m_position.id == elem.id) {
-		// gl.fillStyle = 'rgb(252, 122, 19)';
-		CG_drawRect(elem.x, elem.y, 150, 15);
+		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
 	// gl.fillStyle = 'rgb(0, 0, 0)';
@@ -735,14 +737,12 @@ SCR_drawField_button
 */
 function SCR_drawField_button(elem){
 	if(sys_state.game == G_STATE_DISCONNECTED){
-		// gl.fillStyle = 'rgb(106, 121, 137)';
+		CG_drawRect(elem.x, elem.y, 150, 15, [106, 121, 137]);
 	}
 	else{
-		// gl.fillStyle = 'rgb(252, 2, 2)';
+		CG_drawRect(elem.x, elem.y, 150, 15, [252, 2, 2]);
 	}
-	CG_drawRect(elem.x, elem.y, 150, 15);
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString(elem.string, elem.x+5, elem.y+8);
 }
 
@@ -755,6 +755,7 @@ SCR_drawLockScreen
 function SCR_drawLockScreen(){
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		if(m_active.items[i].type == MTYPE_INPUT){
@@ -775,7 +776,7 @@ SCR_drawLoadScreen
 function SCR_drawLoadScreen(){
 	var loadStatus = SYS_checkResources();
 
-	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20);
+	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20, [255, 255, 255]);
 
 
 	if(loadStatus != 100)
@@ -880,11 +881,8 @@ function SCR_drawСursor(){
 		return;
 	}
 
-	// CG_drawRect(mouse_x, mouse_y, 10, 10);
 	CG_drawPic(cg_glTextures['cursor'], mouse_x, mouse_y, 16, 16);
 	// To do draw cursor
-	// gl.fillStyle = 'rgb(0, 0, 0)';
-	// gl.fillRect(mouse_x, mouse_y, 10, 10);
 	// gl.drawImage(cgs.sprites.cursor, 3, 0, 13, 16, mouse_x, mouse_y, 13, 16);
 }
 /*
