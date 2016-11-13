@@ -47,7 +47,7 @@ function CG_drawChar(char, x, y) {
 	gl.bindBuffer(gl.ARRAY_BUFFER, program.rect);
 	gl.vertexAttribPointer(program.aPosition, 2, gl.FLOAT, false, 0, 0);
 
-	gl.uniform2f(program.uCharacter, char & 15, (char >> 4)-2); ////////////// TO DO
+	gl.uniform2f(program.uCharacter, charMap[char].x, charMap[char].y);
 	gl.uniform2f(program.uDest, x, y);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

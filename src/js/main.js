@@ -235,10 +235,14 @@ function controlEventsInit(){
 	document.onkeydown = function(e){
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = true;
+
+		return false;
 	};
 	document.onkeyup = function(e){
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = false;
+
+		return false;
 	};
 
 	//cursor hide

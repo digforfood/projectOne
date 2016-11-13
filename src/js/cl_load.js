@@ -16,7 +16,7 @@ function CL_loadThreads(){
 		cgs.media.sprites.cursor.src = 'static/media/sprites/cursor.png';
 
 		cgs.media.sprites.test = new Image();
-		cgs.media.sprites.test.src = 'http://rutravel.net/uploads/posts/2015-03/1426435026_moscow_map-20.jpg';
+		cgs.media.sprites.test.src = 'https://arkesoul.files.wordpress.com/2015/09/fsociety.jpg';
 
 		// To do start load thread textures
 		cgs.media.textures = {};
