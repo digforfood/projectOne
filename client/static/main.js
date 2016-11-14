@@ -357,8 +357,11 @@ CG_drawChar
 ===========================================
 */
 function CG_drawChar(char, x, y, size) {
-	var program = CG_setProgram(CG_GL_P_CHAR),
-		size = size || 12;
+	var program = CG_setProgram(CG_GL_P_CHAR);
+
+	if (!size) {
+		size = 12;
+	}
 
 	CG_bindTextures(program, cg_glTextures['char']);
 
@@ -380,8 +383,11 @@ CG_drawString
 */
 function CG_drawString(str, x, y, size) {
 	var i = 0,
-		char = 0,
-		size = size || 12;
+		char = 0;
+
+	if (!size) {
+		size = 12;
+	}
 
 	for (i = 0; i < str.length; i++) {
 		char = str.charCodeAt(i);
