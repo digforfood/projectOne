@@ -146,10 +146,10 @@ function SCR_drawFPS(){
 	}
 	// gl.font = '12px serif';
 	// gl.fillStyle = 'rgb(0, 0, 0)';
-	CG_drawString('FPS: ' + lastfps, canvas.width - 65, 17);
-	CG_drawString('m_x: ' + mouse_x, canvas.width - 65, 29);
-	CG_drawString('m_y: ' + mouse_y, canvas.width - 65, 41);
-	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	CG_drawString('FPS: ' + lastfps, canvas.width - 75, 17, 10);
+	CG_drawString('m_x: ' + mouse_x, canvas.width - 75, 29, 10);
+	CG_drawString('m_y: ' + mouse_y, canvas.width - 75, 41, 10);
+	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 75, 53, 10);
 	fps_count++;
 }
 

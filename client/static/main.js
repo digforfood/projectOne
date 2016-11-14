@@ -356,8 +356,9 @@ function CG_drawPic(img, x, y, width, height) {
 CG_drawChar
 ===========================================
 */
-function CG_drawChar(char, x, y) {
-	var program = CG_setProgram(CG_GL_P_CHAR);
+function CG_drawChar(char, x, y, size) {
+	var program = CG_setProgram(CG_GL_P_CHAR),
+		size = size || 12;
 
 	CG_bindTextures(program, cg_glTextures['char']);
 
@@ -366,6 +367,7 @@ function CG_drawChar(char, x, y) {
 
 	gl.uniform2f(program.uCharacter, charMap[char].x, charMap[char].y);
 	gl.uniform2f(program.uDest, x, y);
+	gl.uniform1f(program.uSize, size);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
@@ -376,15 +378,16 @@ function CG_drawChar(char, x, y) {
 CG_drawString
 ===========================================
 */
-function CG_drawString(str, x, y) {
+function CG_drawString(str, x, y, size) {
 	var i = 0,
-		char = 0;
+		char = 0,
+		size = size || 12;
 
 	for (i = 0; i < str.length; i++) {
 		char = str.charCodeAt(i);
-		CG_drawChar(char, x, y);
+		CG_drawChar(char, x, y, size);
 
-		x += 8;
+		x += size;
 	}
 }
 /*
@@ -592,7 +595,7 @@ function CG_init() {
 	cg_glCurrentTextures = [];
 	cg_glActiveTexture = null;
 
-	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho'], ['aPosition'], ['tTexture']);
+	CG_createProgram(CG_GL_P_CHAR, cgs.shaders.v_chars, cgs.shaders.f_chars, ['uCharacter', 'uDest', 'uOrtho', 'uSize'], ['aPosition'], ['tTexture']);
 	CG_createProgram(CG_GL_P_RECT, cgs.shaders.v_rect, cgs.shaders.f_rect, ['uDest', 'uOrtho', 'uColor'], ['aPosition'], []);
 	CG_createProgram(CG_GL_P_PIC, cgs.shaders.v_pic, cgs.shaders.f_pic, ['uDest', 'uOrtho'], ['aPosition'], []);
 
@@ -790,10 +793,11 @@ cgs.shaders.v_chars =
 	'uniform vec2 uCharacter;\n' +
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
+	'uniform float uSize;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
 	'void main(){\n' +
-	'	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * uSize + uDest, 0.0, 1.0);\n' +
 	'	vTexCoord = (aPosition + uCharacter) * 0.0625;\n' +
 	'}\n';
 
@@ -1029,10 +1033,10 @@ function SCR_drawFPS(){
 	}
 	// gl.font = '12px serif';
 	// gl.fillStyle = 'rgb(0, 0, 0)';
-	CG_drawString('FPS: ' + lastfps, canvas.width - 65, 17);
-	CG_drawString('m_x: ' + mouse_x, canvas.width - 65, 29);
-	CG_drawString('m_y: ' + mouse_y, canvas.width - 65, 41);
-	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 65, 53);
+	CG_drawString('FPS: ' + lastfps, canvas.width - 75, 17, 10);
+	CG_drawString('m_x: ' + mouse_x, canvas.width - 75, 29, 10);
+	CG_drawString('m_y: ' + mouse_y, canvas.width - 75, 41, 10);
+	CG_drawString('m_b: ' + keyEvents['m_b'], canvas.width - 75, 53, 10);
 	fps_count++;
 }
 

@@ -39,8 +39,9 @@ function CG_drawPic(img, x, y, width, height) {
 CG_drawChar
 ===========================================
 */
-function CG_drawChar(char, x, y) {
-	var program = CG_setProgram(CG_GL_P_CHAR);
+function CG_drawChar(char, x, y, size) {
+	var program = CG_setProgram(CG_GL_P_CHAR),
+		size = size || 12;
 
 	CG_bindTextures(program, cg_glTextures['char']);
 
@@ -49,6 +50,7 @@ function CG_drawChar(char, x, y) {
 
 	gl.uniform2f(program.uCharacter, charMap[char].x, charMap[char].y);
 	gl.uniform2f(program.uDest, x, y);
+	gl.uniform1f(program.uSize, size);
 
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
@@ -59,14 +61,15 @@ function CG_drawChar(char, x, y) {
 CG_drawString
 ===========================================
 */
-function CG_drawString(str, x, y) {
+function CG_drawString(str, x, y, size) {
 	var i = 0,
-		char = 0;
+		char = 0,
+		size = size || 12;
 
 	for (i = 0; i < str.length; i++) {
 		char = str.charCodeAt(i);
-		CG_drawChar(char, x, y);
+		CG_drawChar(char, x, y, size);
 
-		x += 8;
+		x += size;
 	}
 }

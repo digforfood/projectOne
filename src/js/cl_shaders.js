@@ -32,10 +32,11 @@ cgs.shaders.v_chars =
 	'uniform vec2 uCharacter;\n' +
 	'uniform vec2 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
+	'uniform float uSize;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
 	'void main(){\n' +
-	'	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);\n' +
+	'	gl_Position = uOrtho * vec4(aPosition * uSize + uDest, 0.0, 1.0);\n' +
 	'	vTexCoord = (aPosition + uCharacter) * 0.0625;\n' +
 	'}\n';
 
