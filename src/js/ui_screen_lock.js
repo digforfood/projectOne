@@ -5,16 +5,15 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
-		var data = {};
 
 		if(net_clKey != null){
-			data['k'] = net_clKey;
+			net_buf.auth.key = net_clKey;
 		} else {
-			data['n'] = ui_s_lock.items[0].buffer;
-			data['p'] = ui_s_lock.items[1].buffer;
+			net_buf.auth.name = ui_s_lock.items[0].buffer;
+			net_buf.auth.pass = ui_s_lock.items[1].buffer;
 		}
 
-		CL_createPacket(data);
+		net_buf.auth.isready = true;
 	}
 }
 

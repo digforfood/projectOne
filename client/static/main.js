@@ -713,13 +713,18 @@ function CL_parseServerMessage(){
 CL_createPacket
 ===========================================
 */
-function CL_createPacket(ent){
+function CL_createPacket(){
 	var msg = {t: 0, b: {}},
 		evBufLen = net_buf.ev.length;
 
-	if(ent != undefined){
+	if(net_buf.auth.isready){
 		msg.t = MSG_CL_LOGIN;
-		msg.b = ent;
+		msg.b = {k: net_buf.auth.key, n: net_buf.auth.name, p: net_buf.auth.pass};
+
+		net_buf.auth.key = null;
+		net_buf.auth.name = '';
+		net_buf.auth.pass = '';
+		net_buf.auth.isready = false;
 	}
 	else if(net_clKey != null){
 		msg.t = MSG_CL_DATA;
@@ -745,7 +750,7 @@ function CL_createPacket(ent){
 
 
 	console.log('NET send msg: ', msg); // To do NET send msg
-	NET_sendPacket(msg);
+	// NET_sendPacket(msg);
 
 	net_lastPacketSentTime = correntTime;
 }
@@ -757,7 +762,7 @@ CL_sendCmd
 ===========================================
 */
 function CL_sendCmd(){
-	if (sys_state.game == G_STATE_DISCONNECTED && sys_state.game == G_STATE_CONNECTING)
+	if (sys_state.game == G_STATE_DISCONNECTED && sys_state.game == G_STATE_CONNECTING && !net_buf.auth.isready)
 		return;
 
 	if (sys_state.menu != M_STATE_NONE && correntTime - net_lastPacketSentTime < 1000)
@@ -856,7 +861,12 @@ NET_init
 function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_inPackets = [];
-	net_buf = {ev: [], mouse: ''};
+
+	net_buf = {auth: {}, ev: [], mouse: ''};
+	net_buf.auth.key = null;
+	net_buf.auth.name = '';
+	net_buf.auth.pass = '';
+	net_buf.auth.isready = false;
 }
 
 /*
@@ -962,7 +972,8 @@ function SCR_drawLoadScreen(){
 
 	////////////////////TO DO////////////////////	
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		sys_state.pushStateG(G_STATE_CONNECTING);
+		// sys_state.pushStateG(G_STATE_DISCONNECTED);
 		// NET_connect();
 	}
 	else {
@@ -1265,16 +1276,15 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
-		var data = {};
 
 		if(net_clKey != null){
-			data['k'] = net_clKey;
+			net_buf.auth.key = net_clKey;
 		} else {
-			data['n'] = ui_s_lock.items[0].buffer;
-			data['p'] = ui_s_lock.items[1].buffer;
+			net_buf.auth.name = ui_s_lock.items[0].buffer;
+			net_buf.auth.pass = ui_s_lock.items[1].buffer;
 		}
 
-		CL_createPacket(data);
+		net_buf.auth.isready = true;
 	}
 }
 

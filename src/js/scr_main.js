@@ -69,7 +69,8 @@ function SCR_drawLoadScreen(){
 
 	////////////////////TO DO////////////////////	
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
-		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		sys_state.pushStateG(G_STATE_CONNECTING);
+		// sys_state.pushStateG(G_STATE_DISCONNECTED);
 		// NET_connect();
 	}
 	else {

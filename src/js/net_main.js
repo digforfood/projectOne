@@ -16,7 +16,12 @@ NET_init
 function NET_init(){
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_inPackets = [];
-	net_buf = {ev: [], mouse: ''};
+
+	net_buf = {auth: {}, ev: [], mouse: ''};
+	net_buf.auth.key = null;
+	net_buf.auth.name = '';
+	net_buf.auth.pass = '';
+	net_buf.auth.isready = false;
 }
 
 /*
