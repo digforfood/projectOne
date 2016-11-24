@@ -719,9 +719,8 @@ function CL_createPacket(){
 
 	if(net_buf.auth.isready){
 		msg.t = MSG_CL_LOGIN;
-		msg.b = {k: net_buf.auth.key, n: net_buf.auth.name, p: net_buf.auth.pass};
+		msg.b = {n: net_buf.auth.name, p: net_buf.auth.pass};
 
-		net_buf.auth.key = null;
 		net_buf.auth.name = '';
 		net_buf.auth.pass = '';
 		net_buf.auth.isready = false;
@@ -863,7 +862,6 @@ function NET_init(){
 	net_inPackets = [];
 
 	net_buf = {auth: {}, ev: [], mouse: ''};
-	net_buf.auth.key = null;
 	net_buf.auth.name = '';
 	net_buf.auth.pass = '';
 	net_buf.auth.isready = false;
@@ -1276,13 +1274,8 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction(){
 	if(sys_state.game != G_STATE_DISCONNECTED){
-
-		if(net_clKey != null){
-			net_buf.auth.key = net_clKey;
-		} else {
-			net_buf.auth.name = ui_s_lock.items[0].buffer;
-			net_buf.auth.pass = ui_s_lock.items[1].buffer;
-		}
+		net_buf.auth.name = ui_s_lock.items[0].buffer;
+		net_buf.auth.pass = ui_s_lock.items[1].buffer;
 
 		net_buf.auth.isready = true;
 	}

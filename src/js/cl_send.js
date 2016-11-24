@@ -9,9 +9,8 @@ function CL_createPacket(){
 
 	if(net_buf.auth.isready){
 		msg.t = MSG_CL_LOGIN;
-		msg.b = {k: net_buf.auth.key, n: net_buf.auth.name, p: net_buf.auth.pass};
+		msg.b = {n: net_buf.auth.name, p: net_buf.auth.pass};
 
-		net_buf.auth.key = null;
 		net_buf.auth.name = '';
 		net_buf.auth.pass = '';
 		net_buf.auth.isready = false;
