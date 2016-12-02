@@ -4,39 +4,38 @@ CL_createPacket
 ===========================================
 */
 function CL_createPacket(){
-	var msg = {t: 0, b: {}},
-		evBufLen = net_buf.ev.length;
+	var msg = [];
 
 	if(net_buf.auth.isready){
-		msg.t = MSG_CL_LOGIN;
-		msg.b = {n: net_buf.auth.name, p: net_buf.auth.pass};
+		msg[0] = MSG_CL_LOGIN;
+		msg[1] = {n: net_buf.auth.name, p: net_buf.auth.pass};
 
 		net_buf.auth.name = '';
 		net_buf.auth.pass = '';
 		net_buf.auth.isready = false;
 	}
-	else if(net_clKey != null){
-		msg.t = MSG_CL_DATA;
-		msg.b['k'] = net_clKey;
+	else {
+		msg[0] = MSG_CL_DATA;
+		msg[1] = net_clKey;
 
-		if(evBufLen > 0){
-			msg.b['e'] = [];
-
-			for(var i=0; i<evBufLen; i++){
-				msg.b['e'].push(net_buf.ev[i]);
-			}
+		if(net_buf.ev.length > 0){
+			// for(var i=0; i<evBufLen; i++){
+			// 	msg.b['e'].push(net_buf.ev[i]);
+			// }
 
 			net_buf.ev = [];
 		}
 
-		if(net_buf.mouse.length>0){
-			msg.b['m'] = net_buf.mouse;
+		if(net_buf.mouse.length > 0){
+			// msg.b['m'] = net_buf.mouse;
+
 			net_buf.mouse = '';
 		}
 	}
-	else
-		return;
 
+
+	if(!msg.length)
+		return;
 
 	console.log('NET send msg: ', msg); // To do NET send msg
 	// NET_sendPacket(msg);
