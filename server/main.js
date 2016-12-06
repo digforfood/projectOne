@@ -1,13 +1,12 @@
 'use strict'
-var WebSocketServer = new require('ws'),
-	webSocketServer = new WebSocketServer.Server({port:443}),
-	currFrameTick = new Date(),
-	prevFrameTick,
-	deltaFrameTick,
+var WebSocketServer = require('ws').Server,
+	webSocketServer,
+	currFrameTime,
+	prevFrameTime,
+	deltaFrameTime,
 
 	playerId,
 	players;
-
 
 ////////////////////_DB_////////////////////
 var db = {'users':[
@@ -21,49 +20,86 @@ var db = {'users':[
 		}
 	]};
 ////////////////////_DB_////////////////////
+/*
+===========================================
+SV_messageHandler
+===========================================
+*/
+function SV_messageHandler(){
+	var msg = {'m': [{'t': 2, 'b': {'k': 112233, 's': 2}}]};
+	this.send(JSON.stringify(msg), function(){ /* ignore errors */ });
+}
+/*
+===========================================
+SV_wssConnectionHandler
+===========================================
+*/
+function SV_wssConnectionHandler(client){
+	var id = playerId++,
+		player = {};
+
+	client.on('message', SV_messageHandler(message));
+
+	client.on('close', function(){
+		player.quit = true;
+	});
+
+	player.socket = client;
+	players[id] = player;
+}
 
 
 /*
-==============
+===========================================
+SV_wssInit
+===========================================
+*/
+function SV_wssInit(){
+	webSocketServer = new WebSocketServer({port: 443});
+
+	webSocketServer.on('connection', SV_wssConnectionHandler(client));
+}
+
+
+/*
+===========================================
+frame
+===========================================
+*/
+function frame(){
+	prevFrameTime = currFrameTime;
+	currFrameTime = new Date();
+	deltaFrameTime = currFrameTime - prevFrameTime;
+
+	//
+}
+
+
+/*
+===========================================
 gameWorldLoop
-==============
+===========================================
 */
 function gameWorldLoop(){
-	prevFrameTick = currFrameTick;
-	currFrameTick = new Date();
-	deltaFrameTick = currFrameTick - prevFrameTick;
+	frame();
 
 	setTimeout(gameWorldLoop, 0);
 }
 
 
 /*
-==============
+===========================================
 main
-==============
+===========================================
 */
 function main(){
+	currFrameTime = new Date();
 	playerId = 0;
 	players = {};
 
-	webSocketServer.on('connection', function(client){
-		var id = playerId++;
-		var player = {};
-		player.socket = client;
-		players[id] = player;
+	SV_wssInit();
 
-		player.socket.on('message', function(message){
-			console.log(message);
-			var msg = {'m': [{'t': 2, 'b': {'k': 112233, 's': 2}}]};
-			this.send(JSON.stringify(msg), function(){ /* ignore errors */ });
-		});
-
-		player.socket.on('close', function(){
-			player.quit = true;
-		});
-	});
-
-	gameWorldLoop();
+	//gameWorldLoop();
 }
 
 main();
