@@ -29,7 +29,8 @@ NET_connect
 ===========================================
 */
 function NET_connect(){
-	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+	// socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+	socket = new WebSocket("ws://localhost:443");
 
 	socket.onopen = function(){
 		console.log('onopen');

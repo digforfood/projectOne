@@ -25,9 +25,10 @@ var db = {'users':[
 SV_messageHandler
 ===========================================
 */
-function SV_messageHandler(){
-	var msg = {'m': [{'t': 2, 'b': {'k': 112233, 's': 2}}]};
-	this.send(JSON.stringify(msg), function(){ /* ignore errors */ });
+function SV_messageHandler(data){
+	console.log(data);
+	// var msg = {'m': [{'t': 2, 'b': {'k': 112233, 's': 2}}]};
+	// this.send(JSON.stringify(msg), function(){ /* ignore errors */ });
 }
 /*
 ===========================================
@@ -35,10 +36,11 @@ SV_wssConnectionHandler
 ===========================================
 */
 function SV_wssConnectionHandler(client){
+	// console.log(client);
 	var id = playerId++,
 		player = {};
 
-	client.on('message', SV_messageHandler(message));
+	client.on('message', SV_messageHandler);
 
 	client.on('close', function(){
 		player.quit = true;
@@ -57,7 +59,7 @@ SV_wssInit
 function SV_wssInit(){
 	webSocketServer = new WebSocketServer({port: 443});
 
-	webSocketServer.on('connection', SV_wssConnectionHandler(client));
+	webSocketServer.on('connection', SV_wssConnectionHandler);
 }
 
 

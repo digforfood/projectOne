@@ -747,8 +747,8 @@ function CL_createPacket(){
 	if(!msg.length)
 		return;
 
-	console.log('NET send msg: ', msg); // To do NET send msg
-	// NET_sendPacket(msg);
+	// console.log('NET send msg: ', msg); // To do NET send msg
+	NET_sendPacket(msg);
 
 	net_lastPacketSentTime = correntTime;
 }
@@ -760,7 +760,13 @@ CL_sendCmd
 ===========================================
 */
 function CL_sendCmd(){
-	if (sys_state.game == G_STATE_DISCONNECTED && sys_state.game == G_STATE_CONNECTING && !net_buf.auth.isready)
+	if (sys_state.game == G_STATE_INTRO_LOADING)
+		return;
+
+	if (sys_state.game == G_STATE_DISCONNECTED)
+		return;
+
+	if (sys_state.game == G_STATE_CONNECTING && !net_buf.auth.isready)
 		return;
 
 	if (sys_state.menu != M_STATE_NONE && correntTime - net_lastPacketSentTime < 1000)
@@ -872,7 +878,8 @@ NET_connect
 ===========================================
 */
 function NET_connect(){
-	socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+	// socket = new WebSocket("ws://devhub.mrdoe.ru:443");
+	socket = new WebSocket("ws://localhost:443");
 
 	socket.onopen = function(){
 		console.log('onopen');
@@ -969,9 +976,9 @@ function SCR_drawLoadScreen(){
 
 	////////////////////TO DO////////////////////	
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
-		sys_state.pushStateG(G_STATE_CONNECTING);
-		// sys_state.pushStateG(G_STATE_DISCONNECTED);
-		// NET_connect();
+		// sys_state.pushStateG(G_STATE_CONNECTING);
+		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		NET_connect();
 	}
 	else {
 		sys_state.pushStateG(G_STATE_RUN);

@@ -37,8 +37,8 @@ function CL_createPacket(){
 	if(!msg.length)
 		return;
 
-	console.log('NET send msg: ', msg); // To do NET send msg
-	// NET_sendPacket(msg);
+	// console.log('NET send msg: ', msg); // To do NET send msg
+	NET_sendPacket(msg);
 
 	net_lastPacketSentTime = correntTime;
 }
@@ -50,7 +50,13 @@ CL_sendCmd
 ===========================================
 */
 function CL_sendCmd(){
-	if (sys_state.game == G_STATE_DISCONNECTED && sys_state.game == G_STATE_CONNECTING && !net_buf.auth.isready)
+	if (sys_state.game == G_STATE_INTRO_LOADING)
+		return;
+
+	if (sys_state.game == G_STATE_DISCONNECTED)
+		return;
+
+	if (sys_state.game == G_STATE_CONNECTING && !net_buf.auth.isready)
 		return;
 
 	if (sys_state.menu != M_STATE_NONE && correntTime - net_lastPacketSentTime < 1000)
