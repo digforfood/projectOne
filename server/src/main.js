@@ -8,6 +8,7 @@ var WebSocketServer = require('ws').Server,
 	playerId,
 	players;
 
+//= sv_c_player.js
 //= sv_db.js
 //= sv_message.js
 //= sv_wss.js

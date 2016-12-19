@@ -4,18 +4,14 @@ SV_wssConnectionHandler
 ===========================================
 */
 function SV_wssConnectionHandler(client){
-	// console.log(client);
-	var id = playerId++,
-		player = {};
+	var player = new SV_Player(playerId++);
 
-	client.on('message', SV_messageHandler);
-
-	client.on('close', function(){
-		player.quit = true;
-	});
+	client.player = player;
+	client.onmessage = function(event) { this.player.msgIn.push(event.data); };
+	client.onclose = function(event) { this.player.quit = true; };
 
 	player.socket = client;
-	players[id] = player;
+	players[player.id] = player;
 }
 
 

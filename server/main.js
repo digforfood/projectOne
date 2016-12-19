@@ -8,6 +8,18 @@ var WebSocketServer = require('ws').Server,
 	playerId,
 	players;
 
+/*
+===========================================
+SV_Player
+===========================================
+*/
+function SV_Player(id){
+	this.id = id;
+	this.socket = {};
+	this.msgIn = [];
+	this.msgOut = [];
+	this.quit = true;
+}
 ////////////////////_DB_////////////////////
 var db = {'users':[
 		{
@@ -36,18 +48,14 @@ SV_wssConnectionHandler
 ===========================================
 */
 function SV_wssConnectionHandler(client){
-	// console.log(client);
-	var id = playerId++,
-		player = {};
+	var player = new SV_Player(playerId++);
 
-	client.on('message', SV_messageHandler);
-
-	client.on('close', function(){
-		player.quit = true;
-	});
+	client.player = player;
+	client.onmessage = function(event) { this.player.msgIn.push(event.data); };
+	client.onclose = function(event) { this.player.quit = true; };
 
 	player.socket = client;
-	players[id] = player;
+	players[player.id] = player;
 }
 
 
