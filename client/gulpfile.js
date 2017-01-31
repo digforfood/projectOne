@@ -10,7 +10,10 @@ var gulp = require('gulp'),
 	plumber = require('gulp-plumber'),
 	rigger = require('gulp-rigger'),
 	vars = require('postcss-simple-vars'),
-	extend = require('postcss-simple-extend');
+	extend = require('postcss-simple-extend'),
+	WebServ = require('../wserv'),
+	webServ = new WebServ();
+
 
 function log(error) {
 	console.log(("[" + error.name + " in " + error.plugin + "]").red.bold.inverse,
@@ -66,5 +69,6 @@ gulp.task('watch', function () {
 });
 
 gulp.task('default', function () {
+	webServ.listen();
 	gulp.start('pcss', 'sjs', 'pjs', 'html-partials', 'watch');
 });

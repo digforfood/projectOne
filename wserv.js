@@ -1,9 +1,15 @@
-var express = require('express'),
-    app = express(),
-    port = 3000,
-    colors = require('colors');
+var WebServ = function() {
+	this.express = require('express');
+	this.app = this.express();
+	this.port = 8888;
+	this.colors = require('colors');
 
-app.use(express.static(__dirname + '/client'));
+	this.app.use(this.express.static(__dirname + '/client'));
 
-app.listen(port);
-console.log('\nStart listning on: ' + port.toString().yellow.bold);
+	this.listen = function() {
+		this.app.listen(this.port);
+		console.log('\nStart listning on: ' + this.port.toString().yellow.bold);
+	}
+}
+
+module.exports = WebServ;
