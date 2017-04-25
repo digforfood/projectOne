@@ -11,7 +11,7 @@ var gulp = require('gulp'),
 	rigger = require('gulp-rigger'),
 	vars = require('postcss-simple-vars'),
 	extend = require('postcss-simple-extend'),
-	WebServ = require('../wserv'),
+	WebServ = require('./wserv'),
 	webServ = new WebServ();
 
 
@@ -21,15 +21,15 @@ function log(error) {
 };
 
 gulp.task('sjs', function () {
-	return gulp.src('./../server/src/main.js')
+	return gulp.src('./../_src/server/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest('./../server/'));
+		.pipe(gulp.dest('./../build/server/'));
 });
 
-gulp.task('pjs', function () {
-	return gulp.src('./../src/js/main.js')
+gulp.task('cjs', function () {
+	return gulp.src('./../_src/client/js/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest('./static/'));
+		.pipe(gulp.dest('./../build/client/static/'));
 });
 
 gulp.task('pcss', function () {
@@ -41,34 +41,34 @@ gulp.task('pcss', function () {
 		extend
 	];
 
-	return gulp.src('./../src/css/app.css')
+	return gulp.src('./../_src/client/css/app.css')
 		.pipe(plumber({errorHandler: log}))
 		.pipe(postcss(proccesors))
-		.pipe(gulp.dest('./static/'));
+		.pipe(gulp.dest('./../build/client/static/'));
 });
 
 gulp.task('html-partials', function () {
-	return gulp.src('./../src/index.html')
+	return gulp.src('./../_src/client/index.html')
 		.pipe(rigger())
-		.pipe(gulp.dest('./'));
+		.pipe(gulp.dest('./../build/client/'));
 });
 
 gulp.task('watch', function () {
-	watch('./../server/src/**/*', function () {
+	watch('./../_src/server/**/*', function () {
 		gulp.start('sjs');
 	});
-	watch('./../src/js/**/*', function () {
-		gulp.start('pjs');
+	watch('./../_src/client/js/**/*', function () {
+		gulp.start('cjs');
 	});
-	watch('./../src/css/**/*', function () {
+	watch('./../_src/client/css/**/*', function () {
 		gulp.start('pcss');
 	});
-	watch('./../src/*.html', function () {
+	watch('./../_src/client/*.html', function () {
 		gulp.start('html-partials');
 	});
 });
 
 gulp.task('default', function () {
 	webServ.listen();
-	gulp.start('pcss', 'sjs', 'pjs', 'html-partials', 'watch');
+	gulp.start('pcss', 'sjs', 'cjs', 'html-partials', 'watch');
 });

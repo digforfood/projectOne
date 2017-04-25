@@ -747,7 +747,7 @@ function CL_createPacket(){
 	if(!msg.length)
 		return;
 
-	// console.log('NET send msg: ', msg); // To do NET send msg
+	console.log('NET send msg: ', msg); // To do NET send msg
 	NET_sendPacket(msg);
 
 	net_lastPacketSentTime = correntTime;
