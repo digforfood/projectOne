@@ -11,7 +11,7 @@ var gulp = require('gulp'),
 	rigger = require('gulp-rigger'),
 	vars = require('postcss-simple-vars'),
 	extend = require('postcss-simple-extend'),
-	WebServ = require('./wserv'),
+	WebServ = require('./tools/wserv'),
 	webServ = new WebServ();
 
 
@@ -21,15 +21,15 @@ function log(error) {
 };
 
 gulp.task('sjs', function () {
-	return gulp.src('./../_src/server/main.js')
+	return gulp.src('./src/server/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest('./../build/server/'));
+		.pipe(gulp.dest('./build/server/'));
 });
 
 gulp.task('cjs', function () {
-	return gulp.src('./../_src/client/js/main.js')
+	return gulp.src('./src/client/js/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest('./../build/client/static/'));
+		.pipe(gulp.dest('./build/client/static/'));
 });
 
 gulp.task('pcss', function () {
@@ -41,29 +41,29 @@ gulp.task('pcss', function () {
 		extend
 	];
 
-	return gulp.src('./../_src/client/css/app.css')
+	return gulp.src('./src/client/css/app.css')
 		.pipe(plumber({errorHandler: log}))
 		.pipe(postcss(proccesors))
-		.pipe(gulp.dest('./../build/client/static/'));
+		.pipe(gulp.dest('./build/client/static/'));
 });
 
 gulp.task('html-partials', function () {
-	return gulp.src('./../_src/client/index.html')
+	return gulp.src('./src/client/index.html')
 		.pipe(rigger())
-		.pipe(gulp.dest('./../build/client/'));
+		.pipe(gulp.dest('./build/client/'));
 });
 
 gulp.task('watch', function () {
-	watch('./../_src/server/**/*', function () {
+	watch('./src/server/**/*', function () {
 		gulp.start('sjs');
 	});
-	watch('./../_src/client/js/**/*', function () {
+	watch('./src/client/js/**/*', function () {
 		gulp.start('cjs');
 	});
-	watch('./../_src/client/css/**/*', function () {
+	watch('./src/client/css/**/*', function () {
 		gulp.start('pcss');
 	});
-	watch('./../_src/client/*.html', function () {
+	watch('./src/client/*.html', function () {
 		gulp.start('html-partials');
 	});
 });
