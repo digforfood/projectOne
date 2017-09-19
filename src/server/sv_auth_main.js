@@ -2,19 +2,25 @@
 
 /*
 ===========================================
-SV_authTick
+SV_authCheckNewClients
 ===========================================
 */
-function SV_authTick(){
-	if(!authNewClients.length)
+function SV_authCheckNewClients() {
+	if (!authNewClients.length)
 		return;
 
-	for (var i = 0; i < authNewClients.length; i++) {
-		// Do client = new Client(authNewClients[i]);
-		// authClients.push(client);
-	}
+	var client = {},
+		len = authNewClients.length,
+		i;
 
-	authNewClients = [];
+	for (i = 0; i < len; i++) {
+		client = new Client(authNewClients.shift());
+
+		authClients.push(client);
+
+		if (i === 16)
+			return;
+	}
 }
 
 
@@ -23,7 +29,19 @@ function SV_authTick(){
 SV_authTick
 ===========================================
 */
-function SV_authLoop(){
+function SV_authTick() {
+	SV_authCheckNewClients();
+
+	// SV_authSendClientMessages();
+}
+
+
+/*
+===========================================
+SV_authTick
+===========================================
+*/
+function SV_authLoop() {
 	SV_authTick();
 
 	setTimeout(SV_authLoop, 100);
@@ -35,7 +53,7 @@ function SV_authLoop(){
 SV_authInit
 ===========================================
 */
-function SV_authInit(){
+function SV_authInit() {
 	authNewClients = [];
 	authClients = [];
 

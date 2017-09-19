@@ -3,7 +3,7 @@
 SV_Player
 ===========================================
 */
-function SV_Player(id){
+function SV_Player(id) {
 	this.id = id;
 	this.socket = {};
 	this.msgIn = [];

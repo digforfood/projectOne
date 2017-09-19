@@ -3,7 +3,7 @@
 UI_mainMenu_startAction
 ===========================================
 */
-function UI_mainMenu_startAction(){
+function UI_mainMenu_startAction() {
 	CL_loadThreads();
 	sys_state.pushStateG(G_STATE_LOADING);
 	sys_state.pushStateM(M_STATE_NONE);
@@ -15,7 +15,7 @@ function UI_mainMenu_startAction(){
 UI_mainMenu_optionsAction
 ===========================================
 */
-function UI_mainMenu_optionsAction(){
+function UI_mainMenu_optionsAction() {
 	sys_state.pushStateM(M_STATE_OPTIONS);
 }
 

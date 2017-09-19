@@ -3,7 +3,7 @@
 CL_parseCommandString
 ===========================================
 */
-function CL_parseCommandString(ent){
+function CL_parseCommandString(ent) {
 	// To do
 }
 
@@ -13,8 +13,8 @@ function CL_parseCommandString(ent){
 CL_parseGamestate
 ===========================================
 */
-function CL_parseGamestate(ent){
-	if(typeof ent.k != "undefined")
+function CL_parseGamestate(ent) {
+	if (typeof ent.k != "undefined")
 		net_clKey = ent.k;
 
 	sys_state.pushStateG(ent.s);
@@ -26,7 +26,7 @@ function CL_parseGamestate(ent){
 CL_parseSnapshot
 ===========================================
 */
-function CL_parseSnapshot(ent){
+function CL_parseSnapshot(ent) {
 	// To do
 }
 
@@ -36,7 +36,7 @@ function CL_parseSnapshot(ent){
 CL_parseServerMessage
 ===========================================
 */
-function CL_parseServerMessage(){
+function CL_parseServerMessage() {
 	if (net_inPackets.length == 0)
 		return;
 
@@ -44,7 +44,7 @@ function CL_parseServerMessage(){
 		type = 0,
 		body = {};
 
-	for(var i = 0; i < net_inPackets.length; i++){
+	for (var i = 0; i < net_inPackets.length; i++) {
 
 		l_msg = net_inPackets[i].m;
 
@@ -53,13 +53,13 @@ function CL_parseServerMessage(){
 			type = l_msg[j].t;
 			body = l_msg[j].b;
 
-			if(type == MSG_SERVERCOMMAND){
+			if (type == MSG_SERVERCOMMAND) {
 				CL_parseCommandString(body);
 			}
-			else if(type == MSG_GAMESTATE){
+			else if (type == MSG_GAMESTATE) {
 				CL_parseGamestate(body);
 			}
-			else if(type == MSG_SNAPSHOT){
+			else if (type == MSG_SNAPSHOT) {
 				CL_parseSnapshot(body);
 			}
 		};

@@ -3,7 +3,7 @@
 SV_wssConnectionHandler
 ===========================================
 */
-function SV_wssConnectionHandler(client){
+function SV_wssConnectionHandler(client) {
 	// var player = new SV_Player(playerId++);
 
 	// client.player = player;
@@ -22,7 +22,7 @@ function SV_wssConnectionHandler(client){
 SV_wssInit
 ===========================================
 */
-function SV_wssInit(){
+function SV_wssInit() {
 	webSocketServer = new WebSocketServer({port: 443});
 
 	webSocketServer.on('connection', SV_wssConnectionHandler);

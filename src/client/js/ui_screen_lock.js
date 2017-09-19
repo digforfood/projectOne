@@ -3,8 +3,8 @@
 UI_lockScreen_connectAction
 ===========================================
 */
-function UI_lockScreen_connectAction(){
-	if(sys_state.game != G_STATE_DISCONNECTED){
+function UI_lockScreen_connectAction() {
+	if (sys_state.game != G_STATE_DISCONNECTED) {
 		net_buf.auth.name = ui_s_lock.items[0].buffer;
 		net_buf.auth.pass = ui_s_lock.items[1].buffer;
 

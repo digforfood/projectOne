@@ -3,8 +3,8 @@
 UI_rectContainsPoint
 ===========================================
 */
-function UI_rectContainsPoint(x, y, item){
-	if(x > item.x && x < item.x + item.width && y > item.y && y < item.y + item.height){
+function UI_rectContainsPoint(x, y, item) {
+	if (x > item.x && x < item.x + item.width && y > item.y && y < item.y + item.height) {
 		return true;
 	}
 	return false;
@@ -16,13 +16,13 @@ function UI_rectContainsPoint(x, y, item){
 UI_handleMouseMoveEvent
 ===========================================
 */
-function UI_handleMouseMoveEvent(){
+function UI_handleMouseMoveEvent() {
 	m_focusItem = {};
 
-	for(var i =0; i < m_active.items.length; i++){
-		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
+	for (var i =0; i < m_active.items.length; i++) {
+		if (UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])) {
 			m_focusItem = m_active.items[i];
-			if(m_active.items[i].type == MTYPE_TEXT)
+			if (m_active.items[i].type == MTYPE_TEXT)
 				m_position = m_active.items[i];
 		}
 	}
@@ -34,7 +34,7 @@ function UI_handleMouseMoveEvent(){
 UI_mouseEvent
 ===========================================
 */
-function UI_mouseEvent(){
+function UI_mouseEvent() {
 	mouse_x += mouse_movement_x;
 	mouse_y += mouse_movement_y;
 	if (mouse_x < 0) mouse_x = 0;
@@ -51,7 +51,7 @@ function UI_mouseEvent(){
 UI_handleMouseClick
 ===========================================
 */
-function UI_handleMouseClick(){
+function UI_handleMouseClick() {
 	if (m_focusItem.type == MTYPE_TEXT) {
 		//
 	}
@@ -59,7 +59,7 @@ function UI_handleMouseClick(){
 		m_position = m_focusItem;
 	}
 
-	if(m_focusItem.onclick == undefined)
+	if (m_focusItem.onclick == undefined)
 		return;
 
 	m_focusItem.onclick();
@@ -71,13 +71,13 @@ function UI_handleMouseClick(){
 UI_handleKeyEvent
 ===========================================
 */
-function UI_handleKeyEvent(key, down){
-	if(key == K_MOUSE){
-		if(down && !m_buttonDownItem && m_focusItem){
+function UI_handleKeyEvent(key, down) {
+	if (key == K_MOUSE) {
+		if (down && !m_buttonDownItem && m_focusItem) {
 			m_buttonDownItem = m_focusItem.id;
 			return;
 		}
-		else if(!down && m_buttonDownItem){
+		else if (!down && m_buttonDownItem) {
 			if (m_buttonDownItem == m_focusItem.id)
 				UI_handleMouseClick();
 
@@ -86,37 +86,37 @@ function UI_handleKeyEvent(key, down){
 		}
 	}
 
-	if(!down)
+	if (!down)
 		return;
 
-	if(key == K_UPARROW){
+	if (key == K_UPARROW) {
 		// To do
 	}	
-	else if(key == K_DOWNARROW){
+	else if (key == K_DOWNARROW) {
 		// To do
 	}
-	else if(key == K_ALT){
-		if(keyEvents[K_SHIFT]){
-			if(ui_langSet == LANG_EN)
+	else if (key == K_ALT) {
+		if (keyEvents[K_SHIFT]) {
+			if (ui_langSet == LANG_EN)
 				ui_langSet = LANG_RU;
 			else
 				ui_langSet = LANG_EN;
 			keyEvents[key] = false;
 		}
 	}
-	else if(key == K_BACKSPACE){
-		if(!m_position || m_position.type!=MTYPE_INPUT)
+	else if (key == K_BACKSPACE) {
+		if (!m_position || m_position.type!=MTYPE_INPUT)
 			return;
 
 		m_position.buffer = m_position.buffer.slice(0, -1);
 		keyEvents[key] = false;
 	}
 	else{
-		if(!m_position || m_position.type!=MTYPE_INPUT || keys_map[key] == undefined)
+		if (!m_position || m_position.type!=MTYPE_INPUT || keys_map[key] == undefined)
 			return;
 
 		keyEvents[key] = false;
-		if(keyEvents[K_SHIFT])
+		if (keyEvents[K_SHIFT])
 			m_position.buffer += keys_map[key][ui_langSet+1];
 		else
 			m_position.buffer += keys_map[key][ui_langSet];
@@ -129,8 +129,8 @@ function UI_handleKeyEvent(key, down){
 UI_keyEvent
 ===========================================
 */
-function UI_keyEvent(){
-	for(var key in keyEvents){
+function UI_keyEvent() {
+	for (var key in keyEvents) {
 		UI_handleKeyEvent(key, keyEvents[key]);
 	}
 }

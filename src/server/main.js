@@ -23,7 +23,7 @@ var WebSocketServer = require('ws').Server,
 frame
 ===========================================
 */
-function frame(){
+function frame() {
 	prevFrameTime = currFrameTime;
 	currFrameTime = new Date();
 	deltaFrameTime = currFrameTime - prevFrameTime;
@@ -45,7 +45,7 @@ function frame(){
 gameWorldLoop
 ===========================================
 */
-function gameWorldLoop(){
+function gameWorldLoop() {
 	frame();
 
 	setTimeout(gameWorldLoop, 0);
@@ -57,7 +57,7 @@ function gameWorldLoop(){
 main
 ===========================================
 */
-function main(){
+function main() {
 	currFrameTime = new Date();
 	playerId = 0;
 	players = {};

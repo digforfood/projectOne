@@ -72,7 +72,7 @@ var scr_width,
 CL_mouseEvent
 ===========================================
 */
-function CL_mouseEvent(){
+function CL_mouseEvent() {
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
 	}
@@ -89,7 +89,7 @@ function CL_mouseEvent(){
 CL_keyEvent
 ===========================================
 */
-function CL_keyEvent(){
+function CL_keyEvent() {
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_keyEvent();
 	}
@@ -104,7 +104,7 @@ function CL_keyEvent(){
 CL_incomingEvents
 ===========================================
 */
-function CL_incomingEvents(){
+function CL_incomingEvents() {
 	// fetch results from server
 	CL_parseServerMessage();
 
@@ -121,16 +121,16 @@ function CL_incomingEvents(){
 SCR_updateScreen
 ===========================================
 */
-function SCR_updateScreen(){
+function SCR_updateScreen() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
+	if ( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING) {
 		SCR_drawLoadScreen();
 	}
-	else if(sys_state.game <= G_STATE_CONNECTING){
+	else if (sys_state.game <= G_STATE_CONNECTING) {
 		SCR_drawLockScreen();
 	}
-	else if(sys_state.game == G_STATE_RUN){
+	else if (sys_state.game == G_STATE_RUN) {
 		// To do
 	}
 
@@ -146,7 +146,7 @@ function SCR_updateScreen(){
 frame
 ===========================================
 */
-function frame(){
+function frame() {
 	correntTime = new Date();
 	deltaMilliseconds = correntTime - thisFrameTime;
 
@@ -178,7 +178,7 @@ function frame(){
 gameLoop
 ===========================================
 */
-function gameLoop(){
+function gameLoop() {
 	frame();
 
 	window.setTimeout(gameLoop, 0);
@@ -190,7 +190,7 @@ function gameLoop(){
 canvasInit
 ===========================================
 */
-function canvasInit(){
+function canvasInit() {
 	canvas = document.getElementById('canvas');
 	scr_width = parseInt(localStorage['scr_width']) || D_SCREEN_WIDTH;
 	scr_height = parseInt(localStorage['scr_height']) || D_SCREEN_HEIGHT;
@@ -206,7 +206,7 @@ function canvasInit(){
 controlEventsInit
 ===========================================
 */
-function controlEventsInit(){
+function controlEventsInit() {
 	keyEvents = {};
 
 	//mouse events
@@ -215,30 +215,30 @@ function controlEventsInit(){
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
 	keyEvents[K_MOUSE] = 0;
-	canvas.oncontextmenu = function(){
+	canvas.oncontextmenu = function() {
 		return false;
 	};
-	canvas.onmousedown = function(e){
+	canvas.onmousedown = function(e) {
 		if (!e) e = window.event;
 		keyEvents[K_MOUSE] = e.buttons;
 	};
-	canvas.onmouseup = function(e){
+	canvas.onmouseup = function(e) {
 		keyEvents[K_MOUSE] = 0;
 	};
-	canvas.onmousemove = function(e){
+	canvas.onmousemove = function(e) {
 		if (!e) e = window.event;
 		mouse_movement_x += e.movementX;
 		mouse_movement_y += e.movementY;
 	};
 
 	//keyboard events
-	document.onkeydown = function(e){
+	document.onkeydown = function(e) {
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = true;
 
 		return false;
 	};
-	document.onkeyup = function(e){
+	document.onkeyup = function(e) {
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = false;
 
@@ -248,7 +248,7 @@ function controlEventsInit(){
 	//cursor hide
 	canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
 	canvas.requestFullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen;
-	canvas.onclick = function(){
+	canvas.onclick = function() {
 		if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
 			canvas.requestPointerLock();
 			canvas.requestFullscreen();
@@ -262,7 +262,7 @@ function controlEventsInit(){
 main
 ===========================================
 */
-function main(){
+function main() {
 	fps = 100;
 	ui_stack = [];
 	ui_langSet = LANG_EN;

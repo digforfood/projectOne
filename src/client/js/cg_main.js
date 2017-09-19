@@ -29,7 +29,7 @@ function CG_setOrtho2D() {
 	for (var i = 0; i < cg_glPrograms.length; i++) {
 		program = cg_glPrograms[i];
 
-		if (program.uOrtho == null){
+		if (program.uOrtho == null) {
 			continue;
 		}
 

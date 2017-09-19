@@ -11,7 +11,7 @@ cgs.shaders.v_rect =
 	'uniform vec4 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'}\n';
 
@@ -35,7 +35,7 @@ cgs.shaders.v_chars =
 	'uniform float uSize;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uSize + uDest, 0.0, 1.0);\n' +
 	'	vTexCoord = (aPosition + uCharacter) * 0.0625;\n' +
 	'}\n';
@@ -59,7 +59,7 @@ cgs.shaders.v_pic =
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'	vTexCoord = aPosition;\n' +
 	'}\n';

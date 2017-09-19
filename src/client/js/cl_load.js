@@ -3,7 +3,7 @@
 CL_loadThreads
 ===========================================
 */
-function CL_loadThreads(){
+function CL_loadThreads() {
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
 		cgs.media = {};
 		// To do start load thread audio
