@@ -14,8 +14,9 @@ var	G_STATE_INTRO_LOADING = 0,
 	MSG_CL_DATA = 1,
 
 	M_STATE_NONE = 0,
-	M_STATE_MAIN = 1,
-	M_STATE_OPTIONS = 2,
+	M_STATE_LOCK = 1,
+	M_STATE_MAIN = 2,
+	M_STATE_OPTIONS = 3,
 
 	CG_GL_P_CHAR = 0,
 	CG_GL_P_RECT = 1,
@@ -427,7 +428,7 @@ function CG_setOrtho2D() {
 	for (var i = 0; i < cg_glPrograms.length; i++) {
 		program = cg_glPrograms[i];
 
-		if (program.uOrtho == null){
+		if (program.uOrtho == null) {
 			continue;
 		}
 
@@ -612,7 +613,7 @@ function CG_init() {
 CL_loadThreads
 ===========================================
 */
-function CL_loadThreads(){
+function CL_loadThreads() {
 	if (sys_state.game == G_STATE_INTRO_LOADING) {
 		cgs.media = {};
 		// To do start load thread audio
@@ -644,7 +645,7 @@ function CL_loadThreads(){
 CL_parseCommandString
 ===========================================
 */
-function CL_parseCommandString(ent){
+function CL_parseCommandString(ent) {
 	// To do
 }
 
@@ -654,8 +655,8 @@ function CL_parseCommandString(ent){
 CL_parseGamestate
 ===========================================
 */
-function CL_parseGamestate(ent){
-	if(typeof ent.k != "undefined")
+function CL_parseGamestate(ent) {
+	if (typeof ent.k != "undefined")
 		net_clKey = ent.k;
 
 	sys_state.pushStateG(ent.s);
@@ -667,7 +668,7 @@ function CL_parseGamestate(ent){
 CL_parseSnapshot
 ===========================================
 */
-function CL_parseSnapshot(ent){
+function CL_parseSnapshot(ent) {
 	// To do
 }
 
@@ -677,7 +678,7 @@ function CL_parseSnapshot(ent){
 CL_parseServerMessage
 ===========================================
 */
-function CL_parseServerMessage(){
+function CL_parseServerMessage() {
 	if (net_inPackets.length == 0)
 		return;
 
@@ -685,7 +686,7 @@ function CL_parseServerMessage(){
 		type = 0,
 		body = {};
 
-	for(var i = 0; i < net_inPackets.length; i++){
+	for (var i = 0; i < net_inPackets.length; i++) {
 
 		l_msg = net_inPackets[i].m;
 
@@ -694,13 +695,13 @@ function CL_parseServerMessage(){
 			type = l_msg[j].t;
 			body = l_msg[j].b;
 
-			if(type == MSG_SERVERCOMMAND){
+			if (type == MSG_SERVERCOMMAND) {
 				CL_parseCommandString(body);
 			}
-			else if(type == MSG_GAMESTATE){
+			else if (type == MSG_GAMESTATE) {
 				CL_parseGamestate(body);
 			}
-			else if(type == MSG_SNAPSHOT){
+			else if (type == MSG_SNAPSHOT) {
 				CL_parseSnapshot(body);
 			}
 		};
@@ -713,10 +714,10 @@ function CL_parseServerMessage(){
 CL_createPacket
 ===========================================
 */
-function CL_createPacket(){
+function CL_createPacket() {
 	var msg = [];
 
-	if(net_buf.auth.isready){
+	if (net_buf.auth.isready) {
 		msg[0] = MSG_CL_LOGIN;
 		msg[1] = {n: net_buf.auth.name, p: net_buf.auth.pass};
 
@@ -728,15 +729,15 @@ function CL_createPacket(){
 		msg[0] = MSG_CL_DATA;
 		msg[1] = net_clKey;
 
-		if(net_buf.ev.length > 0){
-			// for(var i=0; i<evBufLen; i++){
+		if (net_buf.ev.length > 0) {
+			// for (var i=0; i<evBufLen; i++) {
 			// 	msg.b['e'].push(net_buf.ev[i]);
 			// }
 
 			net_buf.ev = [];
 		}
 
-		if(net_buf.mouse.length > 0){
+		if (net_buf.mouse.length > 0) {
 			// msg.b['m'] = net_buf.mouse;
 
 			net_buf.mouse = '';
@@ -744,7 +745,7 @@ function CL_createPacket(){
 	}
 
 
-	if(!msg.length)
+	if (!msg.length)
 		return;
 
 	console.log('NET send msg: ', msg); // To do NET send msg
@@ -759,7 +760,7 @@ function CL_createPacket(){
 CL_sendCmd
 ===========================================
 */
-function CL_sendCmd(){
+function CL_sendCmd() {
 	if (sys_state.game == G_STATE_INTRO_LOADING)
 		return;
 
@@ -787,7 +788,7 @@ cgs.shaders.v_rect =
 	'uniform vec4 uDest;\n' +
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'}\n';
 
@@ -811,7 +812,7 @@ cgs.shaders.v_chars =
 	'uniform float uSize;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uSize + uDest, 0.0, 1.0);\n' +
 	'	vTexCoord = (aPosition + uCharacter) * 0.0625;\n' +
 	'}\n';
@@ -835,7 +836,7 @@ cgs.shaders.v_pic =
 	'uniform mat4 uOrtho;\n' +
 	'attribute vec2 aPosition;\n' +
 	'varying vec2 vTexCoord;\n' +
-	'void main(){\n' +
+	'void main() {\n' +
 	'	gl_Position = uOrtho * vec4(aPosition * uDest.zw + uDest.xy, 0.0, 1.0);\n' +
 	'	vTexCoord = aPosition;\n' +
 	'}\n';
@@ -852,7 +853,7 @@ cgs.shaders.f_pic =
 NET_sendPacket
 ===========================================
 */
-function NET_sendPacket(data){
+function NET_sendPacket(data) {
 	socket.send(JSON.stringify(data));
 }
 
@@ -862,7 +863,7 @@ function NET_sendPacket(data){
 NET_init
 ===========================================
 */
-function NET_init(){
+function NET_init() {
 	net_clKey = parseInt(localStorage['net_clKey']) || null;
 	net_inPackets = [];
 
@@ -877,29 +878,29 @@ function NET_init(){
 NET_connect
 ===========================================
 */
-function NET_connect(){
+function NET_connect() {
 	// socket = new WebSocket("ws://devhub.mrdoe.ru:443");
 	socket = new WebSocket("ws://localhost:443");
 
-	socket.onopen = function(){
+	socket.onopen = function() {
 		console.log('onopen');
 
 		sys_state.pushStateG(G_STATE_CONNECTING);
 	};
 
-	socket.onclose = function(ent){
+	socket.onclose = function(ent) {
 		console.log('onclose');
 
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
 	};
 
-	socket.onmessage = function(ent){
+	socket.onmessage = function(ent) {
 		console.log(ent.data);
 
 		net_inPackets.push(JSON.parse(ent.data));
 	};
 
-	socket.onerror = function(ent){
+	socket.onerror = function(ent) {
 		console.log('onerror');
 
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
@@ -910,7 +911,7 @@ function NET_connect(){
 SCR_drawField_input
 ===========================================
 */
-function SCR_drawField_input(elem){
+function SCR_drawField_input(elem) {
 	if (m_position && m_position.id == elem.id) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
@@ -925,8 +926,8 @@ function SCR_drawField_input(elem){
 SCR_drawField_button
 ===========================================
 */
-function SCR_drawField_button(elem){
-	if(sys_state.game == G_STATE_DISCONNECTED){
+function SCR_drawField_button(elem) {
+	if (sys_state.game == G_STATE_DISCONNECTED) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [106, 121, 137]);
 	}
 	else{
@@ -939,19 +940,19 @@ function SCR_drawField_button(elem){
 
 /*
 ===========================================
-SCR_drawLockScreen
+SCR_drawMenu_lock
 ===========================================
 */
-function SCR_drawLockScreen(){
+function SCR_drawMenu_lock() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if(m_active.items[i].type == MTYPE_INPUT){
+		if (m_active.items[i].type == MTYPE_INPUT) {
 			SCR_drawField_input(m_active.items[i]);
 		}
-		else if(m_active.items[i].type == MTYPE_BUTTON){
+		else if (m_active.items[i].type == MTYPE_BUTTON) {
 			SCR_drawField_button(m_active.items[i]);
 		}
 	}
@@ -963,21 +964,22 @@ function SCR_drawLockScreen(){
 SCR_drawLoadScreen
 ===========================================
 */
-function SCR_drawLoadScreen(){
+function SCR_drawLoadScreen() {
 	var loadStatus = SYS_checkResources();
 
 	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20, [255, 255, 255]);
 
 
-	if(loadStatus != 100)
+	if (loadStatus != 100)
 		return;
 
 	CG_setTextures();
 
 	////////////////////TO DO////////////////////	
-	if (sys_state.game == G_STATE_INTRO_LOADING) {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		// sys_state.pushStateG(G_STATE_CONNECTING);
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		sys_state.pushStateM(M_STATE_LOCK);
 		NET_connect();
 	}
 	else {
@@ -992,7 +994,7 @@ function SCR_drawLoadScreen(){
 SCR_drawMenu_main
 ===========================================
 */
-function SCR_drawMenu_main(){
+function SCR_drawMenu_main() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 
@@ -1012,7 +1014,7 @@ function SCR_drawMenu_main(){
 SCR_drawMenu_options
 ===========================================
 */
-function SCR_drawMenu_options(){
+function SCR_drawMenu_options() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 }
@@ -1023,14 +1025,17 @@ function SCR_drawMenu_options(){
 SCR_drawMenu
 ===========================================
 */
-function SCR_drawMenu(){
-	if(sys_state.menu === M_STATE_NONE) {
+function SCR_drawMenu() {
+	if (sys_state.menu === M_STATE_NONE) {
 		return;
 	}
-	else if(sys_state.menu === M_STATE_MAIN) {
+	else if (sys_state.menu === M_STATE_LOCK) {
+		SCR_drawMenu_lock();
+	}
+	else if (sys_state.menu === M_STATE_MAIN) {
 		SCR_drawMenu_main();
 	}
-	else if(sys_state.menu === M_STATE_OPTIONS) {
+	else if (sys_state.menu === M_STATE_OPTIONS) {
 		SCR_drawMenu_options();
 	}
 }
@@ -1041,8 +1046,8 @@ function SCR_drawMenu(){
 SCR_drawFPS
 ===========================================
 */
-function SCR_drawFPS(){
-	if(sys_state.game == G_STATE_INTRO_LOADING) {
+function SCR_drawFPS() {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		return;
 	}
 
@@ -1067,8 +1072,8 @@ function SCR_drawFPS(){
 SCR_drawСursor
 ===========================================
 */
-function SCR_drawСursor(){
-	if(sys_state.game == G_STATE_INTRO_LOADING) {
+function SCR_drawСursor() {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		return;
 	}
 
@@ -1081,15 +1086,15 @@ function SCR_drawСursor(){
 SYS_checkResources
 ===========================================
 */
-function SYS_checkResources(){
+function SYS_checkResources() {
 	var obj = 0,
 		objComplete = 0;
 
-	for (var i in cgs.media){
-		for (var o in cgs.media[i]){
+	for (var i in cgs.media) {
+		for (var o in cgs.media[i]) {
 			obj++;
 
-			if(cgs.media[i][o].complete || cgs.media[i][o].readyState == "complete" || cgs.media[i][o].readyState == 4)
+			if (cgs.media[i][o].complete || cgs.media[i][o].readyState == "complete" || cgs.media[i][o].readyState == 4)
 				objComplete++;
 		}
 	}
@@ -1101,39 +1106,45 @@ function SYS_checkResources(){
 CLASS SYS_State
 ===========================================
 */
-function SYS_State(ent_g, ent_m){
+function SYS_State(ent_g, ent_m) {
 	this.game = ent_g;
 	this.g_stateStack = [];
 
 	this.menu = ent_m;
 	this.m_stateStack = [];
 
-	this.switchState = function(){
-		if(this.g_stateStack.length > 0){
+	this.switchState = function() {
+		if (this.g_stateStack.length > 0) {
 			this.game = this.g_stateStack[0];
-			if(this.game == G_STATE_DISCONNECTED || this.game == G_STATE_CONNECTING)
-				m_active = ui_s_lock;
-			else if(this.game == G_STATE_CONNECTED)
-				this.pushStateM(M_STATE_MAIN);
+
 			this.g_stateStack = [];
 		}
-		if(this.m_stateStack.length > 0){
+
+		if (this.m_stateStack.length > 0) {
 			this.menu = this.m_stateStack[0];
-			if(this.menu == M_STATE_NONE)
+
+			if (this.menu === M_STATE_NONE) {
 				m_active = {};
-			else if(this.menu == M_STATE_MAIN)
+			}
+			else if (this.menu === M_STATE_LOCK) {
+				m_active = ui_s_lock;
+			}
+			else if (this.menu === M_STATE_MAIN) {
 				m_active = ui_s_m_main;
-			else if(this.menu == M_STATE_OPTIONS)
+			}
+			else if (this.menu === M_STATE_OPTIONS) {
 				m_active = ui_s_m_options;
+			}
+
 			this.m_stateStack = [];
 		}
 	};
 
-	this.pushStateG = function(state){
+	this.pushStateG = function(state) {
 		this.g_stateStack = [state];
 	};
 
-	this.pushStateM = function(state){
+	this.pushStateM = function(state) {
 		this.m_stateStack = [state];
 	};
 }
@@ -1142,8 +1153,8 @@ function SYS_State(ent_g, ent_m){
 UI_rectContainsPoint
 ===========================================
 */
-function UI_rectContainsPoint(x, y, item){
-	if(x > item.x && x < item.x + item.width && y > item.y && y < item.y + item.height){
+function UI_rectContainsPoint(x, y, item) {
+	if (x > item.x && x < item.x + item.width && y > item.y && y < item.y + item.height) {
 		return true;
 	}
 	return false;
@@ -1155,13 +1166,13 @@ function UI_rectContainsPoint(x, y, item){
 UI_handleMouseMoveEvent
 ===========================================
 */
-function UI_handleMouseMoveEvent(){
+function UI_handleMouseMoveEvent() {
 	m_focusItem = {};
 
-	for(var i =0; i < m_active.items.length; i++){
-		if(UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])){
+	for (var i =0; i < m_active.items.length; i++) {
+		if (UI_rectContainsPoint(mouse_x, mouse_y, m_active.items[i])) {
 			m_focusItem = m_active.items[i];
-			if(m_active.items[i].type == MTYPE_TEXT)
+			if (m_active.items[i].type == MTYPE_TEXT)
 				m_position = m_active.items[i];
 		}
 	}
@@ -1173,7 +1184,7 @@ function UI_handleMouseMoveEvent(){
 UI_mouseEvent
 ===========================================
 */
-function UI_mouseEvent(){
+function UI_mouseEvent() {
 	mouse_x += mouse_movement_x;
 	mouse_y += mouse_movement_y;
 	if (mouse_x < 0) mouse_x = 0;
@@ -1190,7 +1201,7 @@ function UI_mouseEvent(){
 UI_handleMouseClick
 ===========================================
 */
-function UI_handleMouseClick(){
+function UI_handleMouseClick() {
 	if (m_focusItem.type == MTYPE_TEXT) {
 		//
 	}
@@ -1198,7 +1209,7 @@ function UI_handleMouseClick(){
 		m_position = m_focusItem;
 	}
 
-	if(m_focusItem.onclick == undefined)
+	if (m_focusItem.onclick == undefined)
 		return;
 
 	m_focusItem.onclick();
@@ -1210,13 +1221,13 @@ function UI_handleMouseClick(){
 UI_handleKeyEvent
 ===========================================
 */
-function UI_handleKeyEvent(key, down){
-	if(key == K_MOUSE){
-		if(down && !m_buttonDownItem && m_focusItem){
+function UI_handleKeyEvent(key, down) {
+	if (key == K_MOUSE) {
+		if (down && !m_buttonDownItem && m_focusItem) {
 			m_buttonDownItem = m_focusItem.id;
 			return;
 		}
-		else if(!down && m_buttonDownItem){
+		else if (!down && m_buttonDownItem) {
 			if (m_buttonDownItem == m_focusItem.id)
 				UI_handleMouseClick();
 
@@ -1225,37 +1236,37 @@ function UI_handleKeyEvent(key, down){
 		}
 	}
 
-	if(!down)
+	if (!down)
 		return;
 
-	if(key == K_UPARROW){
+	if (key == K_UPARROW) {
 		// To do
 	}	
-	else if(key == K_DOWNARROW){
+	else if (key == K_DOWNARROW) {
 		// To do
 	}
-	else if(key == K_ALT){
-		if(keyEvents[K_SHIFT]){
-			if(ui_langSet == LANG_EN)
+	else if (key == K_ALT) {
+		if (keyEvents[K_SHIFT]) {
+			if (ui_langSet == LANG_EN)
 				ui_langSet = LANG_RU;
 			else
 				ui_langSet = LANG_EN;
 			keyEvents[key] = false;
 		}
 	}
-	else if(key == K_BACKSPACE){
-		if(!m_position || m_position.type!=MTYPE_INPUT)
+	else if (key == K_BACKSPACE) {
+		if (!m_position || m_position.type!=MTYPE_INPUT)
 			return;
 
 		m_position.buffer = m_position.buffer.slice(0, -1);
 		keyEvents[key] = false;
 	}
 	else{
-		if(!m_position || m_position.type!=MTYPE_INPUT || keys_map[key] == undefined)
+		if (!m_position || m_position.type!=MTYPE_INPUT || keys_map[key] == undefined)
 			return;
 
 		keyEvents[key] = false;
-		if(keyEvents[K_SHIFT])
+		if (keyEvents[K_SHIFT])
 			m_position.buffer += keys_map[key][ui_langSet+1];
 		else
 			m_position.buffer += keys_map[key][ui_langSet];
@@ -1268,8 +1279,8 @@ function UI_handleKeyEvent(key, down){
 UI_keyEvent
 ===========================================
 */
-function UI_keyEvent(){
-	for(var key in keyEvents){
+function UI_keyEvent() {
+	for (var key in keyEvents) {
 		UI_handleKeyEvent(key, keyEvents[key]);
 	}
 }
@@ -1278,8 +1289,8 @@ function UI_keyEvent(){
 UI_lockScreen_connectAction
 ===========================================
 */
-function UI_lockScreen_connectAction(){
-	if(sys_state.game != G_STATE_DISCONNECTED){
+function UI_lockScreen_connectAction() {
+	if (sys_state.game != G_STATE_DISCONNECTED) {
 		net_buf.auth.name = ui_s_lock.items[0].buffer;
 		net_buf.auth.pass = ui_s_lock.items[1].buffer;
 
@@ -1333,7 +1344,7 @@ ui_s_lock = {
 UI_mainMenu_startAction
 ===========================================
 */
-function UI_mainMenu_startAction(){
+function UI_mainMenu_startAction() {
 	CL_loadThreads();
 	sys_state.pushStateG(G_STATE_LOADING);
 	sys_state.pushStateM(M_STATE_NONE);
@@ -1345,7 +1356,7 @@ function UI_mainMenu_startAction(){
 UI_mainMenu_optionsAction
 ===========================================
 */
-function UI_mainMenu_optionsAction(){
+function UI_mainMenu_optionsAction() {
 	sys_state.pushStateM(M_STATE_OPTIONS);
 }
 
@@ -1411,7 +1422,7 @@ items: [
 CL_mouseEvent
 ===========================================
 */
-function CL_mouseEvent(){
+function CL_mouseEvent() {
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_mouseEvent();
 	}
@@ -1428,7 +1439,7 @@ function CL_mouseEvent(){
 CL_keyEvent
 ===========================================
 */
-function CL_keyEvent(){
+function CL_keyEvent() {
 	if (sys_state.menu != M_STATE_NONE || sys_state.game <= G_STATE_CONNECTING) {
 		UI_keyEvent();
 	}
@@ -1443,7 +1454,7 @@ function CL_keyEvent(){
 CL_incomingEvents
 ===========================================
 */
-function CL_incomingEvents(){
+function CL_incomingEvents() {
 	// fetch results from server
 	CL_parseServerMessage();
 
@@ -1460,16 +1471,13 @@ function CL_incomingEvents(){
 SCR_updateScreen
 ===========================================
 */
-function SCR_updateScreen(){
+function SCR_updateScreen() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	if( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING){
+	if ( sys_state.game === G_STATE_INTRO_LOADING || sys_state.game === G_STATE_LOADING) {
 		SCR_drawLoadScreen();
 	}
-	else if(sys_state.game <= G_STATE_CONNECTING){
-		SCR_drawLockScreen();
-	}
-	else if(sys_state.game == G_STATE_RUN){
+	else if (sys_state.game === G_STATE_RUN) {
 		// To do
 	}
 
@@ -1485,12 +1493,12 @@ function SCR_updateScreen(){
 frame
 ===========================================
 */
-function frame(){
+function frame() {
 	correntTime = new Date();
 	deltaMilliseconds = correntTime - thisFrameTime;
 
 	if (deltaMilliseconds < 1000/fps)
-		return;			// framerate is too high
+		return; // framerate is too high
 
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;
@@ -1517,7 +1525,7 @@ function frame(){
 gameLoop
 ===========================================
 */
-function gameLoop(){
+function gameLoop() {
 	frame();
 
 	window.setTimeout(gameLoop, 0);
@@ -1529,7 +1537,7 @@ function gameLoop(){
 canvasInit
 ===========================================
 */
-function canvasInit(){
+function canvasInit() {
 	canvas = document.getElementById('canvas');
 	scr_width = parseInt(localStorage['scr_width']) || D_SCREEN_WIDTH;
 	scr_height = parseInt(localStorage['scr_height']) || D_SCREEN_HEIGHT;
@@ -1545,7 +1553,7 @@ function canvasInit(){
 controlEventsInit
 ===========================================
 */
-function controlEventsInit(){
+function controlEventsInit() {
 	keyEvents = {};
 
 	//mouse events
@@ -1554,30 +1562,30 @@ function controlEventsInit(){
 	mouse_movement_x = 0;
 	mouse_movement_y = 0;
 	keyEvents[K_MOUSE] = 0;
-	canvas.oncontextmenu = function(){
+	canvas.oncontextmenu = function() {
 		return false;
 	};
-	canvas.onmousedown = function(e){
+	canvas.onmousedown = function(e) {
 		if (!e) e = window.event;
 		keyEvents[K_MOUSE] = e.buttons;
 	};
-	canvas.onmouseup = function(e){
+	canvas.onmouseup = function(e) {
 		keyEvents[K_MOUSE] = 0;
 	};
-	canvas.onmousemove = function(e){
+	canvas.onmousemove = function(e) {
 		if (!e) e = window.event;
 		mouse_movement_x += e.movementX;
 		mouse_movement_y += e.movementY;
 	};
 
 	//keyboard events
-	document.onkeydown = function(e){
+	document.onkeydown = function(e) {
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = true;
 
 		return false;
 	};
-	document.onkeyup = function(e){
+	document.onkeyup = function(e) {
 		if (!e) e = window.event;
 		keyEvents[e.keyCode] = false;
 
@@ -1587,7 +1595,7 @@ function controlEventsInit(){
 	//cursor hide
 	canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
 	canvas.requestFullscreen = canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen;
-	canvas.onclick = function(){
+	canvas.onclick = function() {
 		if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
 			canvas.requestPointerLock();
 			canvas.requestFullscreen();
@@ -1601,7 +1609,7 @@ function controlEventsInit(){
 main
 ===========================================
 */
-function main(){
+function main() {
 	fps = 100;
 	ui_stack = [];
 	ui_langSet = LANG_EN;

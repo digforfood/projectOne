@@ -32,10 +32,10 @@ function SCR_drawField_button(elem) {
 
 /*
 ===========================================
-SCR_drawLockScreen
+SCR_drawMenu_lock
 ===========================================
 */
-function SCR_drawLockScreen() {
+function SCR_drawMenu_lock() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
 	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
@@ -68,9 +68,10 @@ function SCR_drawLoadScreen() {
 	CG_setTextures();
 
 	////////////////////TO DO////////////////////	
-	if (sys_state.game == G_STATE_INTRO_LOADING) {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		// sys_state.pushStateG(G_STATE_CONNECTING);
 		sys_state.pushStateG(G_STATE_DISCONNECTED);
+		sys_state.pushStateM(M_STATE_LOCK);
 		NET_connect();
 	}
 	else {
@@ -120,6 +121,9 @@ function SCR_drawMenu() {
 	if (sys_state.menu === M_STATE_NONE) {
 		return;
 	}
+	else if (sys_state.menu === M_STATE_LOCK) {
+		SCR_drawMenu_lock();
+	}
 	else if (sys_state.menu === M_STATE_MAIN) {
 		SCR_drawMenu_main();
 	}
@@ -135,7 +139,7 @@ SCR_drawFPS
 ===========================================
 */
 function SCR_drawFPS() {
-	if (sys_state.game == G_STATE_INTRO_LOADING) {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		return;
 	}
 
@@ -161,7 +165,7 @@ SCR_drawСursor
 ===========================================
 */
 function SCR_drawСursor() {
-	if (sys_state.game == G_STATE_INTRO_LOADING) {
+	if (sys_state.game === G_STATE_INTRO_LOADING) {
 		return;
 	}
 

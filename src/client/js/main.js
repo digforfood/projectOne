@@ -124,13 +124,10 @@ SCR_updateScreen
 function SCR_updateScreen() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	if ( sys_state.game == G_STATE_INTRO_LOADING || sys_state.game == G_STATE_LOADING) {
+	if ( sys_state.game === G_STATE_INTRO_LOADING || sys_state.game === G_STATE_LOADING) {
 		SCR_drawLoadScreen();
 	}
-	else if (sys_state.game <= G_STATE_CONNECTING) {
-		SCR_drawLockScreen();
-	}
-	else if (sys_state.game == G_STATE_RUN) {
+	else if (sys_state.game === G_STATE_RUN) {
 		// To do
 	}
 
@@ -151,7 +148,7 @@ function frame() {
 	deltaMilliseconds = correntTime - thisFrameTime;
 
 	if (deltaMilliseconds < 1000/fps)
-		return;			// framerate is too high
+		return; // framerate is too high
 
 	prevFrameTime = thisFrameTime;
 	thisFrameTime = correntTime;

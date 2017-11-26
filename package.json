@@ -1,37 +1,27 @@
 {
-  "name": "projectone",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/digforfood/projectOne.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/digforfood/projectOne/issues"
-  },
-  "homepage": "https://github.com/digforfood/projectOne#readme",
-  "devDependencies": {
-    "autoprefixer": "^5.2.0",
-    "colors": "^1.1.2",
-    "express": "^4.13.3",
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-cssmin": "^0.1.7",
-    "gulp-plumber": "^1.0.1",
-    "gulp-postcss": "^5.1.10",
-    "gulp-rigger": "^0.5.8",
-    "gulp-watch": "^4.3.4",
-    "postcss-import": "^6.2.0",
-    "postcss-nested": "^0.3.2",
-    "postcss-nested-props": "0.0.4",
-    "postcss-simple-extend": "^0.3.2",
-    "postcss-simple-vars": "^0.3.0",
-    "ws": "^0.7.2"
-  }
+	"name": "projectone",
+	"version": "0.1.1",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/digforfood/projectOne.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/digforfood/projectOne/issues"
+	},
+	"homepage": "https://github.com/digforfood/projectOne#readme",
+	"devDependencies": {
+		"colors": "^1.1.2",
+		"express": "^4.16.2",
+		"gulp": "^3.9.1",
+		"gulp-rigger": "^0.5.8",
+		"gulp-watch": "^4.3.11",
+		"ws": "^3.3.2"
+	}
 }
