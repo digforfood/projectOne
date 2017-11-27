@@ -1,4 +1,5 @@
 //= sv_auth_h.js
+//= sv_auth_c_client.js
 
 /*
 ===========================================
@@ -14,7 +15,7 @@ function SV_authCheckNewClients() {
 		i;
 
 	for (i = 0; i < len; i++) {
-		client = new Client(authNewClients.shift());
+		client = new SV_Client(authNewClients.shift());
 
 		authClients.push(client);
 
@@ -26,11 +27,49 @@ function SV_authCheckNewClients() {
 
 /*
 ===========================================
+SV_authHandleClientMessages
+===========================================
+*/
+function SV_authHandleClientMessages() {
+	if (!authClients.length)
+		return;
+
+	var messages = [],
+		clients = [];
+
+	for (var i = 0; i < authClients.length; i++) {
+		messages = authClients[i].msgIn;
+
+		for (var j = 0; j < messages.length; j++) {
+			// console.log(messages[i]);
+			authClients[i].quit = true;
+		}
+
+		authClients[i].msgIn = [];
+
+		if (authClients[i].quit) {
+			authClients[i].token = Date.now();
+
+			newClients.push(authClients[i]);
+		}
+		else {
+			clients.push(authClients[i]);
+		}
+	}
+
+	authClients = clients;
+}
+
+
+/*
+===========================================
 SV_authTick
 ===========================================
 */
 function SV_authTick() {
 	SV_authCheckNewClients();
+
+	SV_authHandleClientMessages();
 
 	// SV_authSendClientMessages();
 }

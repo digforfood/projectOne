@@ -144,7 +144,7 @@ frame
 ===========================================
 */
 function frame() {
-	correntTime = new Date();
+	correntTime = Date.now();
 	deltaMilliseconds = correntTime - thisFrameTime;
 
 	if (deltaMilliseconds < 1000/fps)
@@ -275,9 +275,9 @@ function main() {
 
 	fps_count = 0;
 	lastfps = 0;
-	lastfpstime = new Date();
+	lastfpstime = Date.now();
 	
-	thisFrameTime = new Date();
+	thisFrameTime = Date.now();
 
 	controlEventsInit();
 	

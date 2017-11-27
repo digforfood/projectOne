@@ -18,6 +18,13 @@ function CL_parseGamestate(ent) {
 		net_clKey = ent.k;
 
 	sys_state.pushStateG(ent.s);
+
+	if (ent.s === G_STATE_CONNECTING) {
+		sys_state.pushStateM(M_STATE_LOCK);
+	}
+	else if (ent.s === G_STATE_CONNECTED) {
+		sys_state.pushStateM(M_STATE_MAIN);
+	}
 }
 
 
@@ -46,7 +53,7 @@ function CL_parseServerMessage() {
 
 	for (var i = 0; i < net_inPackets.length; i++) {
 
-		l_msg = net_inPackets[i].m;
+		l_msg = net_inPackets[i];
 
 		for (var j = 0; j < l_msg.length; j++) {
 

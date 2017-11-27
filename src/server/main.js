@@ -11,11 +11,58 @@ var WebSocketServer = require('ws').Server,
 	playerId,
 	players;
 
-//= sv_auth_main.js
+//= auth/sv_auth_main.js
 //= sv_c_player.js
 //= sv_db.js
 //= sv_message.js
 //= sv_wss.js
+
+
+/*
+===========================================
+SV_checkNewClients
+===========================================
+*/
+function SV_checkNewClients() {
+	if (!newClients.length)
+		return;
+
+	var player = {},
+		len = newClients.length,
+		i;
+
+	for (i = 0; i < len; i++) {
+		player = new SV_Player(newClients.shift());
+
+		player.msgOut.push({t: 2, b: {k: player.token, s: 3}});
+
+		players[player.id] = player;
+	}
+}
+
+
+/*
+===========================================
+SV_sendClientMessages
+===========================================
+*/
+function SV_sendClientMessages() {
+	var messages = [];
+
+	for (var key in players) {
+		messages = players[key].msgOut;
+
+		if (messages.length) {
+			console.log('S ', messages);
+			players[key].socket.send(
+				JSON.stringify(messages),
+				() => { /* ignore errors */ }
+			);
+
+			players[key].msgOut = [];
+		}
+	}
+}
 
 
 /*
@@ -25,16 +72,16 @@ frame
 */
 function frame() {
 	prevFrameTime = currFrameTime;
-	currFrameTime = new Date();
+	currFrameTime = Date.now();
 	deltaFrameTime = currFrameTime - prevFrameTime;
 
 	// check for new clients
 	SV_checkNewClients();
 
 	// read client messages
-	SV_runClients();
+	//SV_runClients();
 
-	SV_physics();
+	//SV_physics();
 
 	SV_sendClientMessages();
 }
@@ -58,7 +105,7 @@ main
 ===========================================
 */
 function main() {
-	currFrameTime = new Date();
+	currFrameTime = Date.now();
 	playerId = 0;
 	players = {};
 	newClients = [];
@@ -67,7 +114,7 @@ function main() {
 
 	SV_wssInit();
 
-	//gameWorldLoop();
+	gameWorldLoop();
 }
 
 main();

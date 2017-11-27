@@ -660,6 +660,13 @@ function CL_parseGamestate(ent) {
 		net_clKey = ent.k;
 
 	sys_state.pushStateG(ent.s);
+
+	if (ent.s === G_STATE_CONNECTING) {
+		sys_state.pushStateM(M_STATE_LOCK);
+	}
+	else if (ent.s === G_STATE_CONNECTED) {
+		sys_state.pushStateM(M_STATE_MAIN);
+	}
 }
 
 
@@ -688,7 +695,7 @@ function CL_parseServerMessage() {
 
 	for (var i = 0; i < net_inPackets.length; i++) {
 
-		l_msg = net_inPackets[i].m;
+		l_msg = net_inPackets[i];
 
 		for (var j = 0; j < l_msg.length; j++) {
 
@@ -923,6 +930,21 @@ function SCR_drawField_input(elem) {
 
 /*
 ===========================================
+SCR_drawField_text
+===========================================
+*/
+function SCR_drawField_text(elem) {
+	if (m_position && m_position.id == elem.id) {
+		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
+	}
+
+	// gl.fillStyle = 'rgb(0, 0, 0)';
+	CG_drawString(elem.string, elem.x + 5, elem.y + 8);
+}
+
+
+/*
+===========================================
 SCR_drawField_button
 ===========================================
 */
@@ -935,27 +957,6 @@ function SCR_drawField_button(elem) {
 	}
 
 	CG_drawString(elem.string, elem.x+5, elem.y+8);
-}
-
-
-/*
-===========================================
-SCR_drawMenu_lock
-===========================================
-*/
-function SCR_drawMenu_lock() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
-
-	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_active.items[i].type == MTYPE_INPUT) {
-			SCR_drawField_input(m_active.items[i]);
-		}
-		else if (m_active.items[i].type == MTYPE_BUTTON) {
-			SCR_drawField_button(m_active.items[i]);
-		}
-	}
 }
 
 
@@ -991,21 +992,37 @@ function SCR_drawLoadScreen() {
 
 /*
 ===========================================
+SCR_drawMenu_lock
+===========================================
+*/
+function SCR_drawMenu_lock() {
+	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
+	// gl.fillRect (0, 0, scr_width, scr_height); //
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+
+	for (var i = 0; i < m_active.items.length; i++) {
+		if (m_active.items[i].type == MTYPE_INPUT) {
+			SCR_drawField_input(m_active.items[i]);
+		}
+		else if (m_active.items[i].type == MTYPE_BUTTON) {
+			SCR_drawField_button(m_active.items[i]);
+		}
+	}
+}
+
+
+/*
+===========================================
 SCR_drawMenu_main
 ===========================================
 */
 function SCR_drawMenu_main() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_position && m_position.id == m_active.items[i].id) {
-			gl.fillStyle = 'rgb(252, 122, 19)';
-			gl.fillRect(m_active.items[i].x, m_active.items[i].y, 150, 15);
-		}
-
-		gl.fillStyle = 'rgb(0, 0, 0)';
-		gl.fillText(m_active.items[i].string, m_active.items[i].x+5, m_active.items[i].y+12);
+		SCR_drawField_text(m_active.items[i]);
 	}
 }
 
@@ -1017,6 +1034,11 @@ SCR_drawMenu_options
 function SCR_drawMenu_options() {
 	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
 	// gl.fillRect (0, 0, scr_width, scr_height); //
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+
+	for (var i = 0; i < m_active.items.length; i++) {
+		SCR_drawField_text(m_active.items[i]);
+	}
 }
 
 
@@ -1494,7 +1516,7 @@ frame
 ===========================================
 */
 function frame() {
-	correntTime = new Date();
+	correntTime = Date.now();
 	deltaMilliseconds = correntTime - thisFrameTime;
 
 	if (deltaMilliseconds < 1000/fps)
@@ -1625,9 +1647,9 @@ function main() {
 
 	fps_count = 0;
 	lastfps = 0;
-	lastfpstime = new Date();
+	lastfpstime = Date.now();
 	
-	thisFrameTime = new Date();
+	thisFrameTime = Date.now();
 
 	controlEventsInit();
 	
