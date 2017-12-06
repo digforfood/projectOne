@@ -18,7 +18,7 @@ var scr_width,
 
 	ui_stack,
 	ui_langSet,
-	ui_s_lock,
+	ui_s_m_lock,
 	ui_s_m_main,
 	ui_s_m_options,
 	m_active,
@@ -62,7 +62,7 @@ var scr_width,
 //= sys_main.js
 //= sys_state.js
 //= ui_event.js
-//= ui_screen_lock.js
+//= ui_screen_menu-lock.js
 //= ui_screen_menu-main.js
 //= ui_screen_menu-options.js
 
@@ -264,7 +264,7 @@ function main() {
 	ui_stack = [];
 	ui_langSet = LANG_EN;
 	sys_state = new SYS_State(G_STATE_INTRO_LOADING, M_STATE_NONE);
-	m_active = ui_s_lock;
+	m_active = ui_s_m_lock;
 	canvasInit();
 
 	CG_init();

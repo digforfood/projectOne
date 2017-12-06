@@ -24,7 +24,7 @@ function SYS_State(ent_g, ent_m) {
 				m_active = {};
 			}
 			else if (this.menu === M_STATE_LOCK) {
-				m_active = ui_s_lock;
+				m_active = ui_s_m_lock;
 			}
 			else if (this.menu === M_STATE_MAIN) {
 				m_active = ui_s_m_main;
