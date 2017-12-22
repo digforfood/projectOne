@@ -4,11 +4,10 @@ SCR_drawField_input
 ===========================================
 */
 function SCR_drawField_input(elem) {
-	if (m_position && m_position.id == elem.id) {
+	if (m_position && m_position.id === elem.id) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+8 );
 }
 
@@ -19,11 +18,10 @@ SCR_drawField_text
 ===========================================
 */
 function SCR_drawField_text(elem) {
-	if (m_position && m_position.id == elem.id) {
+	if (m_position && m_position.id === elem.id) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString(elem.string, elem.x + 5, elem.y + 8);
 }
 
@@ -34,7 +32,7 @@ SCR_drawField_button
 ===========================================
 */
 function SCR_drawField_button(elem) {
-	if (sys_state.game == G_STATE_DISCONNECTED) {
+	if (sys_state.game === G_STATE_DISCONNECTED) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [106, 121, 137]);
 	}
 	else{
@@ -54,7 +52,6 @@ function SCR_drawLoadScreen() {
 	var loadStatus = SYS_checkResources();
 
 	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20, [255, 255, 255]);
-
 
 	if (loadStatus != 100)
 		return;
@@ -81,15 +78,13 @@ SCR_drawMenu_lock
 ===========================================
 */
 function SCR_drawMenu_lock() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_active.items[i].type == MTYPE_INPUT) {
+		if (m_active.items[i].type === MTYPE_INPUT) {
 			SCR_drawField_input(m_active.items[i]);
 		}
-		else if (m_active.items[i].type == MTYPE_BUTTON) {
+		else if (m_active.items[i].type === MTYPE_BUTTON) {
 			SCR_drawField_button(m_active.items[i]);
 		}
 	}
@@ -102,9 +97,7 @@ SCR_drawMenu_main
 ===========================================
 */
 function SCR_drawMenu_main() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		SCR_drawField_text(m_active.items[i]);
@@ -117,9 +110,7 @@ SCR_drawMenu_options
 ===========================================
 */
 function SCR_drawMenu_options() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		SCR_drawField_text(m_active.items[i]);
@@ -164,8 +155,7 @@ function SCR_drawFPS() {
 		fps_count = 0;
 		lastfpstime = thisfpstime;
 	}
-	// gl.font = '12px serif';
-	// gl.fillStyle = 'rgb(0, 0, 0)';
+
 	CG_drawString('FPS: ' + lastfps, canvas.width - 75, 17, 10);
 	CG_drawString('m_x: ' + mouse_x, canvas.width - 75, 29, 10);
 	CG_drawString('m_y: ' + mouse_y, canvas.width - 75, 41, 10);

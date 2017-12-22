@@ -2,8 +2,8 @@ ui_s_m_options = {
 ///////////////////////////////
 //OPTIONS MENU
 ///////////////////////////////
-string: 'OPTIONS',
-items: [
+	string: 'OPTIONS',
+	items: [
 		{
 			type: MTYPE_TEXT,
 			id: 20,

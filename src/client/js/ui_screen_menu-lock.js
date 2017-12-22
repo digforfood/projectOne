@@ -14,7 +14,6 @@ function UI_lockScreen_connectAction() {
 
 
 ui_s_m_lock = {
-
 ///////////////////////////////
 //LOCK SCREEN
 ///////////////////////////////
@@ -51,5 +50,4 @@ ui_s_m_lock = {
 			onclick: UI_lockScreen_connectAction
 		}
 	]
-
 };

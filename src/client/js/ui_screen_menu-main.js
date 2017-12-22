@@ -24,8 +24,8 @@ ui_s_m_main = {
 ///////////////////////////////
 //MAIN MENU
 ///////////////////////////////
-string: 'MAIN',
-items: [
+	string: 'MAIN',
+	items: [
 		{
 			type: MTYPE_TEXT,
 			id: 20,
