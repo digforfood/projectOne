@@ -5,11 +5,12 @@ var WebSocketServer = require('ws').Server,
 	prevFrameTime,
 	deltaFrameTime,
 
-	authNewClients,
 	newClients,
 
 	playerId,
-	players;
+	players,
+	
+	sv_auth;
 
 //= auth/sv_auth_main.js
 //= sv_c_player.js
@@ -109,8 +110,9 @@ function main() {
 	playerId = 0;
 	players = {};
 	newClients = [];
+	sv_auth = new Auth(newClients);
 
-	SV_authInit();
+	sv_auth.Init();
 
 	SV_wssInit();
 

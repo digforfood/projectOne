@@ -4,7 +4,7 @@ SV_wssConnectionHandler
 ===========================================
 */
 function SV_wssConnectionHandler(client) {
-	authNewClients.push(client);
+	sv_auth.authNewClients.push(client);
 }
 
 

@@ -5,131 +5,149 @@ var WebSocketServer = require('ws').Server,
 	prevFrameTime,
 	deltaFrameTime,
 
-	authNewClients,
 	newClients,
 
 	playerId,
-	players;
+	players,
+	
+	sv_auth;
 
-var
-	authClients;
 /*
 ===========================================
 SV_Client
 ===========================================
 */
-function SV_Client(client) {
-	this.token = null;
-	this.client = client;
-	this.msgIn = [];
-	this.msgOut = [];
-	this.quit = false;
-	this.client.cAuth = this;
+class SV_Client {
 
-	this.client.onmessage = function(event) {
-		this.cAuth.msgIn.push(event.data);
-	};
-	this.client.onclose = function(event) {
-		this.cAuth.quit = true;
-	};
+	constructor(client) {
+		this.token = null;
+		this.client = client;
+		this.msgIn = [];
+		this.msgOut = [];
+		this.quit = false;
+		this.client.cAuth = this;
+
+		this.client.onmessage = function (event) {
+			this.cAuth.msgIn.push(event.data);
+		};
+		this.client.onclose = function (event) {
+			this.cAuth.quit = true;
+		};
+	}
 }
 
-/*
-===========================================
-SV_authCheckNewClients
-===========================================
-*/
-function SV_authCheckNewClients() {
-	if (!authNewClients.length)
-		return;
+class Auth {
 
-	var client = {},
-		len = authNewClients.length,
-		i;
+	/*
+	===========================================
+	Auth::Auth
+	===========================================
+	*/
+	constructor(l_gameClients) {
+		this.authNewClients = [];
+		this.authClients = [];
 
-	for (i = 0; i < len; i++) {
-		client = new SV_Client(authNewClients.shift());
+		this.gameClients = l_gameClients;
+	}
 
-		authClients.push(client);
 
-		if (i === 16)
+	/*
+	===========================================
+	Auth::checkNewClients
+	===========================================
+	*/
+	checkNewClients() {
+		if (!this.authNewClients.length)
 			return;
-	}
-}
 
+		var client = {},
+			len = this.authNewClients.length,
+			i;
 
-/*
-===========================================
-SV_authHandleClientMessages
-===========================================
-*/
-function SV_authHandleClientMessages() {
-	if (!authClients.length)
-		return;
+		for (i = 0; i < len; i++) {
+			client = new SV_Client(this.authNewClients.shift());
 
-	var messages = [],
-		clients = [];
+			this.authClients.push(client);
 
-	for (var i = 0; i < authClients.length; i++) {
-		messages = authClients[i].msgIn;
-
-		for (var j = 0; j < messages.length; j++) {
-			// console.log(messages[i]);
-			authClients[i].quit = true;
-		}
-
-		authClients[i].msgIn = [];
-
-		if (authClients[i].quit) {
-			authClients[i].token = Date.now();
-
-			newClients.push(authClients[i]);
-		}
-		else {
-			clients.push(authClients[i]);
+			if (i === 16)
+				return;
 		}
 	}
 
-	authClients = clients;
-}
+
+	/*
+	===========================================
+	Auth::handleClientMessages
+	===========================================
+	*/
+	handleClientMessages() {
+		if (!this.authClients.length)
+			return;
+
+		var messages = [],
+			clients = [];
+
+		for (var i = 0; i < this.authClients.length; i++) {
+			messages = this.authClients[i].msgIn;
+
+			for (var j = 0; j < messages.length; j++) {
+				// console.log(messages[i]);
+				this.authClients[i].quit = true;
+			}
+
+			this.authClients[i].msgIn = [];
+
+			if (this.authClients[i].quit) {
+				this.authClients[i].token = Date.now();
+
+				this.gameClients.push(this.authClients[i]);
+			}
+			else {
+				clients.push(this.authClients[i]);
+			}
+		}
+
+		this.authClients = clients;
+	}
 
 
-/*
-===========================================
-SV_authTick
-===========================================
-*/
-function SV_authTick() {
-	SV_authCheckNewClients();
+	/*
+	===========================================
+	Auth::Tick
+	===========================================
+	*/
+	Tick() {
+		this.checkNewClients();
 
-	SV_authHandleClientMessages();
+		this.handleClientMessages();
 
-	// SV_authSendClientMessages();
-}
-
-
-/*
-===========================================
-SV_authTick
-===========================================
-*/
-function SV_authLoop() {
-	SV_authTick();
-
-	setTimeout(SV_authLoop, 100);
-}
+		// SV_authSendClientMessages();
+	}
 
 
-/*
-===========================================
-SV_authInit
-===========================================
-*/
-function SV_authInit() {
-	authNewClients = [];
-	authClients = [];
+	/*
+	===========================================
+	Auth::Loop
+	===========================================
+	*/
+	Loop() {
+		this.Tick();
 
-	SV_authLoop();
+		setTimeout(() => {this.Loop()}, 100);
+	}
+
+
+	/*
+	===========================================
+	Auth::Init
+	===========================================
+	*/
+	Init() {
+		this.authNewClients = [];
+		this.authClients = [];
+
+		this.Loop();
+	}
 }
 /*
 ===========================================
@@ -181,7 +199,7 @@ SV_wssConnectionHandler
 ===========================================
 */
 function SV_wssConnectionHandler(client) {
-	authNewClients.push(client);
+	sv_auth.authNewClients.push(client);
 }
 
 
@@ -288,8 +306,9 @@ function main() {
 	playerId = 0;
 	players = {};
 	newClients = [];
+	sv_auth = new Auth(newClients);
 
-	SV_authInit();
+	sv_auth.Init();
 
 	SV_wssInit();
 

@@ -3,8 +3,8 @@ var	G_STATE_INTRO_LOADING = 0,
 	G_STATE_DISCONNECTED = 1,
 	G_STATE_CONNECTING = 2,
 	G_STATE_CONNECTED = 3,
-	G_STATE_RUN = 4,
-	G_STATE_LOADING = 5,
+	G_STATE_LOADING = 4,
+	G_STATE_RUN = 5,
 
 	MSG_SERVERCOMMAND = 1,
 	MSG_GAMESTATE = 2,
@@ -283,7 +283,7 @@ var scr_width,
 
 	ui_stack,
 	ui_langSet,
-	ui_s_lock,
+	ui_s_m_lock,
 	ui_s_m_main,
 	ui_s_m_options,
 	m_active,
@@ -919,11 +919,10 @@ SCR_drawField_input
 ===========================================
 */
 function SCR_drawField_input(elem) {
-	if (m_position && m_position.id == elem.id) {
+	if (m_position && m_position.id === elem.id) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString( ((elem.buffer && elem.buffer.length)? elem.buffer : elem.string), elem.x+5, elem.y+8 );
 }
 
@@ -934,11 +933,10 @@ SCR_drawField_text
 ===========================================
 */
 function SCR_drawField_text(elem) {
-	if (m_position && m_position.id == elem.id) {
+	if (m_position && m_position.id === elem.id) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [252, 122, 19]);
 	}
 
-	// gl.fillStyle = 'rgb(0, 0, 0)';
 	CG_drawString(elem.string, elem.x + 5, elem.y + 8);
 }
 
@@ -949,7 +947,7 @@ SCR_drawField_button
 ===========================================
 */
 function SCR_drawField_button(elem) {
-	if (sys_state.game == G_STATE_DISCONNECTED) {
+	if (sys_state.game === G_STATE_DISCONNECTED) {
 		CG_drawRect(elem.x, elem.y, 150, 15, [106, 121, 137]);
 	}
 	else{
@@ -969,7 +967,6 @@ function SCR_drawLoadScreen() {
 	var loadStatus = SYS_checkResources();
 
 	CG_drawRect(10, scr_height - 30, (scr_width-20)*loadStatus/100, 20, [255, 255, 255]);
-
 
 	if (loadStatus != 100)
 		return;
@@ -996,15 +993,13 @@ SCR_drawMenu_lock
 ===========================================
 */
 function SCR_drawMenu_lock() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
-		if (m_active.items[i].type == MTYPE_INPUT) {
+		if (m_active.items[i].type === MTYPE_INPUT) {
 			SCR_drawField_input(m_active.items[i]);
 		}
-		else if (m_active.items[i].type == MTYPE_BUTTON) {
+		else if (m_active.items[i].type === MTYPE_BUTTON) {
 			SCR_drawField_button(m_active.items[i]);
 		}
 	}
@@ -1017,9 +1012,7 @@ SCR_drawMenu_main
 ===========================================
 */
 function SCR_drawMenu_main() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		SCR_drawField_text(m_active.items[i]);
@@ -1032,9 +1025,7 @@ SCR_drawMenu_options
 ===========================================
 */
 function SCR_drawMenu_options() {
-	// gl.fillStyle = 'rgb(136, 197, 198)';		// background
-	// gl.fillRect (0, 0, scr_width, scr_height); //
-	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]);
+	CG_drawRect(0, 0, scr_width, scr_height, [136, 197, 198]); // background
 
 	for (var i = 0; i < m_active.items.length; i++) {
 		SCR_drawField_text(m_active.items[i]);
@@ -1079,8 +1070,7 @@ function SCR_drawFPS() {
 		fps_count = 0;
 		lastfpstime = thisfpstime;
 	}
-	// gl.font = '12px serif';
-	// gl.fillStyle = 'rgb(0, 0, 0)';
+
 	CG_drawString('FPS: ' + lastfps, canvas.width - 75, 17, 10);
 	CG_drawString('m_x: ' + mouse_x, canvas.width - 75, 29, 10);
 	CG_drawString('m_y: ' + mouse_y, canvas.width - 75, 41, 10);
@@ -1149,7 +1139,7 @@ function SYS_State(ent_g, ent_m) {
 				m_active = {};
 			}
 			else if (this.menu === M_STATE_LOCK) {
-				m_active = ui_s_lock;
+				m_active = ui_s_m_lock;
 			}
 			else if (this.menu === M_STATE_MAIN) {
 				m_active = ui_s_m_main;
@@ -1313,16 +1303,15 @@ UI_lockScreen_connectAction
 */
 function UI_lockScreen_connectAction() {
 	if (sys_state.game != G_STATE_DISCONNECTED) {
-		net_buf.auth.name = ui_s_lock.items[0].buffer;
-		net_buf.auth.pass = ui_s_lock.items[1].buffer;
+		net_buf.auth.name = ui_s_m_lock.items[0].buffer;
+		net_buf.auth.pass = ui_s_m_lock.items[1].buffer;
 
 		net_buf.auth.isready = true;
 	}
 }
 
 
-ui_s_lock = {
-
+ui_s_m_lock = {
 ///////////////////////////////
 //LOCK SCREEN
 ///////////////////////////////
@@ -1359,7 +1348,6 @@ ui_s_lock = {
 			onclick: UI_lockScreen_connectAction
 		}
 	]
-
 };
 /*
 ===========================================
@@ -1387,8 +1375,8 @@ ui_s_m_main = {
 ///////////////////////////////
 //MAIN MENU
 ///////////////////////////////
-string: 'MAIN',
-items: [
+	string: 'MAIN',
+	items: [
 		{
 			type: MTYPE_TEXT,
 			id: 20,
@@ -1415,8 +1403,8 @@ ui_s_m_options = {
 ///////////////////////////////
 //OPTIONS MENU
 ///////////////////////////////
-string: 'OPTIONS',
-items: [
+	string: 'OPTIONS',
+	items: [
 		{
 			type: MTYPE_TEXT,
 			id: 20,
@@ -1636,7 +1624,7 @@ function main() {
 	ui_stack = [];
 	ui_langSet = LANG_EN;
 	sys_state = new SYS_State(G_STATE_INTRO_LOADING, M_STATE_NONE);
-	m_active = ui_s_lock;
+	m_active = ui_s_m_lock;
 	canvasInit();
 
 	CG_init();
