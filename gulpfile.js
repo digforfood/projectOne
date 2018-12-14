@@ -1,54 +1,49 @@
-var gulp = require('gulp'),
-	colors = require('colors'),
-	watch = require('gulp-watch'),
-	rigger = require('gulp-rigger'),
-	WebServ = require('./tools/wserv'),
-	webServ = new WebServ(),
+const { watch, series, src, dest } = require('gulp');
+const ts = require('gulp-typescript');
+const tsProject = ts.createProject('tsconfig.json');
+const rigger = require('gulp-rigger');
 
-	opt = {
+const WebServ = require('./tools/wserv');
+const webServ = new WebServ();
+
+const opt = {
 		path: {
 			build: './build',
 			src: './src'
 		}
 	};
 
-
 function log(error) {
 	console.log(("[" + error.name + " in " + error.plugin + "]").red.bold.inverse,
 	error.message + "]");
 };
 
-gulp.task('sjs', function () {
-	return gulp.src(opt.path.src + '/server/main.js')
+function sjs () {
+	return src(opt.path.src + '/server/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest(opt.path.build + '/server/'));
-});
+		.pipe(dest(opt.path.build + '/server/'));
+};
 
-gulp.task('cjs', function () {
-	return gulp.src(opt.path.src + '/client/js/main.js')
+function cjs () {
+	return src(opt.path.src + '/client/js/main.js')
 		.pipe(rigger())
-		.pipe(gulp.dest(opt.path.build + '/client/static/'));
-});
+		.pipe(dest(opt.path.build + '/client/static/'));
 
-gulp.task('html-partials', function () {
-	return gulp.src(opt.path.src + '/client/index.html')
+	// return src(opt.path.src + '/client/js/main.ts')
+	// 	.pipe(rigger())
+	// 	.pipe(tsProject())
+	// 	.js
+	// 	.pipe(dest(opt.path.build + '/client/static/'));
+};
+
+function htmlPartials () {
+	return src(opt.path.src + '/client/index.html')
 		.pipe(rigger())
-		.pipe(gulp.dest(opt.path.build + '/client/'));
-});
+		.pipe(dest(opt.path.build + '/client/'));
+};
 
-gulp.task('watch', function () {
-	watch(opt.path.src + '/server/**/*', function () {
-		gulp.start('sjs');
-	});
-	watch(opt.path.src + '/client/js/**/*', function () {
-		gulp.start('cjs');
-	});
-	watch(opt.path.src + '/client/*.html', function () {
-		gulp.start('html-partials');
-	});
-});
+watch(opt.path.src + '/server/**/*', { delay: 500 }, sjs);
+watch(opt.path.src + '/client/js/**/*', { delay: 500 }, cjs);
+watch(opt.path.src + '/client/*.html', { delay: 500 }, htmlPartials);
 
-gulp.task('default', function () {
-	webServ.listen();
-	gulp.start('sjs', 'cjs', 'html-partials', 'watch');
-});
+exports.default = series(sjs, cjs, htmlPartials, () => {webServ.listen();});
